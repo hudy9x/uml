@@ -17,7 +17,7 @@ export default function UMLEditor() {
   const { umlId } = useParams();
   const navigate = useNavigate();
   const [umlCode, setUmlCode] = useState('');
-  const [svgUrl, setSvgUrl] = useState('');
+  const [svgContent, setSvgContent] = useState('');
   const [projectName, setProjectName] = useState('');
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
@@ -74,7 +74,22 @@ export default function UMLEditor() {
 
   useEffect(() => {
     const encoded = encode(umlCode);
-    setSvgUrl(`http://www.plantuml.com/plantuml/svg/${encoded}`);
+
+    console.log('umlCode', umlCode)
+    if (!umlCode) {
+      setSvgContent('')
+      return
+    }
+
+    fetch(`http://www.plantuml.com/plantuml/svg/${encoded}`)
+      .then(res => res.text())
+      .then(svg => {
+        setSvgContent(svg);
+      })
+      .catch(error => {
+        console.error('Error fetching SVG:', error);
+        toast.error('Failed to load UML diagram');
+      });
 
     // Debounced save
     if (umlId) {
@@ -142,9 +157,8 @@ export default function UMLEditor() {
             <ResizablePanel defaultSize={50}>
               <Card className="h-full rounded-lg border-0">
                 <ZoomableView className="h-full">
-                  <img 
-                    src={svgUrl}
-                    alt="UML Diagram"
+                  <div 
+                    dangerouslySetInnerHTML={{ __html: svgContent }} 
                     className="max-w-full max-h-full"
                   />
                 </ZoomableView>
