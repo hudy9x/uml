@@ -54,6 +54,9 @@ export function ZoomableView({
         maxScale={maxScale}
         wheel={{ disabled: false, touchPadDisabled: false }}
         centerOnInit={true}
+        limitToBounds={false}
+        alignmentAnimation={{ disabled: true }}
+        centerZoomedOut={false}
       >
         <TransformComponent 
           wrapperClass="!w-full !h-full" 
