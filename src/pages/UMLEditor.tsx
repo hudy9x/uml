@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import CodeMirror from '@uiw/react-codemirror';
 import { encode } from 'plantuml-encoder';
+import { plantUML } from '../lib/codemirror/plantuml';
 import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -148,6 +149,7 @@ export default function UMLEditor() {
                   onChange={(value) => setUmlCode(value)}
                   className="h-full"
                   theme="dark"
+                  extensions={[plantUML()]}
                 />
               </div>
             </ResizablePanel>

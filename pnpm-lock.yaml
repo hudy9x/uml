@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@codemirror/language':
+        specifier: ^6.11.2
+        version: 6.11.2
+      '@codemirror/state':
+        specifier: ^6.5.2
+        version: 6.5.2
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@18.3.23)(react@18.3.1)
