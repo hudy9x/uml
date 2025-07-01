@@ -1,0 +1,460 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0233901A79E00DD6E054EE93 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 96517058A972826129643ED5 /* LaunchScreen.storyboard */; };
+		160655A31234A93D2D784E72 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FE76021CBA0D92494EFD49FB /* Assets.xcassets */; };
+		1B2C35922F24336D44E27774 /* libapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6AB01E0571BDD50F89C0BF1 /* libapp.a */; };
+		35B8BE308D3807739AA970E8 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 429FCD09C955085673C5E324 /* Metal.framework */; };
+		420E41008DCE7CC4C4D5CAD9 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38B7DDF53F5C111B3CDE6402 /* WebKit.framework */; };
+		670F52F20CDFA09C662CDBD0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9261691DEE47DFB879046B89 /* UIKit.framework */; };
+		786FFB5DCA451F9C1D7E9A5E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60B90A484E76025F2EE2F200 /* CoreGraphics.framework */; };
+		86585B7EF138482044DA20D5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8D5C493E7EFB0068271BE3B /* QuartzCore.framework */; };
+		91ED8EF42ACD18AE49E45EF2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D6613654F6EB845E8387B72 /* Security.framework */; };
+		9DFA1336FE4F43171E2D6319 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CDE807E31B351D83026D82E /* MetalKit.framework */; };
+		CFD268090870774B62706B90 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 759D09849477AAA811B3BF13 /* main.mm */; };
+		D0A48E212F118ABFB02A5F41 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 12964B3D22C97577D1EF1568 /* assets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0D6613654F6EB845E8387B72 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		12964B3D22C97577D1EF1568 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = SOURCE_ROOT; };
+		38B7DDF53F5C111B3CDE6402 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		429FCD09C955085673C5E324 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		43DA8297FAF11F0BE9DD6F05 /* odoflow-agent_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "odoflow-agent_iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		60B90A484E76025F2EE2F200 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		759D09849477AAA811B3BF13 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
+		7D8A709604EED766AFC840B9 /* lib.rs */ = {isa = PBXFileReference; path = lib.rs; sourceTree = "<group>"; };
+		88BCA2E3579280195092D412 /* main.rs */ = {isa = PBXFileReference; path = main.rs; sourceTree = "<group>"; };
+		9261691DEE47DFB879046B89 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		96517058A972826129643ED5 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9CDE807E31B351D83026D82E /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		A2B2C0F2C98BB6F1E5F6346B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BF528C12D6ECB4171DD5AEFB /* bindings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bindings.h; sourceTree = "<group>"; };
+		C4776093EDCFC44F3A18A478 /* odoflow-agent_iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "odoflow-agent_iOS.entitlements"; sourceTree = "<group>"; };
+		C6AB01E0571BDD50F89C0BF1 /* libapp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libapp.a; sourceTree = "<group>"; };
+		E8D5C493E7EFB0068271BE3B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		FE76021CBA0D92494EFD49FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		01FAC36D890F17CE67600283 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B2C35922F24336D44E27774 /* libapp.a in Frameworks */,
+				786FFB5DCA451F9C1D7E9A5E /* CoreGraphics.framework in Frameworks */,
+				35B8BE308D3807739AA970E8 /* Metal.framework in Frameworks */,
+				9DFA1336FE4F43171E2D6319 /* MetalKit.framework in Frameworks */,
+				86585B7EF138482044DA20D5 /* QuartzCore.framework in Frameworks */,
+				91ED8EF42ACD18AE49E45EF2 /* Security.framework in Frameworks */,
+				670F52F20CDFA09C662CDBD0 /* UIKit.framework in Frameworks */,
+				420E41008DCE7CC4C4D5CAD9 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		09AAB5EC5B85B451C385BB6A /* odoflow-agent_iOS */ = {
+			isa = PBXGroup;
+			children = (
+				A2B2C0F2C98BB6F1E5F6346B /* Info.plist */,
+				C4776093EDCFC44F3A18A478 /* odoflow-agent_iOS.entitlements */,
+			);
+			path = "odoflow-agent_iOS";
+			sourceTree = "<group>";
+		};
+		0BAF7944F853F45A8FB99865 /* bindings */ = {
+			isa = PBXGroup;
+			children = (
+				BF528C12D6ECB4171DD5AEFB /* bindings.h */,
+			);
+			path = bindings;
+			sourceTree = "<group>";
+		};
+		0CEF09E8ED3A285509A183D9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				60B90A484E76025F2EE2F200 /* CoreGraphics.framework */,
+				C6AB01E0571BDD50F89C0BF1 /* libapp.a */,
+				429FCD09C955085673C5E324 /* Metal.framework */,
+				9CDE807E31B351D83026D82E /* MetalKit.framework */,
+				E8D5C493E7EFB0068271BE3B /* QuartzCore.framework */,
+				0D6613654F6EB845E8387B72 /* Security.framework */,
+				9261691DEE47DFB879046B89 /* UIKit.framework */,
+				38B7DDF53F5C111B3CDE6402 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1462A7068324FBD04F83264A /* Externals */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Externals;
+			sourceTree = "<group>";
+		};
+		20B3B393299BE3945701BDFB = {
+			isa = PBXGroup;
+			children = (
+				12964B3D22C97577D1EF1568 /* assets */,
+				FE76021CBA0D92494EFD49FB /* Assets.xcassets */,
+				96517058A972826129643ED5 /* LaunchScreen.storyboard */,
+				1462A7068324FBD04F83264A /* Externals */,
+				09AAB5EC5B85B451C385BB6A /* odoflow-agent_iOS */,
+				3CF27DA1A84786ECE9D4B60E /* Sources */,
+				DB7B1C84A24E3B95778BD858 /* src */,
+				0CEF09E8ED3A285509A183D9 /* Frameworks */,
+				B494DC4142635224FEABAD42 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3CF27DA1A84786ECE9D4B60E /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				BAD34239537CE633797F54C8 /* odoflow-agent */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		B494DC4142635224FEABAD42 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				43DA8297FAF11F0BE9DD6F05 /* odoflow-agent_iOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BAD34239537CE633797F54C8 /* odoflow-agent */ = {
+			isa = PBXGroup;
+			children = (
+				759D09849477AAA811B3BF13 /* main.mm */,
+				0BAF7944F853F45A8FB99865 /* bindings */,
+			);
+			path = "odoflow-agent";
+			sourceTree = "<group>";
+		};
+		DB7B1C84A24E3B95778BD858 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7D8A709604EED766AFC840B9 /* lib.rs */,
+				88BCA2E3579280195092D412 /* main.rs */,
+			);
+			name = src;
+			path = ../../src;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5F532AE8E68AC32F7E005C5C /* odoflow-agent_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7AF3FD10A13756AC1C34E394 /* Build configuration list for PBXNativeTarget "odoflow-agent_iOS" */;
+			buildPhases = (
+				FD7351E5F3E2986AAC83940D /* Build Rust Code */,
+				4C54B58B4070F4CE30ED230D /* Sources */,
+				FDBFE77CA6B87540C1CAFFF8 /* Resources */,
+				01FAC36D890F17CE67600283 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "odoflow-agent_iOS";
+			packageProductDependencies = (
+			);
+			productName = "odoflow-agent_iOS";
+			productReference = 43DA8297FAF11F0BE9DD6F05 /* odoflow-agent_iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5F2D2A986A4721B5ACF9A13B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 02668FBF44F70C81C3460D3F /* Build configuration list for PBXProject "odoflow-agent" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 20B3B393299BE3945701BDFB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 54;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5F532AE8E68AC32F7E005C5C /* odoflow-agent_iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FDBFE77CA6B87540C1CAFFF8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				160655A31234A93D2D784E72 /* Assets.xcassets in Resources */,
+				0233901A79E00DD6E054EE93 /* LaunchScreen.storyboard in Resources */,
+				D0A48E212F118ABFB02A5F41 /* assets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		FD7351E5F3E2986AAC83940D /* Build Rust Code */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Rust Code";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Externals/x86_64/${CONFIGURATION}/libapp.a",
+				"$(SRCROOT)/Externals/arm64/${CONFIGURATION}/libapp.a",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pnpm tauri ios xcode-script -v --platform ${PLATFORM_DISPLAY_NAME:?} --sdk-root ${SDKROOT:?} --framework-search-paths \"${FRAMEWORK_SEARCH_PATHS:?}\" --header-search-paths \"${HEADER_SEARCH_PATHS:?}\" --gcc-preprocessor-definitions \"${GCC_PREPROCESSOR_DEFINITIONS:-}\" --configuration ${CONFIGURATION:?} ${FORCE_COLOR} ${ARCHS:?}";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4C54B58B4070F4CE30ED230D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD268090870774B62706B90 /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0EA000AAAAD0508DE6D81513 /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = release;
+		};
+		13B462B12B258C624D6A3F86 /* release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ARCHS = (
+					arm64,
+				);
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "odoflow-agent_iOS/odoflow-agent_iOS.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphoneos*]" = x86_64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
+				INFOPLIST_FILE = "odoflow-agent_iOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.odoflow-agent.app;
+				PRODUCT_NAME = "odoflow-agent";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+			};
+			name = release;
+		};
+		6A3EBB724CA9F62B4110E152 /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = debug;
+		};
+		D917BF2667165FFB4C820A8F /* debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ARCHS = (
+					arm64,
+				);
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "odoflow-agent_iOS/odoflow-agent_iOS.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_BITCODE = NO;
+				"EXCLUDED_ARCHS[sdk=iphoneos*]" = x86_64;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
+				INFOPLIST_FILE = "odoflow-agent_iOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = "$(inherited) $(PROJECT_DIR)/Externals/arm64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = "$(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME) $(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.odoflow-agent.app;
+				PRODUCT_NAME = "odoflow-agent";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+			};
+			name = debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		02668FBF44F70C81C3460D3F /* Build configuration list for PBXProject "odoflow-agent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A3EBB724CA9F62B4110E152 /* debug */,
+				0EA000AAAAD0508DE6D81513 /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
+		7AF3FD10A13756AC1C34E394 /* Build configuration list for PBXNativeTarget "odoflow-agent_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D917BF2667165FFB4C820A8F /* debug */,
+				13B462B12B258C624D6A3F86 /* release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5F2D2A986A4721B5ACF9A13B /* Project object */;
+}
