@@ -22,8 +22,14 @@ export const plantumlLanguage = StreamLanguage.define<PlantUMLState>({
     if (stream.eatSpace()) return null;
 
     if (state.note === true) {
-      console.log(stream)
-      // return 'string';
+      // Check for end note first
+      if (stream.match(/^\s*end\s+note\s*$/i)) {
+        state.note = false;
+        return 'keyword';
+      }
+      // Consume the entire line as note content
+      stream.skipToEnd();
+      return 'string';
     }
 
 
