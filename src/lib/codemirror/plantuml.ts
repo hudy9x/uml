@@ -62,7 +62,11 @@ export const plantumlLanguage = StreamLanguage.define<PlantUMLState>({
     if (stream.match(/:\s*(.*)/)) {
       return 'string';
     }
-    
+
+    // Handle section titles
+    if (stream.match(/^\s*==.*?==\s*$/)) {
+      return 'keyword';
+    }
 
     // Handle common keywords
     const keywords = [
