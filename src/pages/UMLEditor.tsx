@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import CodeMirror from '@uiw/react-codemirror';
 import { encode } from 'plantuml-encoder';
-import { Card, CardContent } from '../components/ui/card';
+import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../components/ui/resizable';
 import { getProject, updateProject } from '../lib/db';
 import { toast } from 'sonner';
 import { ChevronLeft } from 'lucide-react';
+import { ZoomableView } from '../components/ZoomableView';
 
 let saveTimeout: number;
 
@@ -139,12 +140,14 @@ export default function UMLEditor() {
             <ResizableHandle className='invisible' />
             
             <ResizablePanel defaultSize={50}>
-              <Card className="h-full rounded-lg border-0 flex items-center justify-center p-4">
-                <img 
-                  src={svgUrl}
-                  alt="UML Diagram"
-                  className="max-w-full max-h-full"
-                />
+              <Card className="h-full rounded-lg border-0">
+                <ZoomableView className="h-full">
+                  <img 
+                    src={svgUrl}
+                    alt="UML Diagram"
+                    className="max-w-full max-h-full"
+                  />
+                </ZoomableView>
               </Card>
             </ResizablePanel>
           </ResizablePanelGroup>
