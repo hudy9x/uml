@@ -49,6 +49,10 @@ export default function UMLEditor() {
 
   async function handleNameSave() {
     if (!umlId) return;
+    if (editedName === projectName) {
+      setIsEditingName(false);
+      return;
+    }
     await updateProject(umlId, { name: editedName });
     setProjectName(editedName);
     setIsEditingName(false);
