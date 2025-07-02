@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { ChevronLeft } from 'lucide-react';
 import { ZoomableView } from '../components/ZoomableView';
 
-let saveTimeout: number;
+let debounceTimeout: number;
 
 export default function UMLEditor() {
   const { umlId } = useParams();
@@ -74,34 +74,39 @@ export default function UMLEditor() {
   };
 
   useEffect(() => {
-    const encoded = encode(umlCode);
-
-    console.log('umlCode', umlCode)
     if (!umlCode) {
       setSvgContent('')
       return
     }
 
-    fetch(`http://www.plantuml.com/plantuml/svg/${encoded}`)
-      .then(res => res.text())
-      .then(svg => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = window.setTimeout(async () => {
+      const encoded = encode(umlCode);
+      
+      // Generate SVG
+      try {
+        const res = await fetch(`http://www.plantuml.com/plantuml/svg/${encoded}`);
+        const svg = await res.text();
         setSvgContent(svg);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching SVG:', error);
         toast.error('Failed to load UML diagram');
-      });
+      }
 
-    // Debounced save
-    if (umlId) {
-      toast.info('Saving...');
-      clearTimeout(saveTimeout);
-      saveTimeout = window.setTimeout(async () => {
-        await updateProject(umlId, { content: umlCode });
-        toast.success('Saved!');
-      }, 1000);
-    }
-  }, [umlCode]);
+      // Save if we have a umlId
+      if (umlId) {
+        toast.info('Saving...');
+        try {
+          await updateProject(umlId, { content: umlCode });
+          toast.success('Saved!');
+        } catch (error) {
+          toast.error('Failed to save diagram');
+        }
+      }
+    }, 800);
+
+    return () => clearTimeout(debounceTimeout);
+  }, [umlCode, umlId]);
 
 
 
