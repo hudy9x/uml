@@ -24,6 +24,8 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for changelog generation
 
       - name: setup node
         uses: actions/setup-node@v4
@@ -62,13 +64,36 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install
 
+      - name: Get version from package.json
+        id: get_version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate Changelog
+        id: changelog
+        shell: bash
+        run: |
+          # Make the script executable
+          chmod +x scripts/generate-changelog.js
+          
+          # Generate changelog and capture the output
+          CHANGELOG_CONTENT=$(node scripts/generate-changelog.js --stdout)
+          
+          # Save changelog to GitHub Environment
+          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: app-v__VERSION__
-          releaseName: 'App v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
+          tagName: v${{ env.VERSION }}
+          releaseName: 'App v${{ env.VERSION }}'
+          releaseBody: ${{ env.CHANGELOG }}
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
