@@ -15,7 +15,7 @@ export default function Home() {
 
   async function loadProjects() {
     const list = await listProjects();
-    setProjects(list.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()));
+    setProjects(list.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()));
   }
 
   async function handleCreate() {
@@ -54,7 +54,7 @@ export default function Home() {
                   {project.name}
                 </CardTitle>
                 <CardDescription>
-                  Last updated: {new Date(project.updatedAt).toLocaleDateString(undefined, {
+                  Last updated: {new Date(project.updated_at).toLocaleDateString(undefined, {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
