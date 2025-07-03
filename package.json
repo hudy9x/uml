@@ -20,6 +20,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-sql": "~2",
     "@uiw/react-codemirror": "^4.23.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
