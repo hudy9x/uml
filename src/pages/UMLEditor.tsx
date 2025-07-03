@@ -116,7 +116,7 @@ export default function UMLEditor() {
 
   return (
     <main className="min-h-screen bg-background" style={{ backgroundColor: 'color(srgb 0.1582 0.1724 0.2053)'}}>
-      <div className="mx-auto pr-4" >
+      <div className="mx-auto px-4" >
         {/* Header */}
         
         {/* Editor */}
