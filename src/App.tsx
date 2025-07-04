@@ -5,6 +5,7 @@ import { Toaster } from 'sonner';
 import Home from './pages/Home';
 import UMLEditor from './pages/UMLEditor';
 import { initDB } from './lib/db';
+import TestPage from './pages/TestPage';
 
 initDB()
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/uml/:umlId" element={<UMLEditor />} />
+        <Route path="/test" element={<TestPage />} />
       </Routes>
     </BrowserRouter>
   );
