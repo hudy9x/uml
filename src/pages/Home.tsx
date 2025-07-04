@@ -4,7 +4,6 @@ import { Button } from '../components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card';
 import { createProject, listProjects, type UMLProject } from '../lib/db';
 import { Plus, FileCode2 } from 'lucide-react';
-import { TestWindow } from '../components/Testwindow';
 
 export default function Home() {
   const [projects, setProjects] = useState<UMLProject[]>([]);
@@ -41,8 +40,6 @@ export default function Home() {
             </div>
           </CardHeader>
         </Card>
-
-        <TestWindow />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
