@@ -9,10 +9,9 @@ import { Input } from '../components/ui/input';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../components/ui/resizable';
 import { getProject, updateProject } from '../lib/db';
 import { toast } from 'sonner';
-import { ChevronLeft, Download } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { ZoomableView } from '../components/ZoomableView';
-import { save } from "@tauri-apps/plugin-dialog";
-import { writeFile } from "@tauri-apps/plugin-fs";
+import { DownloadDiagramButton } from '../components/DownloadDiagramButton';
 
 let debounceTimeout: number;
 
@@ -116,37 +115,6 @@ export default function UMLEditor() {
     return () => clearTimeout(debounceTimeout);
   }, [umlCode, umlId]);
 
-  const handleDownload = async () => {
-    if (!umlCode) {
-      toast.error('No diagram to download');
-      return;
-    }
-
-    try {
-      const encoded = encode(umlCode);
-      const res = await fetch(`http://www.plantuml.com/plantuml/img/${encoded}`);
-      const imageBlob = await res.blob();
-      const imageData = await imageBlob.arrayBuffer();
-      const uint8Array = new Uint8Array(imageData);
-      
-      const filePath = await save({
-        defaultPath: `${projectName || 'diagram'}.png`,
-        filters: [{
-          name: 'Image',
-          extensions: ['png']
-        }]
-      });
-
-      if (filePath) {
-        await writeFile(filePath, uint8Array);
-        toast.success('Diagram downloaded successfully!');
-      }
-    } catch (error) {
-      console.error('Error downloading diagram:', error);
-      toast.error('Failed to download diagram');
-    }
-  };
-
   return (
     <main className="min-h-screen bg-background" style={{ backgroundColor: 'color(srgb 0.1582 0.1724 0.2053)'}}>
       <div className="mx-auto px-4" >
@@ -170,28 +138,24 @@ export default function UMLEditor() {
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant="default"
-                  size="icon"
-                  onClick={handleDownload}
-                  title="Download as PNG"
-                >
-                  <Download className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-2 flex-1">
                   <div className="flex items-center gap-2 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={isEditingName ? editedName : projectName}
-                        readOnly={!isEditingName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                        onKeyDown={handleNameKeyDown}
-                        onBlur={handleBlur}
-                        onClick={handleInputClick}
-                        className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
-                      />
-                    </div>
+                    <Input
+                      value={isEditingName ? editedName : projectName}
+                      readOnly={!isEditingName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                      onKeyDown={handleNameKeyDown}
+                      onBlur={handleBlur}
+                      onClick={handleInputClick}
+                      className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
+                    />
+                    <DownloadDiagramButton 
+                      umlCode={umlCode}
+                      projectName={projectName}
+                    />
                   </div>
                 </div>
+              </div>
 
                 <CodeMirror
                   value={umlCode}
