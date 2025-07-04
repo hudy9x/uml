@@ -67,9 +67,11 @@ export default function UMLEditor() {
   const handleNameKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleNameSave();
+      (e.target as HTMLInputElement).blur();
     } else if (e.key === 'Escape') {
       setIsEditingName(false);
       setEditedName(projectName);
+      (e.target as HTMLInputElement).blur();
     }
   };
 
