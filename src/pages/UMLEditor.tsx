@@ -11,6 +11,7 @@ import { getProject, updateProject } from '../lib/db';
 import { toast } from 'sonner';
 import { ChevronLeft } from 'lucide-react';
 import { ZoomableView } from '../components/ZoomableView';
+import { DownloadDiagramButton } from '../components/DownloadDiagramButton';
 
 let debounceTimeout: number;
 
@@ -67,9 +68,11 @@ export default function UMLEditor() {
   const handleNameKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleNameSave();
+      (e.target as HTMLInputElement).blur();
     } else if (e.key === 'Escape') {
       setIsEditingName(false);
       setEditedName(projectName);
+      (e.target as HTMLInputElement).blur();
     }
   };
 
@@ -112,8 +115,6 @@ export default function UMLEditor() {
     return () => clearTimeout(debounceTimeout);
   }, [umlCode, umlId]);
 
-
-
   return (
     <main className="min-h-screen bg-background" style={{ backgroundColor: 'color(srgb 0.1582 0.1724 0.2053)'}}>
       <div className="mx-auto px-4" >
@@ -137,20 +138,24 @@ export default function UMLEditor() {
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
+                <div className="flex items-center gap-2 flex-1">
                   <div className="flex items-center gap-2 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={isEditingName ? editedName : projectName}
-                        readOnly={!isEditingName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                        onKeyDown={handleNameKeyDown}
-                        onBlur={handleBlur}
-                        onClick={handleInputClick}
-                        className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
-                      />
-                    </div>
+                    <Input
+                      value={isEditingName ? editedName : projectName}
+                      readOnly={!isEditingName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                      onKeyDown={handleNameKeyDown}
+                      onBlur={handleBlur}
+                      onClick={handleInputClick}
+                      className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
+                    />
+                    <DownloadDiagramButton 
+                      umlCode={umlCode}
+                      projectName={projectName}
+                    />
                   </div>
                 </div>
+              </div>
 
                 <CodeMirror
                   value={umlCode}

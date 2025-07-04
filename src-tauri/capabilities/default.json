@@ -8,6 +8,13 @@
   "permissions": [
     "core:default",
     "sql:default",
-    "sql:allow-execute"
+    "sql:allow-execute",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:default",
+    "fs:default",
+    "fs:allow-app-write",
+    "fs:allow-app-write-recursive",
+    "fs:allow-app-read"
   ]
 }

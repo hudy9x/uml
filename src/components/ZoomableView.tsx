@@ -1,4 +1,4 @@
-import { ZoomIn, ZoomOut, Maximize } from 'lucide-react';
+import { ZoomIn, ZoomOut } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Button } from './ui/button';
 
@@ -38,7 +38,7 @@ export function ZoomableView({
         >
           <ZoomOut className="h-4 w-4" />
         </Button>
-        <Button
+        {/* <Button
           variant="secondary"
           size="icon"
           onClick={() => document.querySelector('.react-transform-wrapper')?.dispatchEvent(
@@ -46,7 +46,7 @@ export function ZoomableView({
           )}
         >
           <Maximize className="h-4 w-4" />
-        </Button>
+        </Button> */}
       </div>
       <TransformWrapper
         initialScale={initialScale}
