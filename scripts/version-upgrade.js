@@ -12,10 +12,23 @@ const __dirname = dirname(__filename);
 // Get the package.json path
 const packageJsonPath = join(process.cwd(), 'package.json');
 const versionLockPath = join(process.cwd(), '.version-lock');
+const tauriConfigPath = join(process.cwd(), 'src-tauri', 'tauri.conf.json');
 
 // Read current version from package.json
 const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
 let [major, minor, patch] = packageJson.version.split('.').map(Number);
+
+// Function to update Tauri config version
+function updateTauriConfig(version) {
+  try {
+    const tauriConfig = JSON.parse(readFileSync(tauriConfigPath, 'utf8'));
+    tauriConfig.version = version;
+    writeFileSync(tauriConfigPath, JSON.stringify(tauriConfig, null, 2) + '\n');
+    console.log('Updated Tauri config version');
+  } catch (error) {
+    console.error('Error updating Tauri config:', error.message);
+  }
+}
 
 // Get the last processed commit hash
 function getLastProcessedCommit() {
@@ -128,6 +141,9 @@ if (newVersion) {
   // Update package.json
   packageJson.version = newVersion;
   writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
+  
+  // Update Tauri config version
+  updateTauriConfig(newVersion);
   
   // Save the current commit as last processed
   saveLastProcessedCommit();
