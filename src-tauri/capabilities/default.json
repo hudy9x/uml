@@ -16,6 +16,7 @@
     "fs:allow-app-write",
     "fs:allow-app-write-recursive",
     "fs:allow-app-read",
-    "core:webview:allow-create-webview-window"
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-close"
   ]
 }

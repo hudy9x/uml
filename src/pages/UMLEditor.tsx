@@ -34,6 +34,27 @@ export default function UMLEditor() {
   const maxEditorSize = 100;
   const [editorSize, setEditorSize] = useState(30);
 
+  // Close any existing preview windows on mount
+  useEffect(() => {
+    const closeExistingPreviews = async () => {
+      try {
+        const windows = await WebviewWindow.getAll();
+        console.log("windows", windows); 
+        windows.forEach(window => {
+          if (window.label === "preview") {
+            console.log("closing window", window);
+            window.close();
+          }
+        });
+        setEditorSize(30);
+      } catch (error) {
+        console.error("Error closing existing preview windows:", error);
+      }
+    };
+
+    closeExistingPreviews();
+  }, []);
+
   // Clean up preview window when component unmounts
   useEffect(() => {
     return () => {
