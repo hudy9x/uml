@@ -1,22 +1,24 @@
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { Button } from './ui/button';
 import { encode } from "plantuml-encoder";
+import { useCallback, useState } from "react";
 
 
 export function TestWindow() {
-  let webview: WebviewWindow;
+  const [webview, setWebview] = useState<WebviewWindow | null>(null);
 
   const openWindow = async () => {
     try {
+      let webview: WebviewWindow
       webview = new WebviewWindow('test', {
         url: 'http://localhost:1420/test',
         title: 'Test Window',
         width: 800,
         height: 600,
-        center: true,
+        center: true
       });
 
-      
+      setWebview(webview)
 
       webview.once('tauri://created', function () {
         console.log('Window created successfully');
@@ -39,13 +41,15 @@ export function TestWindow() {
     }
   };
 
-  const updateDiagram = () => {
+  const updateDiagram = useCallback(() => {
+    if (!webview) return;
     const encoded = encode('@startuml\nAlice -> Bob: Hello\n@enduml');
 
+    console.log('sending diagram',webview, encoded)
     webview.emit('update-diagram', {
       diagram: encoded,
     });
-  }
+  }, [webview])
 
   return (
     <div>

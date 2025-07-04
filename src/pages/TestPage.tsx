@@ -7,9 +7,11 @@ export default function TestPage() {
     useEffect(() => {
         const w = getCurrentWebviewWindow();
 
-
+        console.log('w', w)
         w.listen('update-diagram', (event) => {
-            console.log('event', event.payload)
+            console.log('event', event)
+            const { diagram } = event.payload as { diagram: string };
+            setDiagram(diagram);
         });
 
     }, []);
