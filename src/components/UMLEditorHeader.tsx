@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ChevronLeft, ExternalLink } from "lucide-react";
-import { DownloadDiagramButton } from "./DownloadDiagramButton";
+import { ChevronLeft } from "lucide-react";
+import { ExportActionsDropdown } from "./ExportActionsDropdown";
 
 interface UMLEditorHeaderProps {
   projectName: string;
@@ -67,16 +67,11 @@ export function UMLEditorHeader({
             onClick={handleInputClick}
             className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
           />
-          <DownloadDiagramButton umlCode={umlCode} projectName={projectName} />
-          <Button
-            variant="default"
-            size="icon"
-            onClick={onOpenPreview}
-            disabled={!umlCode}
-            title="Open in new window"
-          >
-            <ExternalLink className="h-4 w-4" />
-          </Button>
+          <ExportActionsDropdown
+            umlCode={umlCode}
+            projectName={projectName}
+            onOpenPreview={onOpenPreview}
+          />
         </div>
       </div>
     </div>
