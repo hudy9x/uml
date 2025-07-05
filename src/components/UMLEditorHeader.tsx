@@ -2,8 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ChevronLeft, ExternalLink } from "lucide-react";
+import { ChevronLeft, ExternalLink, FileDown } from "lucide-react";
 import { DownloadDiagramButton } from "./DownloadDiagramButton";
+import { save } from "@tauri-apps/plugin-dialog";
+import { writeFile } from "@tauri-apps/plugin-fs";
+import { toast } from "sonner";
 
 interface UMLEditorHeaderProps {
   projectName: string;
@@ -51,6 +54,33 @@ export function UMLEditorHeader({
     handleNameSave();
   };
 
+  const handleSaveUMLCode = async () => {
+    if (!umlCode) {
+      toast.error('No UML code to save');
+      return;
+    }
+
+    try {
+      const filePath = await save({
+        defaultPath: `${projectName || 'diagram'}.pu`,
+        filters: [{
+          name: 'PlantUML',
+          extensions: ['pu']
+        }]
+      });
+
+      if (filePath) {
+        const encoder = new TextEncoder();
+        const uint8Array = encoder.encode(umlCode);
+        await writeFile(filePath, uint8Array);
+        toast.success('UML code saved successfully!');
+      }
+    } catch (error) {
+      console.error('Error saving UML code:', error);
+      toast.error('Failed to save UML code');
+    }
+  };
+
   return (
     <div className="flex items-center gap-4 pr-3">
       <Button variant="default" size="icon" onClick={() => navigate("/")}>
@@ -68,6 +98,15 @@ export function UMLEditorHeader({
             className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
           />
           <DownloadDiagramButton umlCode={umlCode} projectName={projectName} />
+          <Button
+            variant="default"
+            size="icon"
+            onClick={handleSaveUMLCode}
+            disabled={!umlCode}
+            title="Save as PlantUML file"
+          >
+            <FileDown className="h-4 w-4" />
+          </Button>
           <Button
             variant="default"
             size="icon"
