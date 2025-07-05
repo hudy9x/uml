@@ -111,8 +111,10 @@ jobs:
           RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
         run: |
           LATEST_JSON=$(find ./src-tauri/target -name "latest.json" -type f)
+          ls ./src-tauri/target
           echo "Latest.json content:"
-          more "$LATEST_JSON"
+          more ./src-tauri/target/latest.json
+          find . -maxdepth 3 -name "latest.json"
           
           curl \
             -X POST \
