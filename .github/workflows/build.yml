@@ -93,7 +93,7 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         name: Build and upload release
         id: tauri_build
-        # timeout-minutes: 5
+        timeout-minutes: 5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -107,17 +107,17 @@ jobs:
           args: ${{ matrix.args }}
 
       # Upload latest.json to the release
-      - name: Retry to upload latest.json to release
-        if: matrix.platform == 'macos-latest'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
-        run: |
-          LATEST_JSON=./latest.json
+      # - name: Retry to upload latest.json to release
+      #   if: matrix.platform == 'macos-latest'
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
+      #   run: |
+      #     LATEST_JSON=./latest.json
           
-          curl \
-            -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary "@$LATEST_JSON" \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=latest.json"
+      #     curl \
+      #       -X POST \
+      #       -H "Authorization: token $GITHUB_TOKEN" \
+      #       -H "Content-Type: application/octet-stream" \
+      #       --data-binary "@$LATEST_JSON" \
+      #       "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=latest.json"
