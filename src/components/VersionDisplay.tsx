@@ -215,12 +215,13 @@ export function VersionDisplay() {
               {/* Action Buttons */}
               {updateInfo.status === UpdateStatus.AVAILABLE && (
 
-              <div className="flex justify-center gap-2 pt-3">
+              <div className="flex justify-center gap-2">
                   <Button
+                    variant="outline"
                     size="sm"
                     onClick={handleUpdate}
                     disabled={isUpdating}
-                    className="bg-blue-600 text-white hover:bg-blue-700 text-xs h-7 px-3"
+                    className="text-xs"
                   >
                     {isUpdating ? "Updating..." : "Update Now"}
                   </Button>
