@@ -90,19 +90,31 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - uses: tauri-apps/tauri-action@v0
+        id: tauri_build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: v${{ env.VERSION }}
-          releaseName: 'App v${{ env.VERSION }}'
+          releaseName: 'v${{ env.VERSION }}'
           releaseBody: ${{ env.CHANGELOG }}
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
 
-      # Only run on windows-latest to avoid concurrent updates
+      # Capture signatures for each platform
+      - name: Save signature
+        if: success()
+        shell: bash
+        run: |
+          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+            echo "DARWIN_SIGNATURE=${{ steps.tauri_build.outputs.signature }}" >> $GITHUB_ENV
+          elif [[ "${{ matrix.platform }}" == "windows-latest" ]]; then
+            echo "WINDOWS_SIGNATURE=${{ steps.tauri_build.outputs.signature }}" >> $GITHUB_ENV
+          fi
+
+      # Only run on macos-latest to avoid concurrent updates
       - name: Update release.json
         if: matrix.platform == 'macos-latest'
         run: |
@@ -113,7 +125,7 @@ jobs:
           git fetch origin release:release
           git checkout release
 
-          # Create release.json with proper URLs
+          # Create release.json with proper URLs and signatures
           cat > release.json << EOF
           {
             "version": "${{ env.VERSION }}",
@@ -121,11 +133,11 @@ jobs:
             "pub_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
             "platforms": {
               "darwin-aarch64": {
-                "signature": "dW5kZWZpbmVk",
+                "signature": "${{ env.DARWIN_SIGNATURE }}",
                 "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml-editor_${{ env.VERSION }}_aarch64.dmg"
               },
               "windows-x86_64": {
-                "signature": "dW5kZWZpbmVk",
+                "signature": "${{ env.WINDOWS_SIGNATURE }}",
                 "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml-editor_${{ env.VERSION }}_x64_en-US.msi"
               }
             }
