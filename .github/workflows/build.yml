@@ -106,6 +106,9 @@ jobs:
       - name: Update release.json
         if: matrix.platform == 'macos-latest'
         run: |
+          # Reset the tauri.conf.json to the original
+          git checkout src-tauri/tauri.conf.json
+
           # Checkout release branch
           git fetch origin release:release
           git checkout release
