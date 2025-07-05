@@ -1,0 +1,14 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "preview-window",
+  "description": "Capability for the UML preview window",
+  "windows": [
+    "preview"
+  ],
+  "permissions": [
+    "core:window:default",
+    "core:webview:default",
+    "core:event:allow-listen",
+    "core:event:allow-emit"
+  ]
+} 
