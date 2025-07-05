@@ -108,6 +108,7 @@ jobs:
         if: success()
         shell: bash
         run: |
+          echo "Signature: ${{ steps.tauri_build.outputs.signature }}"
           if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
             echo "DARWIN_SIGNATURE=${{ steps.tauri_build.outputs.signature }}" >> $GITHUB_ENV
           elif [[ "${{ matrix.platform }}" == "windows-latest" ]]; then
