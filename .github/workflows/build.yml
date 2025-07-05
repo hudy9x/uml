@@ -104,7 +104,7 @@ jobs:
 
       # Only run on windows-latest to avoid concurrent updates
       - name: Update release.json
-        if: matrix.platform == 'windows-latest'
+        if: matrix.platform == 'macos-latest'
         run: |
           # Checkout release branch
           git fetch origin release:release
@@ -119,11 +119,11 @@ jobs:
             "platforms": {
               "darwin-aarch64": {
                 "signature": "dW5kZWZpbmVk",
-                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml.app.tar.gz"
+                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml-editor_${{ env.VERSION }}_aarch64.dmg"
               },
               "windows-x86_64": {
                 "signature": "dW5kZWZpbmVk",
-                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml.msi.zip"
+                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml-editor_${{ env.VERSION }}_x64_en-US.msi"
               }
             }
           }
