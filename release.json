@@ -1,14 +1,14 @@
 {
   "version": "0.4.1",
   "notes": "",
-  "pub_date": "2025-07-05T12:55:22Z",
+  "pub_date": "2025-07-05T13:18:28Z",
   "platforms": {
     "darwin-aarch64": {
-      "signature": "dW5kZWZpbmVk",
+      "signature": "",
       "url": "https://github.com/hudy9x/uml/releases/download/v0.4.1/uml-editor_0.4.1_aarch64.dmg"
     },
     "windows-x86_64": {
-      "signature": "dW5kZWZpbmVk",
+      "signature": "",
       "url": "https://github.com/hudy9x/uml/releases/download/v0.4.1/uml-editor_0.4.1_x64_en-US.msi"
     }
   }
