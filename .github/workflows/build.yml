@@ -113,8 +113,9 @@ jobs:
           LATEST_JSON=$(find ./src-tauri/target -name "latest.json" -type f)
           ls ./src-tauri/target
           echo "Latest.json content:"
-          more ./src-tauri/target/latest.json
           find . -maxdepth 3 -name "latest.json"
+          more ./src-tauri/target/latest.json
+          
           
           curl \
             -X POST \
