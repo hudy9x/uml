@@ -1,23 +1,23 @@
 {
-  "version": "0.3.2",
-  "notes": "Test release with the following updates:\n- Added auto-update feature\n- Improved UML editor performance\n- Fixed minor UI bugs",
-  "pub_date": "2024-03-20T12:00:00Z",
+  "version": "0.4.1",
+  "notes": ## What's Changed
+
+🔨 Other Changes
+
+- Update the build pipeline to read the Changelog instead of generating it ([4efb535](../../commit/4efb535))
+- Generate changelog and upgrade the version ([5fdf991](../../commit/5fdf991))
+
+
+📋 Full Changelog: [5fdf991...4efb535](../../compare/5fdf991...4efb535),
+  "pub_date": "2025-07-05T12:38:34Z",
   "platforms": {
-    "darwin-x86_64": {
-      "signature": "dW5kZWZpbmVk",
-      "url": "https://github.com/yourusername/uml/releases/download/v1.0.1/uml.app.tar.gz"
-    },
     "darwin-aarch64": {
       "signature": "dW5kZWZpbmVk",
-      "url": "https://github.com/yourusername/uml/releases/download/v1.0.1/uml.app.tar.gz"
-    },
-    "linux-x86_64": {
-      "signature": "dW5kZWZpbmVk",
-      "url": "https://github.com/yourusername/uml/releases/download/v1.0.1/uml.AppImage.tar.gz"
+      "url": "https://github.com/hudy9x/uml/releases/download/v0.4.1/uml-editor_0.4.1_aarch64.dmg"
     },
     "windows-x86_64": {
       "signature": "dW5kZWZpbmVk",
-      "url": "https://github.com/yourusername/uml/releases/download/v1.0.1/uml.msi.zip"
+      "url": "https://github.com/hudy9x/uml/releases/download/v0.4.1/uml-editor_0.4.1_x64_en-US.msi"
     }
   }
 }
