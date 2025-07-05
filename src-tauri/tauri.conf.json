@@ -35,7 +35,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFEOThFRERFRUExMjUwODEKUldTQlVCTHEzdTJZSFhDZXZxeWdoK1Y5aFh0SzdQcGZSaWtjUTVTQUFJZTlJL0p6WDQ2SHI4OFkK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU3QTg2MEVGMDg0N0IwRTAKUldUZ3NFY0k3MkNvNXc3WTNFZjJnU0hpNVRLS1BtOTVhWEx3eFZKdVZiaER6TnViMlgvdFR2RkoK",
       "endpoints": [
         "https://raw.githubusercontent.com/hudy9x/uml/refs/heads/release/release.json"
       ]
