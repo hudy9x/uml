@@ -8,10 +8,10 @@ import { getVersion } from "@tauri-apps/api/app";
 import { toast } from "sonner";
 
 export enum UpdateStatus {
-  CHECKING = 'CHECKING',
-  AVAILABLE = 'AVAILABLE',
-  LATEST = 'LATEST',
-  ERROR = 'ERROR'
+  CHECKING = "CHECKING",
+  AVAILABLE = "AVAILABLE",
+  LATEST = "LATEST",
+  ERROR = "ERROR",
 }
 
 export interface UpdateInfo {
@@ -33,19 +33,19 @@ export function VersionDisplay() {
 
   const checkForUpdates = async () => {
     try {
-      setUpdateInfo(prev => ({ ...prev, status: UpdateStatus.CHECKING }));
+      setUpdateInfo((prev) => ({ ...prev, status: UpdateStatus.CHECKING }));
       const update = await check();
-      
+
       if (update) {
         setUpdateInfo({
           status: UpdateStatus.AVAILABLE,
           currentVersion: version,
-          newVersion: update.version
+          newVersion: update.version,
         });
       } else {
         setUpdateInfo({
           status: UpdateStatus.LATEST,
-          currentVersion: version
+          currentVersion: version,
         });
       }
     } catch (error) {
@@ -53,18 +53,18 @@ export function VersionDisplay() {
       setUpdateInfo({
         status: UpdateStatus.ERROR,
         currentVersion: version,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   };
 
   useEffect(() => {
     // Get current version
-    getVersion().then(currentVersion => {
+    getVersion().then((currentVersion) => {
       setVersion(currentVersion);
-      setUpdateInfo(prev => ({ ...prev, currentVersion }));
+      setUpdateInfo((prev) => ({ ...prev, currentVersion }));
     });
-    
+
     // Initial check
     checkForUpdates();
 
@@ -84,7 +84,7 @@ export function VersionDisplay() {
     try {
       setIsUpdating(true);
       const update = await check();
-      
+
       if (!update) {
         toast.error("No update available");
         return;
@@ -92,7 +92,7 @@ export function VersionDisplay() {
 
       let downloaded = 0;
       let totalSize = 0;
-      
+
       await update.downloadAndInstall((progress: DownloadEvent) => {
         switch (progress.event) {
           case "Started":
@@ -142,14 +142,12 @@ export function VersionDisplay() {
         );
       case UpdateStatus.LATEST:
         return (
-          <div className="text-center">
-            You're running the latest version
-          </div>
+          <div className="text-center">You're running the latest version</div>
         );
       case UpdateStatus.ERROR:
         return (
           <div className="text-center text-red-500">
-            Failed to check for updates: {updateInfo.error || 'Unknown error'}
+            Failed to check for updates: {updateInfo.error || "Unknown error"}
           </div>
         );
     }
@@ -181,7 +179,16 @@ export function VersionDisplay() {
           <div className="flex flex-col items-center gap-4 py-4">
             {/* App Icon */}
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-12 h-12 text-white"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8V6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-6"></path>
                 <line x1="2" y1="20" x2="2" y2="20"></line>
               </svg>
@@ -193,7 +200,9 @@ export function VersionDisplay() {
                 <h2 className="text-xl font-semibold text-white">UML Editor</h2>
                 <p className="text-xs text-gray-400">Version {version}</p>
                 <p className="text-[10px] text-gray-500 max-w-[240px] mx-auto mt-2">
-                  A modern UML diagram editor with real-time preview and PlantUML support. Create, edit, and export your diagrams with ease.
+                  A modern UML diagram editor with real-time preview and
+                  PlantUML support. Create, edit, and export your diagrams with
+                  ease.
                 </p>
               </div>
 
@@ -214,8 +223,7 @@ export function VersionDisplay() {
 
               {/* Action Buttons */}
               {updateInfo.status === UpdateStatus.AVAILABLE && (
-
-              <div className="flex justify-center gap-2">
+                <div className="flex justify-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -238,4 +246,4 @@ export function VersionDisplay() {
       </Dialog>
     </>
   );
-} 
+}
