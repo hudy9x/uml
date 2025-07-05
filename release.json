@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
+  "version": "0.3.2",
   "notes": "Test release with the following updates:\n- Added auto-update feature\n- Improved UML editor performance\n- Fixed minor UI bugs",
   "pub_date": "2024-03-20T12:00:00Z",
   "platforms": {
