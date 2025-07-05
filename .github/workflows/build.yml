@@ -117,7 +117,7 @@ jobs:
           cat > release.json << EOF
           {
             "version": "${{ env.VERSION }}",
-            "notes": ${{ env.CHANGELOG }},
+            "notes": "",
             "pub_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
             "platforms": {
               "darwin-aarch64": {
