@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogHeader } from "./ui/dialog";
+import { Dialog, DialogContent } from "./ui/dialog";
 import { Progress } from "./ui/progress";
 import { check, type DownloadEvent } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
@@ -177,7 +177,7 @@ export function VersionDisplay() {
       </div>
 
       <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
-        <DialogContent className="w-[280px] rounded-xl bg-zinc-900/80 backdrop-blur-sm border-0">
+        <DialogContent className="w-[280px] rounded-xl bg-zinc-900/80 backdrop-blur-sm border-0 [&>button]:text-white [&>button]:cursor-pointer [&>button:hover]:text-white/80">
           <div className="flex flex-col items-center gap-4 py-4">
             {/* App Icon */}
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -213,17 +213,9 @@ export function VersionDisplay() {
               )}
 
               {/* Action Buttons */}
+              {updateInfo.status === UpdateStatus.AVAILABLE && (
+
               <div className="flex justify-center gap-2 pt-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowUpdateDialog(false)}
-                  disabled={isUpdating}
-                  className="bg-transparent border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white text-xs h-7 px-3"
-                >
-                  Close
-                </Button>
-                {updateInfo.status === UpdateStatus.AVAILABLE && (
                   <Button
                     size="sm"
                     onClick={handleUpdate}
@@ -232,8 +224,8 @@ export function VersionDisplay() {
                   >
                     {isUpdating ? "Updating..." : "Update Now"}
                   </Button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Copyright */}
