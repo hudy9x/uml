@@ -27,7 +27,7 @@ export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
       // Generate SVG
       try {
         const res = await fetch(
-          `http://www.plantuml.com/plantuml/svg/${encoded}`
+          `https://www.plantuml.com/plantuml/svg/${encoded}`
         );
         const svg = await res.text();
         setSvgContent(svg);
