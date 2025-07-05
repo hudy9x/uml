@@ -18,8 +18,8 @@ jobs:
             args: '--target aarch64-apple-darwin'
           # - platform: 'macos-latest' # for Intel based macs
           #   args: '--target x86_64-apple-darwin'
-          - platform: 'windows-latest'
-            args: ''
+          # - platform: 'windows-latest'
+          #   args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -103,53 +103,20 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      # Capture signatures for each platform
-      - name: Save signature
-        if: success()
-        shell: bash
-        run: |
-          echo "Signature: ${{ steps.tauri_build.outputs.signature }}"
-          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
-            echo "DARWIN_SIGNATURE=${{ steps.tauri_build.outputs.signature }}" >> $GITHUB_ENV
-          elif [[ "${{ matrix.platform }}" == "windows-latest" ]]; then
-            echo "WINDOWS_SIGNATURE=${{ steps.tauri_build.outputs.signature }}" >> $GITHUB_ENV
-          fi
-
-      # Only run on macos-latest to avoid concurrent updates
-      - name: Update release.json
+      # Upload latest.json to the release
+      - name: Upload latest.json to release
         if: matrix.platform == 'macos-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
         run: |
-          # Reset the tauri.conf.json to the original
-          git checkout src-tauri/tauri.conf.json
-
-          # Checkout release branch
-          git fetch origin release:release
-          git checkout release
-
-          # Create release.json with proper URLs and signatures
-          cat > release.json << EOF
-          {
-            "version": "${{ env.VERSION }}",
-            "notes": "",
-            "pub_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-            "platforms": {
-              "darwin-aarch64": {
-                "signature": "${{ env.DARWIN_SIGNATURE }}",
-                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml-editor_${{ env.VERSION }}_aarch64.dmg"
-              },
-              "windows-x86_64": {
-                "signature": "${{ env.WINDOWS_SIGNATURE }}",
-                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml-editor_${{ env.VERSION }}_x64_en-US.msi"
-              }
-            }
-          }
-          EOF
-
-          # Configure git
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-
-          # Commit and push
-          git add release.json
-          git commit -m "Update release.json for version ${{ env.VERSION }}"
-          git push origin release
+          LATEST_JSON=$(find ./src-tauri/target -name "latest.json" -type f)
+          echo "Latest.json content:"
+          more "$LATEST_JSON"
+          
+          curl \
+            -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "@$LATEST_JSON" \
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=latest.json"
