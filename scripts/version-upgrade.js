@@ -72,35 +72,104 @@ function getNewCommits() {
 
 // Analyze commits and determine version bump
 function analyzeCommits(commits) {
-  let shouldBumpMajor = false;
-  let shouldBumpMinor = false;
-  let shouldBumpPatch = false;
+  let highestBumpType = 'none';
 
+  // Define verb patterns for different types of changes
+  const featureVerbs = [
+    'add',
+    'create',
+    'implement',
+    'introduce',
+    'enable'
+  ];
+
+  const patchVerbs = [
+    'update',
+    'fix',
+    'refactor',
+    'format',
+    'remove',
+    'change',
+    'merge',
+    'clean',
+    'optimize',
+    'adjust',
+    'modify',
+    'rename',
+    'move',
+    'delete',
+    'disable'
+  ];
+
+  // Track version changes for logging
+  let tempMajor = major;
+  let tempMinor = minor;
+  let tempPatch = patch;
+  
+  console.log('\nAnalyzing commits with potential version changes:');
   commits.forEach(commit => {
     const lowerCommit = commit.toLowerCase();
+    const firstWord = lowerCommit.split(' ')[0];
+    let commitBumpType = 'none';
     
-    // Check for breaking changes
+    // Check for breaking changes - highest priority
     if (lowerCommit.includes('breaking change') || lowerCommit.includes('!:')) {
-      shouldBumpMajor = true;
+      commitBumpType = 'major';
+      if (highestBumpType !== 'major') {
+        tempMajor++;
+        tempMinor = 0;
+        tempPatch = 0;
+      }
+      highestBumpType = 'major';
     }
-    // Check for features
-    else if (lowerCommit.startsWith('feat:') || lowerCommit.startsWith('feature:')) {
-      shouldBumpMinor = true;
+    // Check for features - medium priority
+    else if (
+      lowerCommit.startsWith('feat:') || 
+      lowerCommit.startsWith('feature:') ||
+      featureVerbs.some(verb => firstWord === verb)
+    ) {
+      commitBumpType = 'minor';
+      if (highestBumpType !== 'major') {
+        if (highestBumpType !== 'minor') {
+          tempMinor++;
+          tempPatch = 0;
+        }
+        highestBumpType = 'minor';
+      }
     }
-    // Check for patches
+    // Check for patches - lowest priority
     else if (
       lowerCommit.startsWith('fix:') ||
       lowerCommit.startsWith('perf:') ||
       lowerCommit.startsWith('refactor:') ||
       lowerCommit.startsWith('style:') ||
       lowerCommit.startsWith('test:') ||
-      lowerCommit.startsWith('docs:')
+      lowerCommit.startsWith('docs:') ||
+      patchVerbs.some(verb => firstWord === verb)
     ) {
-      shouldBumpPatch = true;
+      commitBumpType = 'patch';
+      if (highestBumpType === 'none') {
+        tempPatch++;
+        highestBumpType = 'patch';
+      }
     }
+    // Default to patch for unmatched commit types
+    else {
+      commitBumpType = 'patch';
+      if (highestBumpType === 'none') {
+        tempPatch++;
+        highestBumpType = 'patch';
+      }
+    }
+
+    console.log(`- ${commit} (${commitBumpType}: v${tempMajor}.${tempMinor}.${tempPatch})`);
   });
 
-  return { shouldBumpMajor, shouldBumpMinor, shouldBumpPatch };
+  return {
+    shouldBumpMajor: highestBumpType === 'major',
+    shouldBumpMinor: highestBumpType === 'minor',
+    shouldBumpPatch: highestBumpType === 'patch'
+  };
 }
 
 // Update version based on commit analysis
@@ -112,26 +181,32 @@ function updateVersion() {
     return null;
   }
 
-  console.log(`Analyzing ${commits.length} new commits...`);
-  commits.forEach(commit => console.log(`- ${commit}`));
+  const currentVersion = `${major}.${minor}.${patch}`;
+  console.log(`\nStarting version: ${currentVersion}`);
 
   const { shouldBumpMajor, shouldBumpMinor, shouldBumpPatch } = analyzeCommits(commits);
 
+  // Apply the highest level version bump only once
   if (shouldBumpMajor) {
+    console.log('\nApplying major version bump...');
     major++;
     minor = 0;
     patch = 0;
   } else if (shouldBumpMinor) {
+    console.log('\nApplying minor version bump...');
     minor++;
     patch = 0;
   } else if (shouldBumpPatch) {
+    console.log('\nApplying patch version bump...');
     patch++;
   } else {
-    console.log('No version bump needed');
+    console.log('\nNo version bump needed');
     return null;
   }
 
-  return `${major}.${minor}.${patch}`;
+  const newVersion = `${major}.${minor}.${patch}`;
+  console.log(`\nFinal version change: ${currentVersion} → ${newVersion}`);
+  return newVersion;
 }
 
 // Main execution

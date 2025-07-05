@@ -1,7 +1,7 @@
 {
   "name": "uml-editor",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "tauri": "tauri",
     "app-dev": "tauri dev",
     "app-build": "tauri build",
-    "app-upver": "node scripts/version-upgrade.js"
+    "app-upver": "node scripts/generate-changelog.js && node scripts/version-upgrade.js"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.6",
