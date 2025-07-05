@@ -11,7 +11,7 @@
     "app-dev": "tauri dev",
     "app-build": "tauri build",
     "app-upver": "node scripts/generate-changelog.js && node scripts/version-upgrade.js",
-    "app-sign": "pnpm tauri signer generate -w key"
+    "app-sign": "rm ./key && rm ./key.pub && pnpm tauri signer generate -w key"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.6",
