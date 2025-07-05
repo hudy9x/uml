@@ -110,11 +110,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
         run: |
-          LATEST_JSON=$(find ./src-tauri/target -name "latest.json" -type f)
-          ls ./src-tauri/target
-          echo "Latest.json content:"
+          LATEST_JSON=./latest.json
+          ls
+          echo "find latest.json:"
           find . -maxdepth 3 -name "latest.json"
-          more ./src-tauri/target/latest.json
+
+          echo "Latest.json content:"
+          more ./latest.json
           
           
           curl \
