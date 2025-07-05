@@ -17,7 +17,7 @@ export default function TestPage() {
   return (
     <div className="h-screen w-screen bg-white">
       <ZoomableView className="h-full">
-        <img src={`http://www.plantuml.com/plantuml/svg/${diagram}`} />
+        <img src={`https://www.plantuml.com/plantuml/svg/${diagram}`} />
       </ZoomableView>
     </div>
   );

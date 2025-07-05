@@ -30,7 +30,7 @@ export function ExportActionsDropdown({
 
     try {
       const encoded = encode(umlCode);
-      const res = await fetch(`http://www.plantuml.com/plantuml/img/${encoded}`);
+      const res = await fetch(`https://www.plantuml.com/plantuml/img/${encoded}`);
       const imageBlob = await res.blob();
       const imageData = await imageBlob.arrayBuffer();
       const uint8Array = new Uint8Array(imageData);

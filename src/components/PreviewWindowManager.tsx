@@ -48,12 +48,14 @@ export function usePreviewWindow({
   const openPreviewWindow = async () => {
     try {
       const webview = new WebviewWindow("preview", {
-        url: "http://localhost:1420/preview",
+        url: "/preview",
         title: `Preview: ${projectName}`,
         width: 800,
         height: 600,
         center: true,
       });
+
+      console.log("previewWindow", webview);
 
       setPreviewWindow(webview);
       onPreviewWindowChange(webview);
