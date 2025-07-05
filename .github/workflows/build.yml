@@ -73,28 +73,9 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Update Tauri pubkey
-        shell: bash
-        run: |
-          # Ensure jq is available (it should be on GitHub runners by default)
-          if ! command -v jq &> /dev/null; then
-            echo "jq is not installed. Installing..."
-            if [[ "$RUNNER_OS" == "Linux" ]]; then
-              sudo apt-get update && sudo apt-get install -y jq
-            elif [[ "$RUNNER_OS" == "macOS" ]]; then
-              brew install jq
-            else
-              choco install jq
-            fi
-          fi
-          
-          # Create a temporary file with the updated content
-          if ! jq --arg pubkey "${{ secrets.TAURI_SIGNING_PUBLIC_KEY }}" '.plugins.updater.pubkey = $pubkey' src-tauri/tauri.conf.json > temp.json; then
-            echo "Failed to update pubkey in tauri.conf.json"
-            exit 1
-          fi
-          
-          # Replace the original file with the updated content
-          mv temp.json src-tauri/tauri.conf.json
+        env:
+          TAURI_SIGNING_PUBLIC_KEY: ${{ secrets.TAURI_SIGNING_PUBLIC_KEY }}
+        run: node scripts/update-tauri-pubkey.js
 
       - name: Read Changelog
         id: changelog
