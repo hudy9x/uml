@@ -72,15 +72,12 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Generate Changelog
+      - name: Read Changelog
         id: changelog
         shell: bash
         run: |
-          # Make the script executable
-          chmod +x scripts/generate-changelog.js
-          
-          # Generate changelog and capture the output
-          CHANGELOG_CONTENT=$(node scripts/generate-changelog.js --stdout)
+          # Read the changelog file and capture the output
+          CHANGELOG_CONTENT=$(cat CHANGELOG.md)
           
           # Save changelog to GitHub Environment
           echo "CHANGELOG<<EOF" >> $GITHUB_ENV
