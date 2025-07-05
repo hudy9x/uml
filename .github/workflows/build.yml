@@ -16,8 +16,8 @@ jobs:
         include:
           - platform: 'macos-latest' # for Arm based macs (M1 and above)
             args: '--target aarch64-apple-darwin'
-          - platform: 'macos-latest' # for Intel based macs
-            args: '--target x86_64-apple-darwin'
+          # - platform: 'macos-latest' # for Intel based macs
+          #   args: '--target x86_64-apple-darwin'
           - platform: 'windows-latest'
             args: ''
 
@@ -97,3 +97,39 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      # Only run on windows-latest to avoid concurrent updates
+      - name: Update release.json
+        if: matrix.platform == 'windows-latest'
+        run: |
+          # Checkout release branch
+          git fetch origin release:release
+          git checkout release
+
+          # Create release.json with proper URLs
+          cat > release.json << EOF
+          {
+            "version": "${{ env.VERSION }}",
+            "notes": ${{ env.CHANGELOG }},
+            "pub_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "platforms": {
+              "darwin-aarch64": {
+                "signature": "dW5kZWZpbmVk",
+                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml.app.tar.gz"
+              },
+              "windows-x86_64": {
+                "signature": "dW5kZWZpbmVk",
+                "url": "https://github.com/hudy9x/uml/releases/download/v${{ env.VERSION }}/uml.msi.zip"
+              }
+            }
+          }
+          EOF
+
+          # Configure git
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+
+          # Commit and push
+          git add release.json
+          git commit -m "Update release.json for version ${{ env.VERSION }}"
+          git push origin release
