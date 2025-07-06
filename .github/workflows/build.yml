@@ -77,14 +77,29 @@ jobs:
           TAURI_SIGNING_PUBLIC_KEY: ${{ secrets.TAURI_SIGNING_PUBLIC_KEY }}
         run: node scripts/update-tauri-pubkey.js
 
-      - name: Read Changelog
-        id: changelog
-        shell: bash
+      - name: Generate Changelog
+        id: generate_changelog
         run: |
-          # Read the changelog file and capture the output
-          CHANGELOG_CONTENT=$(cat CHANGELOG.md)
+          ls -l
+          # Try to download the lastcommit file
+          LAST_COMMIT=""
+          if curl -s -f -L "https://github.com/${{ github.repository }}/releases/latest/download/lastcommit" -o lastcommit; then
+            LAST_COMMIT=$(cat lastcommit)
+            echo "Found last commit: $LAST_COMMIT"
+          else
+            # If file not found, get the latest commit
+            LAST_COMMIT=$(git rev-parse HEAD)
+            echo "Using latest commit: $LAST_COMMIT"
+          fi
           
-          # Save changelog to GitHub Environment
+          # Save commit id to .version-lock
+          echo "$LAST_COMMIT" > .version-lock
+          
+          # Generate changelog
+          node scripts/version-upgrade.js
+          
+          # Read and store changelog content
+          CHANGELOG_CONTENT=$(cat CHANGELOG.md)
           echo "CHANGELOG<<EOF" >> $GITHUB_ENV
           echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -93,7 +108,7 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         name: Build and upload release
         id: tauri_build
-        timeout-minutes: 5
+        timeout-minutes: 30
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -105,6 +120,20 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      # Update release body with generated changelog
+      - name: Update Release Body
+        if: matrix.platform == 'macos-latest'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
+        run: |
+          curl \
+            -X PATCH \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": \"${{ env.CHANGELOG }}\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.tauri_build.outputs.releaseId }}"
 
       # Upload latest.json to the release
       # - name: Retry to upload latest.json to release
