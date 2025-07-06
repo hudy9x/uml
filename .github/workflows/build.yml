@@ -67,7 +67,7 @@ jobs:
       # Generate version start ----------------------------------
       - name: Get last commit for .version-lock file
         id: get_last_commit
-        if: matrix.platform == 'macos-latest'
+        shell: bash
         run: |
           # Try to download the lastcommit file
           OLD_LAST_COMMIT=""
@@ -85,7 +85,7 @@ jobs:
 
       - name: Generate app version from package.json
         id: get_version
-        if: matrix.platform == 'macos-latest'
+        # if: matrix.platform == 'macos-latest'
         shell: bash
         run: |
           node scripts/version-upgrade.js
