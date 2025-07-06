@@ -83,21 +83,18 @@ jobs:
         run: |
           ls -l
           # Try to download the lastcommit file
-          LAST_COMMIT=""
+          OLD_LAST_COMMIT=""
           if curl -s -f -L "https://github.com/${{ github.repository }}/releases/latest/download/lastcommit" -o lastcommit; then
-            LAST_COMMIT=$(cat lastcommit)
-            echo "Found last commit: $LAST_COMMIT"
+            OLD_LAST_COMMIT=$(cat lastcommit)
+            echo "Found previous last commit: $OLD_LAST_COMMIT"
           else
             # If file not found, get the latest commit
-            LAST_COMMIT=$(git rev-parse HEAD)
-            echo "Using latest commit: $LAST_COMMIT"
+            OLD_LAST_COMMIT=$(git rev-parse HEAD)
+            echo "Using latest commit: $OLD_LAST_COMMIT"
           fi
           
           # Save commit id to .version-lock
-          echo "$LAST_COMMIT" > .version-lock
-
-          # Save last commit to environment variable
-          echo "LAST_COMMIT=$LAST_COMMIT" >> $GITHUB_ENV
+          echo "$OLD_LAST_COMMIT" > .version-lock
           
           # Generate changelog
           node scripts/version-upgrade.js
@@ -130,9 +127,10 @@ jobs:
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LAST_COMMIT: ${{ env.LAST_COMMIT }}
           RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
         run: |
+          # Get last commit from environment variable
+          LAST_COMMIT=$(git rev-parse HEAD)
           # Upload lastcommit file to release
           curl \
             -X POST \
