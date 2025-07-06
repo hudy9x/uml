@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ChevronLeft } from "lucide-react";
-import { ExportActionsDropdown } from "./ExportActionsDropdown";
+import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
 
 interface UMLEditorHeaderProps {
   projectName: string;
@@ -67,7 +67,7 @@ export function UMLEditorHeader({
             onClick={handleInputClick}
             className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
           />
-          <ExportActionsDropdown
+          <DiagramActionsDropdown
             umlCode={umlCode}
             projectName={projectName}
             onOpenPreview={onOpenPreview}

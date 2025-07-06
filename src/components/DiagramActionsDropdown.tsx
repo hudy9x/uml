@@ -17,7 +17,7 @@ interface ExportActionsDropdownProps {
   onOpenPreview: () => void;
 }
 
-export function ExportActionsDropdown({ 
+export function DiagramActionsDropdown({ 
   umlCode, 
   projectName,
   onOpenPreview 
