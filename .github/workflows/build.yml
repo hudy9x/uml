@@ -64,6 +64,7 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install
 
+      # Generate version start ----------------------------------
       - name: Get last commit for .version-lock file
         id: get_last_commit
         if: matrix.platform == 'macos-latest'
@@ -89,14 +90,23 @@ jobs:
         run: |
           node scripts/version-upgrade.js
           VERSION=$(node -p "require('./package.json').version")
+          
+          echo "--------------------------------"
+          echo "The current version is: $VERSION"
+          echo "--------------------------------"
+
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+      # End ----------------------------------
 
+      # Update Tauri pubkey start ----------------------------------
       - name: Update Tauri pubkey
         env:
           TAURI_SIGNING_PUBLIC_KEY: ${{ secrets.TAURI_SIGNING_PUBLIC_KEY }}
         run: node scripts/update-tauri-pubkey.js
+      # End ----------------------------------
 
+      # Generate changelog start ----------------------------------
       - name: Generate Changelog
         id: generate_changelog
         if: matrix.platform == 'macos-latest'
@@ -106,6 +116,8 @@ jobs:
           echo "CHANGELOG<<EOF" >> $GITHUB_ENV
           echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+      # End ----------------------------------
+
 
       # Build and upload release
       - uses: tauri-apps/tauri-action@v0
@@ -124,8 +136,8 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      # Upload lastcommit file to the release
-      - name: Upload lastcommit to release
+      # Save last commit for the next build ----------------------------------
+      - name: Upload lastcommit for the next build
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -140,6 +152,4 @@ jobs:
             -H "Content-Type: application/octet-stream" \
             --data-binary "$LAST_COMMIT" \
             "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=lastcommit"
-
-      # Upload latest.json to the release
-      # - name: Retry to upload latest.json to release
+      # End ----------------------------------
