@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { ExternalLink, FileDown, Download, MoreVertical, Clipboard } from "lucide-react";
+import { ExternalLink, FileDown, Download, MoreVertical, Clipboard, Image, Copy } from "lucide-react";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeFile } from "@tauri-apps/plugin-fs";
 import { writeImage } from '@tauri-apps/plugin-clipboard-manager';
@@ -119,14 +119,14 @@ export function DiagramActionsDropdown({
       <DropdownMenuContent align="end" className="w-[200px]">
         <DropdownMenuItem className="cursor-pointer" onClick={handleDownloadPNG}>
           <Download className="h-4 w-4 mr-2" />
-          Download as PNG
+          Download as image
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={handleSaveUMLCode}>
           <FileDown className="h-4 w-4 mr-2" />
-          Save as PlantUML
+          Save as .pu file
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={handleCopyToClipboard}>
-          <Clipboard className="h-4 w-4 mr-2" />
+          <Copy className="h-4 w-4 mr-2" />
           Copy as Image
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={onOpenPreview}>
