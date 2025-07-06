@@ -27,12 +27,12 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history for changelog generation
 
-      - name: setup node
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
-      - name: install pnpm
+      - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: latest
@@ -51,7 +51,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: install Rust stable
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
@@ -61,13 +61,33 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: install frontend dependencies
+      - name: Install frontend dependencies
         run: pnpm install
 
-      - name: Get version from package.json
+      - name: Get last commit for .version-lock file
+        id: get_last_commit
+        if: matrix.platform == 'macos-latest'
+        run: |
+          # Try to download the lastcommit file
+          OLD_LAST_COMMIT=""
+          if curl -s -f -L "https://github.com/${{ github.repository }}/releases/latest/download/lastcommit" -o lastcommit; then
+            OLD_LAST_COMMIT=$(cat lastcommit)
+            echo "Found previous last commit: $OLD_LAST_COMMIT"
+          else
+            # If file not found, get the latest commit
+            OLD_LAST_COMMIT=$(git rev-parse HEAD)
+            echo "Using latest commit: $OLD_LAST_COMMIT"
+          fi
+          echo "OLD_LAST_COMMIT=$OLD_LAST_COMMIT" >> $GITHUB_ENV
+          echo "$OLD_LAST_COMMIT" > .version-lock
+          ls -l
+
+      - name: Generate app version from package.json
         id: get_version
+        if: matrix.platform == 'macos-latest'
         shell: bash
         run: |
+          node scripts/version-upgrade.js
           VERSION=$(node -p "require('./package.json').version")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -81,24 +101,6 @@ jobs:
         id: generate_changelog
         if: matrix.platform == 'macos-latest'
         run: |
-          ls -l
-          # Try to download the lastcommit file
-          OLD_LAST_COMMIT=""
-          if curl -s -f -L "https://github.com/${{ github.repository }}/releases/latest/download/lastcommit" -o lastcommit; then
-            OLD_LAST_COMMIT=$(cat lastcommit)
-            echo "Found previous last commit: $OLD_LAST_COMMIT"
-          else
-            # If file not found, get the latest commit
-            OLD_LAST_COMMIT=$(git rev-parse HEAD)
-            echo "Using latest commit: $OLD_LAST_COMMIT"
-          fi
-          
-          # Save commit id to .version-lock
-          echo "$OLD_LAST_COMMIT" > .version-lock
-          
-          # Generate changelog
-          node scripts/version-upgrade.js
-          
           # Read and store changelog content
           CHANGELOG_CONTENT=$(cat CHANGELOG.md)
           echo "CHANGELOG<<EOF" >> $GITHUB_ENV
