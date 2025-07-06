@@ -79,6 +79,7 @@ jobs:
 
       - name: Generate Changelog
         id: generate_changelog
+        if: matrix.platform == 'macos-latest'
         run: |
           ls -l
           # Try to download the lastcommit file
@@ -94,6 +95,9 @@ jobs:
           
           # Save commit id to .version-lock
           echo "$LAST_COMMIT" > .version-lock
+
+          # Save last commit to environment variable
+          echo "LAST_COMMIT=$LAST_COMMIT" >> $GITHUB_ENV
           
           # Generate changelog
           node scripts/version-upgrade.js
@@ -121,32 +125,21 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      # Update release body with generated changelog
-      - name: Update Release Body
+      # Upload lastcommit file to the release
+      - name: Upload lastcommit to release
         if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LAST_COMMIT: ${{ env.LAST_COMMIT }}
           RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
         run: |
+          # Upload lastcommit file to release
           curl \
-            -X PATCH \
+            -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d "{\"body\": \"${{ env.CHANGELOG }}\"}" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.tauri_build.outputs.releaseId }}"
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "$LAST_COMMIT" \
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=lastcommit"
 
       # Upload latest.json to the release
       # - name: Retry to upload latest.json to release
-      #   if: matrix.platform == 'macos-latest'
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
-      #   run: |
-      #     LATEST_JSON=./latest.json
-          
-      #     curl \
-      #       -X POST \
-      #       -H "Authorization: token $GITHUB_TOKEN" \
-      #       -H "Content-Type: application/octet-stream" \
-      #       --data-binary "@$LATEST_JSON" \
-      #       "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=latest.json"
