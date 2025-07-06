@@ -15,7 +15,7 @@ const versionLockPath = join(process.cwd(), '.version-lock');
 const tauriConfigPath = join(process.cwd(), 'src-tauri', 'tauri.conf.json');
 
 // Read current version from package.json
-const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+const packageJson = process.env.CURRENT_VERSION ? process.env.CURRENT_VERSION : JSON.parse(readFileSync(packageJsonPath, 'utf8'));
 let [major, minor, patch] = packageJson.version.split('.').map(Number);
 
 // Function to update Tauri config version

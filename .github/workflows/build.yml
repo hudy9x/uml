@@ -92,8 +92,11 @@ jobs:
           # Try to download the latest.json file to get version
           VERSION=""
           if curl -s -f -L "https://github.com/${{ github.repository }}/releases/latest/download/latest.json" -o latest.json; then
-            VERSION=$(node -p "require('./latest.json').version")
-            echo "Found current version: $VERSION"
+            CURRENT_VERSION=$(node -p "require('./latest.json').version")
+            echo "Found current version: $CURRENT_VERSION"
+            
+            node scripts/version-upgrade.js
+            VERSION=$(node -p "require('./package.json').version")
           else
             node scripts/version-upgrade.js
             VERSION=$(node -p "require('./package.json').version")
