@@ -17,6 +17,8 @@
     "fs:allow-app-write-recursive",
     "fs:allow-app-read",
     "core:webview:allow-create-webview-window",
-    "core:window:allow-close"
+    "core:window:allow-close",
+    "updater:default",
+    "process:default"
   ]
 }
