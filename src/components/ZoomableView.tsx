@@ -1,6 +1,11 @@
-import { ZoomIn, ZoomOut } from 'lucide-react';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { Button } from './ui/button';
+import { Maximize2, ZoomIn, ZoomOut } from "lucide-react";
+import {
+  TransformWrapper,
+  TransformComponent,
+  useControls,
+} from "react-zoom-pan-pinch";
+import { Button } from "./ui/button";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 interface ZoomableViewProps {
   children: React.ReactNode;
@@ -10,44 +15,40 @@ interface ZoomableViewProps {
   initialScale?: number;
 }
 
-export function ZoomableView({
+// Separate component for controls to ensure useControls is used within context
+function Controls() {
+  const { zoomIn, zoomOut, resetTransform } = useControls();
+
+  return (
+    <div className="absolute -bottom-4 left-2 flex gap-2 z-10">
+      <div className="flex flex-col gap-2">
+        <Button variant="outline" size="icon" onClick={() => zoomIn()}>
+          <ZoomIn />
+        </Button>
+        <Button variant="outline" size="icon" onClick={() => zoomOut()}>
+          <ZoomOut />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => resetTransform()}
+        >
+          <Maximize2 />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function ZoomableViewContent({
   children,
-  className = '',
+  className = "",
   minScale = 0.5,
   maxScale = 4,
   initialScale = 1,
 }: ZoomableViewProps) {
   return (
     <div className={`relative ${className}`}>
-      <div className="absolute top-4 right-4 flex gap-2 z-10">
-        <Button
-          variant="secondary"
-          size="icon"
-          onClick={() => document.querySelector('.react-transform-wrapper')?.dispatchEvent(
-            new WheelEvent('wheel', { deltaY: -100, ctrlKey: true })
-          )}
-        >
-          <ZoomIn className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="secondary"
-          size="icon"
-          onClick={() => document.querySelector('.react-transform-wrapper')?.dispatchEvent(
-            new WheelEvent('wheel', { deltaY: 100, ctrlKey: true })
-          )}
-        >
-          <ZoomOut className="h-4 w-4" />
-        </Button>
-        {/* <Button
-          variant="secondary"
-          size="icon"
-          onClick={() => document.querySelector('.react-transform-wrapper')?.dispatchEvent(
-            new CustomEvent('resetTransform')
-          )}
-        >
-          <Maximize className="h-4 w-4" />
-        </Button> */}
-      </div>
       <TransformWrapper
         initialScale={initialScale}
         minScale={minScale}
@@ -58,13 +59,23 @@ export function ZoomableView({
         alignmentAnimation={{ disabled: true }}
         centerZoomedOut={false}
       >
-        <TransformComponent 
-          wrapperClass="!w-full !h-full" 
+        {/* Controls must be inside TransformWrapper to access context */}
+        <Controls />
+        <TransformComponent
+          wrapperClass="!w-full !h-full"
           contentClass="!w-full !h-full flex items-center justify-center p-4"
         >
           {children}
         </TransformComponent>
       </TransformWrapper>
     </div>
+  );
+}
+
+export function ZoomableView(props: ZoomableViewProps) {
+  return (
+    <ErrorBoundary>
+      <ZoomableViewContent {...props} />
+    </ErrorBoundary>
   );
 }
