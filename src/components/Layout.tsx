@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { VersionDisplay } from './VersionDisplay';
 
 interface LayoutProps {
   children: ReactNode;
