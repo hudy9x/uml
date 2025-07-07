@@ -6,6 +6,7 @@ import { check, type DownloadEvent } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { getVersion } from "@tauri-apps/api/app";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export enum UpdateStatus {
   CHECKING = "CHECKING",
@@ -21,7 +22,7 @@ export interface UpdateInfo {
   error?: string;
 }
 
-export function VersionDisplay() {
+export function VersionDisplay({className}: {className?: string}) {
   const [version, setVersion] = useState("");
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo>({
     status: UpdateStatus.CHECKING,
@@ -155,7 +156,7 @@ export function VersionDisplay() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 flex items-center gap-2">
+      <div className={cn("flex items-center gap-2", className)}>
         <Button
           variant="outline"
           size="sm"
