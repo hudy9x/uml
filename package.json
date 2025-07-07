@@ -31,6 +31,8 @@
     "@tauri-apps/plugin-process": "~2",
     "@tauri-apps/plugin-sql": "~2",
     "@tauri-apps/plugin-updater": "~2",
+    "@uiw/codemirror-theme-github": "^4.24.0",
+    "@uiw/codemirror-theme-material": "^4.24.0",
     "@uiw/react-codemirror": "^4.23.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -15,8 +15,10 @@ function App() {
       <Layout>
         <Toaster position="bottom-right" richColors />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/uml/:umlId" element={<UMLEditor />} />
+          <Route path="/" element={<Home />}>
+            <Route path="/uml/:umlId" element={<UMLEditor />} />
+          </Route>
+          {/* <Route path="/uml/:umlId" element={<UMLEditor />} /> */}
           <Route path="/preview" element={<Preview />} />
         </Routes>
       </Layout>

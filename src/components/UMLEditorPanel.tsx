@@ -1,5 +1,6 @@
 import CodeMirror from "@uiw/react-codemirror";
 import { plantUML } from "../lib/codemirror/plantuml";
+import { materialLight, materialDark } from "@uiw/codemirror-theme-material";
 
 interface UMLEditorPanelProps {
   umlCode: string;
@@ -13,7 +14,7 @@ export function UMLEditorPanel({ umlCode, onChange }: UMLEditorPanelProps) {
       height="100%"
       onChange={onChange}
       className="h-full"
-      theme="dark"
+      theme={materialDark}
       extensions={[plantUML()]}
     />
   );
