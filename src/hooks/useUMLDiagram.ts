@@ -28,6 +28,8 @@ export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
       try {
         const res = await fetch(
           `https://www.plantuml.com/plantuml/svg/${encoded}`
+          // `https://www.plantuml.com/plantuml/dsvg/${encoded}`  => dark mode
+
         );
         const svg = await res.text();
         setSvgContent(svg);

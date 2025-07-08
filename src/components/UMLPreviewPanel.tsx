@@ -1,4 +1,3 @@
-import { Card } from "./ui/card";
 import { ZoomableView } from "./ZoomableView";
 
 interface UMLPreviewPanelProps {
@@ -8,13 +7,13 @@ interface UMLPreviewPanelProps {
 
 export function UMLPreviewPanel({ svgContent, hidden }: UMLPreviewPanelProps) {
   return (
-    <Card className={`h-full rounded-lg border-0 ${hidden ? "hidden" : ""}`}>
+    <div className={`uml-preview-card rounded-lg ${hidden ? "hidden" : ""}`} style={{ height: "100%" }}>
       <ZoomableView className="h-full">
         <div
           dangerouslySetInnerHTML={{ __html: svgContent }}
-          className="max-w-full max-h-full"
+          className="max-w-full h-[calc(100vh - 34px)] uml-preview"
         />
       </ZoomableView>
-    </Card>
+    </div>
   );
 } 

@@ -118,3 +118,36 @@
     @apply bg-background text-foreground;
   }
 }
+
+body {
+  background: transparent;
+}
+.cm-focused {
+  @apply border-transparent !outline-transparent;
+}
+.home-page {
+  @apply overflow-hidden relative bg-secondary;
+}
+
+.home-wrapper{
+  @apply h-[calc(100vh-34px)];
+}
+
+.custom-scrollbar {
+  @apply [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300;
+}
+
+.uml-preview-card {
+  /* height: calc(100% - 32px); */
+}
+
+.uml-editor-panel {
+  @apply rounded-none border-r h-full;
+  /* height: calc(100% - 32px); */
+  padding-bottom: 32px;
+}
+
+.uml-editor-panel .cm-scroller {
+  @apply [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent;
+  @apply [&::-webkit-scrollbar-thumb]:bg-primary/20 [&::-webkit-scrollbar-thumb:hover]:bg-primary;
+}

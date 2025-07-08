@@ -71,43 +71,33 @@ export default function UMLEditor() {
   };
 
   return (
-    <main
-      className="min-h-screen bg-background"
-      style={{ backgroundColor: "color(srgb 0.1582 0.1724 0.2053)" }}
-    >
-      <div className="mx-auto px-4">
-        <div>
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="rounded-lg py-4"
-            style={{ height: "calc(100vh)" }}
-          >
-            <ResizablePanel defaultSize={editorSize}>
-              <div className="h-full rounded-none border-0">
-                <UMLEditorHeader
-                  projectName={projectName}
-                  umlCode={umlCode}
-                  onProjectNameChange={handleProjectNameChange}
-                  onOpenPreview={openPreviewWindow}
-                />
-                <UMLEditorPanel
-                  umlCode={umlCode}
-                  onChange={(value) => setUmlCode(value)}
-                />
-              </div>
-            </ResizablePanel>
+    <main className="uml-editor-page bg-[var(--background)]">
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="rounded-lg"
+        style={{ height: "calc(100vh - 29px)" }}
+      >
+        <ResizablePanel defaultSize={editorSize}>
+          <div className="uml-editor-panel">
+            <UMLEditorHeader
+              projectName={projectName}
+              umlCode={umlCode}
+              onProjectNameChange={handleProjectNameChange}
+              onOpenPreview={openPreviewWindow}
+            />
+            <UMLEditorPanel
+              umlCode={umlCode}
+              onChange={(value) => setUmlCode(value)}
+            />
+          </div>
+        </ResizablePanel>
 
-            <ResizableHandle className="invisible" />
+        <ResizableHandle className="invisible" />
 
-            <ResizablePanel defaultSize={maxEditorSize - editorSize}>
-              <UMLPreviewPanel
-                svgContent={svgContent}
-                hidden={!!previewWindow}
-              />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </div>
-      </div>
+        <ResizablePanel defaultSize={maxEditorSize - editorSize}>
+          <UMLPreviewPanel svgContent={svgContent} hidden={!!previewWindow} />
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </main>
   );
 }

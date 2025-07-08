@@ -52,28 +52,21 @@ export function UMLEditorHeader({
   };
 
   return (
-    <div className="flex items-center gap-4 pr-3">
-      <Button variant="default" size="icon" onClick={() => navigate("/")}>
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      <div className="flex items-center gap-2 flex-1">
-        <div className="flex items-center gap-2 flex-1">
-          <Input
-            value={isEditingName ? editedName : projectName}
-            readOnly={!isEditingName}
-            onChange={(e) => setEditedName(e.target.value)}
-            onKeyDown={handleNameKeyDown}
-            onBlur={handleBlur}
-            onClick={handleInputClick}
-            className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
-          />
-          <DiagramActionsDropdown
-            umlCode={umlCode}
-            projectName={projectName}
-            onOpenPreview={onOpenPreview}
-          />
-        </div>
-      </div>
+    <div className="flex items-center gap-2 px-3 py-2">
+      <Input
+        value={isEditingName ? editedName : projectName}
+        readOnly={!isEditingName}
+        onChange={(e) => setEditedName(e.target.value)}
+        onKeyDown={handleNameKeyDown}
+        onBlur={handleBlur}
+        onClick={handleInputClick}
+        className="max-w-[300px]  bg-transparent cursor-pointer"
+      />
+      <DiagramActionsDropdown
+        umlCode={umlCode}
+        projectName={projectName}
+        onOpenPreview={onOpenPreview}
+      />
     </div>
   );
-} 
+}

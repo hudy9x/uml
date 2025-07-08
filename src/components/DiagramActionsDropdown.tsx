@@ -109,7 +109,7 @@ export function DiagramActionsDropdown({
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Button 
-          variant="default" 
+          variant="outline" 
           size="icon" 
           className="focus-visible:ring-0 focus-visible:ring-offset-0"
         >
