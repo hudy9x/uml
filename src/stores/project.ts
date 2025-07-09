@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { UMLProject, listProjects, updateProject, deleteProject } from '@/lib/db'
+import { UMLProject } from '@/databases/_types'
+import { listProjects, updateProject, deleteProject } from '@/databases/projects'
 
 interface ProjectState {
   projects: UMLProject[]

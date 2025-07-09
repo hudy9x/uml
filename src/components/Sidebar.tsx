@@ -1,11 +1,11 @@
 import { Plus, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import { createProject, UMLProject } from "@/lib/db";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "@/stores/project";
+import { createProject } from "@/databases/projects";
 
 export default function Sidebar() {
   const { projects, loadProjects, addProject, deleteProject } = useProjectStore();
