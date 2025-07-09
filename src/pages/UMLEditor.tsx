@@ -5,7 +5,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../components/ui/resizable";
-import { getProject } from "../lib/db";
+import { getProject } from "../databases/projects";
 import { toast } from "sonner";
 import { UMLEditorHeader } from "../components/UMLEditorHeader";
 import { UMLEditorPanel } from "../components/UMLEditorPanel";

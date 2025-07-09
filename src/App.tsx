@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from "@/components/ui/sonner"
 import Home from './pages/Home';
 import UMLEditor from './pages/UMLEditor';
-import { initDB } from './lib/db';
+import { initDB } from './databases/_db';
 import Preview from './pages/Preview';
 import { Layout } from './components/Layout';
 

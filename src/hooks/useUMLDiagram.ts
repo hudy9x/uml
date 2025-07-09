@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
-import { updateProject } from "../lib/db";
+import { updateProject } from "../databases/projects";
 import { useBackground } from "./useBackground";
 import { StatusBadge } from "@/lib/status-badge";
 

@@ -51,16 +51,19 @@ export default function Sidebar() {
             <Link
               key={project.id}
               className={cn(
-                "w-full text-muted-foreground truncate hover:bg-background/70 text-xs font-normal px-2 py-2 rounded-sm flex items-center justify-between group",
+                "w-full text-muted-foreground relative truncate hover:bg-background/70 text-xs font-normal px-2 py-2 rounded-sm flex items-center justify-between group",
                 umlId === project.id &&
                   "bg-background text-primary shadow"
               )}
               to={`/uml/${project.id}`}
             >
-              <span className="truncate">{project.name}</span>
+              <div className="flex items-center gap-2 grow-0 w-[92%]">
+                <span className="w-4 h-4 rounded flex items-center justify-center p-1 bg-red-600/90 text-foreground text-xs">s</span>
+                <span className="truncate">{project.name}</span>
+              </div>
               <button
                 onClick={(e) => handleDelete(e, project.id)}
-                className="opacity-0 group-hover:opacity-100 hover:text-destructive p-1 rounded"
+                className="cursor-pointer hover:bg-secondary opacity-0 group-hover:opacity-100 hover:text-destructive p-1 rounded shrink-0 absolute right-2 top-1.5"
               >
                 <X className="h-3 w-3" />
               </button>
