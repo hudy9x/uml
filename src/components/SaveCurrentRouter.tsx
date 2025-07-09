@@ -13,6 +13,8 @@ export default function SaveCurrentRouter() {
       const cachedRoute = localStorage.getItem(CACHED_ROUTE_KEY);
       if (cachedRoute) {
         navigate(cachedRoute);
+      } else {
+        navigate('/empty');
       }
       return;
     }

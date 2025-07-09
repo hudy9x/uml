@@ -33,6 +33,6 @@ export async function initDB() {
     )
   `);
 
-  await migrate();
+  await migrate(db);
 
 }

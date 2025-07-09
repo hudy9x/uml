@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
-import { updateProject } from "../databases/projects";
+import { useProjectStore } from "@/stores/project";
 import { useBackground } from "./useBackground";
 import { StatusBadge } from "@/lib/status-badge";
 
@@ -54,7 +54,7 @@ root {
       if (umlId) {
         StatusBadge.loading(true);
         try {
-          await updateProject(umlId, { content: umlCode });
+          await useProjectStore.getState().updateProjectContent(umlId, umlCode);
           StatusBadge.loading(false);
         } catch (error) {
           StatusBadge.loading(false);

@@ -174,7 +174,7 @@ export function VersionDisplay({className}: {className?: string}) {
       </div>
 
       <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
-        <DialogContent className="w-[280px] rounded-xl bg-background backdrop-blur-sm border-0 [&>button]:text-white [&>button]:cursor-pointer [&>button:hover]:text-white/80">
+        <DialogContent className="w-[280px] rounded-xl bg-background backdrop-blur-sm [&>button]:text-foreground [&>button]:cursor-pointer [&>button:hover]:text-foreground/80">
           <div className="flex flex-col items-center gap-4 py-4">
             {/* App Icon */}
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">

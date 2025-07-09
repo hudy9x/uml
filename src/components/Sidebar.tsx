@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useProjectStore } from "@/stores/project";
 import { createProject } from "@/databases/projects";
+import UmlIcon from "./UmlIcon";
 
 export default function Sidebar() {
   const { projects, loadProjects, addProject, deleteProject } = useProjectStore();
@@ -58,7 +59,7 @@ export default function Sidebar() {
               to={`/uml/${project.id}`}
             >
               <div className="flex items-center gap-2 grow-0 w-[92%]">
-                <span className="w-4 h-4 rounded flex items-center justify-center p-1 bg-red-600/90 text-foreground text-xs">s</span>
+                <UmlIcon type={project.type || "sequence"} />
                 <span className="truncate">{project.name}</span>
               </div>
               <button

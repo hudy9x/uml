@@ -1,16 +1,54 @@
 import { getDB } from './_db';
 import { UMLProject } from './_types';
 
+export function detectUMLType(content: string): string {
+  const lowerContent = content.toLowerCase();
+  
+  // Check for specific UML diagram keywords
+  if (lowerContent.includes('@startuml')) {
+    if (lowerContent.includes('class ') || lowerContent.includes('interface ')) {
+      return 'class';
+    }
+    if (lowerContent.includes('actor ') || lowerContent.includes('usecase ')) {
+      return 'use-case';
+    }
+    if (lowerContent.includes('participant ') || lowerContent.includes('->') || lowerContent.includes('-->')) {
+      return 'sequence';
+    }
+    if (lowerContent.includes('start') || lowerContent.includes('activity') || lowerContent.includes('fork') || lowerContent.includes('end')) {
+      return 'activity';
+    }
+    if (lowerContent.includes('state ') || lowerContent.includes('[*]')) {
+      return 'state';
+    }
+    if (lowerContent.includes('component ') || lowerContent.includes('interface ')) {
+      return 'component';
+    }
+    if (lowerContent.includes('package ') || lowerContent.includes('node ')) {
+      return 'deployment';
+    }
+  }
+
+  console.log('lowerContent', lowerContent, lowerContent.includes('startgantt'))
+  if (lowerContent.includes('startgantt')) {
+    console.log('gantt')
+    return 'gantt';
+  }
+  
+  return 'unknown';
+}
+
 export async function createProject(name: string = 'Untitled UML', type?: string): Promise<UMLProject> {
   const db = await getDB();
+  const defaultContent = `@startuml\nclass Example\n@enduml`;
   const project: UMLProject = {
     id: crypto.randomUUID(),
     name,
-    content: `@startuml\nclass Example\n@enduml`,
+    content: defaultContent,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     is_deleted: 0,
-    type
+    type: type || detectUMLType(defaultContent)
   };
   
   await db.execute(
@@ -37,10 +75,12 @@ export async function updateProject(
   const db = await getDB();
   const now = new Date().toISOString();
   
+  // If content is updated, automatically detect and update the type
   if (updates.content !== undefined) {
+    const detectedType = detectUMLType(updates.content);
     await db.execute(
-      'UPDATE uml_projects SET content = $1, updated_at = $2 WHERE id = $3',
-      [updates.content, now, id]
+      'UPDATE uml_projects SET content = $1, type = $2, updated_at = $3 WHERE id = $4',
+      [updates.content, detectedType, now, id]
     );
   }
   
