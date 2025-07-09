@@ -151,3 +151,25 @@ body {
   @apply [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent;
   @apply [&::-webkit-scrollbar-thumb]:bg-primary/20 [&::-webkit-scrollbar-thumb:hover]:bg-primary;
 }
+
+/* Status Badge Styles */
+.status-badge {
+  background-color: #f3f4f6;
+  color: #374151;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.status-badge.info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.status-badge.success {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}

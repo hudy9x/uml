@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
 import { updateProject } from "../lib/db";
-// import { useTheme } from "next-themes";
 import { useBackground } from "./useBackground";
+import { StatusBadge } from "@/lib/status-badge";
 
 let debounceTimeout: number;
 
@@ -15,7 +15,6 @@ interface UseUMLDiagramProps {
 export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
   const [umlCode, setUmlCode] = useState(initialCode);
   const [svgContent, setSvgContent] = useState("");
-  // const { theme } = useTheme();
   const { previewBackground, isDarkBackground } = useBackground();
 
   const changeBackground = (isDark: boolean, umlCode: string) => {
@@ -38,7 +37,6 @@ root {
     clearTimeout(debounceTimeout);
     debounceTimeout = window.setTimeout(async () => {
       const encoded = encode(changeBackground(isDarkBackground, umlCode));
-      
 
       // Generate SVG
       try {
@@ -54,12 +52,12 @@ root {
 
       // Save if we have a umlId
       if (umlId) {
-        toast.info("Saving...");
+        StatusBadge.loading(true);
         try {
           await updateProject(umlId, { content: umlCode });
-          toast.success("Saved!");
+          StatusBadge.loading(false);
         } catch (error) {
-          toast.error("Failed to save diagram");
+          StatusBadge.loading(false);
         }
       }
     }, 800);
