@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
 import { updateProject } from "../lib/db";
-import { useTheme } from "next-themes";
+// import { useTheme } from "next-themes";
+import { useBackground } from "./useBackground";
 
 let debounceTimeout: number;
 
@@ -14,7 +15,19 @@ interface UseUMLDiagramProps {
 export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
   const [umlCode, setUmlCode] = useState(initialCode);
   const [svgContent, setSvgContent] = useState("");
-  const { theme } = useTheme();
+  // const { theme } = useTheme();
+  const { previewBackground, isDarkBackground } = useBackground();
+
+  const changeBackground = (isDark: boolean, umlCode: string) => {
+    if (isDark) {
+      return umlCode.replace(`@startuml`, `@startuml\n<style>
+root {
+  BackgroundColor ${previewBackground}
+}
+</style>`)
+    }
+    return umlCode
+  }
 
   useEffect(() => {
     if (!umlCode) {
@@ -24,14 +37,13 @@ export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
 
     clearTimeout(debounceTimeout);
     debounceTimeout = window.setTimeout(async () => {
-      const encoded = encode(umlCode);
+      const encoded = encode(changeBackground(isDarkBackground, umlCode));
+      
 
       // Generate SVG
       try {
         const res = await fetch(
-          `https://www.plantuml.com/plantuml/${theme === 'dark' ? 'd': ''}svg/${encoded}`
-          // `https://www.plantuml.com/plantuml/dsvg/${encoded}`  => dark mode
-
+          `https://www.plantuml.com/plantuml/${isDarkBackground ? 'd' : ''}svg/${encoded}`
         );
         const svg = await res.text();
         setSvgContent(svg);
@@ -53,7 +65,7 @@ export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
     }, 800);
 
     return () => clearTimeout(debounceTimeout);
-  }, [umlCode, umlId, theme]);
+  }, [umlCode, umlId, isDarkBackground]);
 
   return {
     umlCode,
