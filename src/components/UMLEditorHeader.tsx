@@ -1,36 +1,36 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ChevronLeft } from "lucide-react";
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
 import { cn } from "../lib/utils";
 import { useBackground } from "../hooks/useBackground";
+import { useProjectStore } from "@/stores/project";
+import { useParams } from "react-router-dom";
 
 interface UMLEditorHeaderProps {
   projectName: string;
   umlCode: string;
-  onProjectNameChange: (name: string) => Promise<void>;
   onOpenPreview: () => void;
 }
 
 export function UMLEditorHeader({
   projectName,
   umlCode,
-  onProjectNameChange,
   onOpenPreview,
 }: UMLEditorHeaderProps) {
   const { editorBackground } = useBackground();
+  const { updateProjectName } = useProjectStore();
+  const { umlId } = useParams();
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(projectName);
 
   const handleNameSave = async () => {
-    if (editedName === projectName) {
+    if (editedName === projectName || !umlId) {
       setIsEditingName(false);
       return;
     }
-    await onProjectNameChange(editedName);
+    await updateProjectName(umlId, editedName);
     setIsEditingName(false);
   };
 
@@ -66,7 +66,7 @@ export function UMLEditorHeader({
         onKeyDown={handleNameKeyDown}
         onBlur={handleBlur}
         onClick={handleInputClick}
-        className="max-w-[300px]  bg-transparent cursor-pointer"
+        className="max-w-[300px] bg-transparent cursor-pointer"
       />
       <DiagramActionsDropdown
         umlCode={umlCode}

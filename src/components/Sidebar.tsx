@@ -1,34 +1,25 @@
 import { Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import { createProject, listProjects, UMLProject } from "@/lib/db";
-import { useEffect, useState } from "react";
+import { createProject, UMLProject } from "@/lib/db";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useProjectStore } from "@/stores/project";
 
 export default function Sidebar() {
-  const [projects, setProjects] = useState<UMLProject[]>([]);
+  const { projects, loadProjects, addProject } = useProjectStore();
   const navigate = useNavigate();
   const { umlId } = useParams();
 
   useEffect(() => {
     loadProjects();
-  }, []);
-
-  async function loadProjects() {
-    const list = await listProjects();
-    setProjects(
-      list.sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
-    );
-  }
+  }, [loadProjects]);
 
   async function handleCreate() {
     const project = await createProject();
+    addProject(project);
     navigate(`/uml/${project.id}`);
-    setProjects([project, ...projects]);
   }
 
   return (

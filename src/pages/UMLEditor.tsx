@@ -5,7 +5,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../components/ui/resizable";
-import { getProject, updateProject } from "../lib/db";
+import { getProject } from "../lib/db";
 import { toast } from "sonner";
 import { UMLEditorHeader } from "../components/UMLEditorHeader";
 import { UMLEditorPanel } from "../components/UMLEditorPanel";
@@ -13,11 +13,13 @@ import { UMLPreviewPanel } from "../components/UMLPreviewPanel";
 import { usePreviewWindow } from "../components/PreviewWindowManager";
 import { useUMLDiagram } from "../hooks/useUMLDiagram";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { useProjectStore } from "@/stores/project";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
   const navigate = useNavigate();
-  const [projectName, setProjectName] = useState("");
+  const { projects } = useProjectStore();
+  const projectName = projects.find(p => p.id === umlId)?.name ?? "";
   const maxEditorSize = 100;
   const [editorSize, setEditorSize] = useState(30);
 
@@ -60,15 +62,7 @@ export default function UMLEditor() {
     }
 
     setUmlCode(project.content);
-    setProjectName(project.name);
   }
-
-  const handleProjectNameChange = async (newName: string) => {
-    if (!umlId) return;
-    await updateProject(umlId, { name: newName });
-    setProjectName(newName);
-    toast.success("Project name updated!");
-  };
 
   return (
     <main className="uml-editor-page bg-[var(--background)]">
@@ -81,7 +75,6 @@ export default function UMLEditor() {
             <UMLEditorHeader
               projectName={projectName}
               umlCode={umlCode}
-              onProjectNameChange={handleProjectNameChange}
               onOpenPreview={openPreviewWindow}
             />
             <UMLEditorPanel
