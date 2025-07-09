@@ -1,8 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import Sidebar from "@/components/Sidebar";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect } from "react";
+import SaveCurrentRouter from "@/components/SaveCurrentRouter";
 
 export default function Home() {
 
@@ -22,6 +22,7 @@ export default function Home() {
         </div>
       </div>
       <Footer />
+      <SaveCurrentRouter />
     </main>
   );
 }
