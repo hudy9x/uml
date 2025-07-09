@@ -1,4 +1,4 @@
-import { Maximize2, ZoomIn, ZoomOut } from "lucide-react";
+import { Search, ZoomIn, ZoomOut } from "lucide-react";
 import {
   TransformWrapper,
   TransformComponent,
@@ -20,7 +20,7 @@ function Controls() {
   const { zoomIn, zoomOut, resetTransform } = useControls();
 
   return (
-    <div className="absolute -bottom-4 left-2 flex gap-2 z-10">
+    <div className="absolute bottom-2 right-2 flex gap-2 z-10">
       <div className="flex flex-col gap-2">
         <Button variant="outline" size="icon" onClick={() => zoomIn()}>
           <ZoomIn />
@@ -28,12 +28,8 @@ function Controls() {
         <Button variant="outline" size="icon" onClick={() => zoomOut()}>
           <ZoomOut />
         </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => resetTransform()}
-        >
-          <Maximize2 />
+        <Button variant="outline" size="icon" onClick={() => resetTransform()}>
+          <Search />{" "}
         </Button>
       </div>
     </div>

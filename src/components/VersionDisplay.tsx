@@ -6,6 +6,7 @@ import { check, type DownloadEvent } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { getVersion } from "@tauri-apps/api/app";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export enum UpdateStatus {
   CHECKING = "CHECKING",
@@ -21,7 +22,7 @@ export interface UpdateInfo {
   error?: string;
 }
 
-export function VersionDisplay() {
+export function VersionDisplay({className}: {className?: string}) {
   const [version, setVersion] = useState("");
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo>({
     status: UpdateStatus.CHECKING,
@@ -155,27 +156,25 @@ export function VersionDisplay() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="relative"
+      <div className={cn("flex items-center gap-2", className)}>
+        <div
+          className="relative cursor-pointer hover:bg-primary/10 px-1 py-0.5 rounded text-xs"
           onClick={() => setShowUpdateDialog(true)}
         >
           {updateInfo.status === UpdateStatus.AVAILABLE && (
-            <span className="absolute -right-1 -top-1">
-              <span className="relative flex h-3 w-3">
+            <span className="absolute -right-3 top-1">
+              <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
               </span>
             </span>
           )}
           v{version}
-        </Button>
+        </div>
       </div>
 
       <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
-        <DialogContent className="w-[280px] rounded-xl bg-zinc-900/80 backdrop-blur-sm border-0 [&>button]:text-white [&>button]:cursor-pointer [&>button:hover]:text-white/80">
+        <DialogContent className="w-[280px] rounded-xl bg-background backdrop-blur-sm [&>button]:text-foreground [&>button]:cursor-pointer [&>button:hover]:text-foreground/80">
           <div className="flex flex-col items-center gap-4 py-4">
             {/* App Icon */}
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -197,7 +196,7 @@ export function VersionDisplay() {
             {/* App Info */}
             <div className="space-y-3 w-full">
               <div className="text-center space-y-0.5">
-                <h2 className="text-xl font-semibold text-white">UML Editor</h2>
+                <h2 className="text-xl font-semibold text-foreground">UML Editor</h2>
                 <p className="text-xs text-gray-400">Version {version}</p>
                 <p className="text-[10px] text-gray-500 max-w-[240px] mx-auto mt-2">
                   A modern UML diagram editor with real-time preview and
@@ -207,7 +206,7 @@ export function VersionDisplay() {
               </div>
 
               {/* Status Message */}
-              <div className="text-xs text-gray-300 py-1.5">
+              <div className="text-xs text-foreground py-1.5">
                 {getStatusMessage()}
               </div>
 

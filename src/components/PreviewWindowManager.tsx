@@ -53,6 +53,7 @@ export function usePreviewWindow({
         width: 800,
         height: 600,
         center: true,
+        // decorations: false
       });
 
       console.log("previewWindow", webview);

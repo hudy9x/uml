@@ -1,33 +1,36 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ChevronLeft } from "lucide-react";
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
+import { cn } from "../lib/utils";
+import { useBackground } from "../hooks/useBackground";
+import { useProjectStore } from "@/stores/project";
+import { useParams } from "react-router-dom";
 
 interface UMLEditorHeaderProps {
   projectName: string;
   umlCode: string;
-  onProjectNameChange: (name: string) => Promise<void>;
   onOpenPreview: () => void;
 }
 
 export function UMLEditorHeader({
   projectName,
   umlCode,
-  onProjectNameChange,
   onOpenPreview,
 }: UMLEditorHeaderProps) {
-  const navigate = useNavigate();
+  const { editorBackground } = useBackground();
+  const { updateProjectName } = useProjectStore();
+  const { umlId } = useParams();
+
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(projectName);
 
   const handleNameSave = async () => {
-    if (editedName === projectName) {
+    if (editedName === projectName || !umlId) {
       setIsEditingName(false);
       return;
     }
-    await onProjectNameChange(editedName);
+    await updateProjectName(umlId, editedName);
     setIsEditingName(false);
   };
 
@@ -52,28 +55,24 @@ export function UMLEditorHeader({
   };
 
   return (
-    <div className="flex items-center gap-4 pr-3">
-      <Button variant="default" size="icon" onClick={() => navigate("/")}>
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      <div className="flex items-center gap-2 flex-1">
-        <div className="flex items-center gap-2 flex-1">
-          <Input
-            value={isEditingName ? editedName : projectName}
-            readOnly={!isEditingName}
-            onChange={(e) => setEditedName(e.target.value)}
-            onKeyDown={handleNameKeyDown}
-            onBlur={handleBlur}
-            onClick={handleInputClick}
-            className="max-w-[300px] text-white bg-transparent border-none cursor-pointer hover:border-white focus:border-white"
-          />
-          <DiagramActionsDropdown
-            umlCode={umlCode}
-            projectName={projectName}
-            onOpenPreview={onOpenPreview}
-          />
-        </div>
-      </div>
+    <div className={cn("flex items-center gap-2 px-3 py-2")} 
+    style={{
+      backgroundColor: editorBackground
+    }} >
+      <Input
+        value={isEditingName ? editedName : projectName}
+        readOnly={!isEditingName}
+        onChange={(e) => setEditedName(e.target.value)}
+        onKeyDown={handleNameKeyDown}
+        onBlur={handleBlur}
+        onClick={handleInputClick}
+        className="max-w-[300px] bg-transparent cursor-pointer"
+      />
+      <DiagramActionsDropdown
+        umlCode={umlCode}
+        projectName={projectName}
+        onOpenPreview={onOpenPreview}
+      />
     </div>
   );
-} 
+}

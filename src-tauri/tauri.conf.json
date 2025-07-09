@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "uml-editor",
+  "productName": "UML Editor",
   "version": "0.7.4",
   "identifier": "com.uml-editor.app",
   "build": {
@@ -13,8 +13,8 @@
     "windows": [
       {
         "title": "UML Editor",
-        "width": 1200,
-        "height": 800
+        "width": 1300,
+        "height": 700
       }
     ],
     "security": {

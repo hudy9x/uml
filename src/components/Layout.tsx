@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { VersionDisplay } from './VersionDisplay';
+import { TitleBar } from './TitleBar';
 
 interface LayoutProps {
   children: ReactNode;
@@ -7,9 +7,11 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen relative">
-      {children}
-      <VersionDisplay />
+    <div className=" relative">
+      {/* <TitleBar /> */}
+      <main className="">
+        {children}
+      </main>
     </div>
   );
 } 

@@ -5,7 +5,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "../components/ui/resizable";
-import { getProject, updateProject } from "../lib/db";
+import { getProject } from "../databases/projects";
 import { toast } from "sonner";
 import { UMLEditorHeader } from "../components/UMLEditorHeader";
 import { UMLEditorPanel } from "../components/UMLEditorPanel";
@@ -13,11 +13,13 @@ import { UMLPreviewPanel } from "../components/UMLPreviewPanel";
 import { usePreviewWindow } from "../components/PreviewWindowManager";
 import { useUMLDiagram } from "../hooks/useUMLDiagram";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { useProjectStore } from "@/stores/project";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
   const navigate = useNavigate();
-  const [projectName, setProjectName] = useState("");
+  const { projects } = useProjectStore();
+  const projectName = projects.find(p => p.id === umlId)?.name ?? "";
   const maxEditorSize = 100;
   const [editorSize, setEditorSize] = useState(30);
 
@@ -60,54 +62,34 @@ export default function UMLEditor() {
     }
 
     setUmlCode(project.content);
-    setProjectName(project.name);
   }
 
-  const handleProjectNameChange = async (newName: string) => {
-    if (!umlId) return;
-    await updateProject(umlId, { name: newName });
-    setProjectName(newName);
-    toast.success("Project name updated!");
-  };
-
   return (
-    <main
-      className="min-h-screen bg-background"
-      style={{ backgroundColor: "color(srgb 0.1582 0.1724 0.2053)" }}
-    >
-      <div className="mx-auto px-4">
-        <div>
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="rounded-lg py-4"
-            style={{ height: "calc(100vh)" }}
-          >
-            <ResizablePanel defaultSize={editorSize}>
-              <div className="h-full rounded-none border-0">
-                <UMLEditorHeader
-                  projectName={projectName}
-                  umlCode={umlCode}
-                  onProjectNameChange={handleProjectNameChange}
-                  onOpenPreview={openPreviewWindow}
-                />
-                <UMLEditorPanel
-                  umlCode={umlCode}
-                  onChange={(value) => setUmlCode(value)}
-                />
-              </div>
-            </ResizablePanel>
+    <main className="uml-editor-page bg-[var(--background)]">
+      <ResizablePanelGroup
+        direction="horizontal"
+        style={{ height: "calc(100vh - 29px)" }}
+      >
+        <ResizablePanel defaultSize={editorSize}>
+          <div className="uml-editor-panel">
+            <UMLEditorHeader
+              projectName={projectName}
+              umlCode={umlCode}
+              onOpenPreview={openPreviewWindow}
+            />
+            <UMLEditorPanel
+              umlCode={umlCode}
+              onChange={(value) => setUmlCode(value)}
+            />
+          </div>
+        </ResizablePanel>
 
-            <ResizableHandle className="invisible" />
+        <ResizableHandle className="bg-transparent hover:bg-foreground/40" withHandle />
 
-            <ResizablePanel defaultSize={maxEditorSize - editorSize}>
-              <UMLPreviewPanel
-                svgContent={svgContent}
-                hidden={!!previewWindow}
-              />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </div>
-      </div>
+        <ResizablePanel defaultSize={maxEditorSize - editorSize}>
+          <UMLPreviewPanel svgContent={svgContent} hidden={!!previewWindow} />
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </main>
   );
 }
