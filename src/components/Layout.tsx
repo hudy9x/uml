@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { TitleBar } from './TitleBar';
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,7 +7,6 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   return (
     <div className=" relative">
-      {/* <TitleBar /> */}
       <main className="">
         {children}
       </main>

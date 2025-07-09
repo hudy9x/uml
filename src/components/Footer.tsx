@@ -1,8 +1,6 @@
 import { VersionDisplay } from "./VersionDisplay";
-import { Button } from "./ui/button";
-import { Github, Moon, MoreVertical, Sun } from "lucide-react";
+import { Github } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Switch } from "./ui/switch";
 
 export function Footer() {

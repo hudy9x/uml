@@ -1,6 +1,5 @@
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, FileQuestion, PackageOpen } from "lucide-react";
+import { Plus, PackageOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useProjectStore } from "@/stores/project";
 import { createProject } from "@/databases/projects";
