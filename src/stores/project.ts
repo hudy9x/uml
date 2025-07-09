@@ -18,6 +18,7 @@ export const useProjectStore = create<ProjectState>()((set) => ({
     const sortedProjects = list.sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
+    console.log('sortedProjects', sortedProjects)
     set({ projects: sortedProjects })
   },
   updateProjectName: async (id: string, name: string) => {
