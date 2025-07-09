@@ -1,9 +1,11 @@
 import { ZoomableView } from "@/components/ZoomableView";
+import { useBackground } from "@/hooks/useBackground";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect, useState } from "react";
 
 export default function TestPage() {
   const [diagram, setDiagram] = useState("");
+  const { previewBackground, previewUrl } = useBackground();
   useEffect(() => {
     const w = getCurrentWebviewWindow();
 
@@ -15,9 +17,9 @@ export default function TestPage() {
     });
   }, []);
   return (
-    <div className="h-screen w-screen bg-white">
+    <div className="h-screen w-screen" style={{ backgroundColor: previewBackground }}>
       <ZoomableView className="h-full">
-        <img src={`https://www.plantuml.com/plantuml/svg/${diagram}`} />
+        <img src={`${previewUrl}svg/${diagram}`} />
       </ZoomableView>
     </div>
   );

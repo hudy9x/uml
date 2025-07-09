@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
 import { updateProject } from "../lib/db";
+import { useTheme } from "next-themes";
 
 let debounceTimeout: number;
 
@@ -13,6 +14,7 @@ interface UseUMLDiagramProps {
 export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
   const [umlCode, setUmlCode] = useState(initialCode);
   const [svgContent, setSvgContent] = useState("");
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!umlCode) {
@@ -27,7 +29,7 @@ export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
       // Generate SVG
       try {
         const res = await fetch(
-          `https://www.plantuml.com/plantuml/svg/${encoded}`
+          `https://www.plantuml.com/plantuml/${theme === 'dark' ? 'd': ''}svg/${encoded}`
           // `https://www.plantuml.com/plantuml/dsvg/${encoded}`  => dark mode
 
         );
@@ -51,7 +53,7 @@ export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
     }, 800);
 
     return () => clearTimeout(debounceTimeout);
-  }, [umlCode, umlId]);
+  }, [umlCode, umlId, theme]);
 
   return {
     umlCode,

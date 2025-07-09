@@ -74,7 +74,6 @@ export default function UMLEditor() {
     <main className="uml-editor-page bg-[var(--background)]">
       <ResizablePanelGroup
         direction="horizontal"
-        className="rounded-lg"
         style={{ height: "calc(100vh - 29px)" }}
       >
         <ResizablePanel defaultSize={editorSize}>
@@ -92,7 +91,7 @@ export default function UMLEditor() {
           </div>
         </ResizablePanel>
 
-        <ResizableHandle className="invisible" />
+        <ResizableHandle className="bg-transparent hover:bg-foreground/40" withHandle />
 
         <ResizablePanel defaultSize={maxEditorSize - editorSize}>
           <UMLPreviewPanel svgContent={svgContent} hidden={!!previewWindow} />

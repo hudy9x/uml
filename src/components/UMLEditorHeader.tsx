@@ -4,6 +4,8 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ChevronLeft } from "lucide-react";
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
+import { cn } from "../lib/utils";
+import { useBackground } from "../hooks/useBackground";
 
 interface UMLEditorHeaderProps {
   projectName: string;
@@ -18,7 +20,8 @@ export function UMLEditorHeader({
   onProjectNameChange,
   onOpenPreview,
 }: UMLEditorHeaderProps) {
-  const navigate = useNavigate();
+  const { editorBackground } = useBackground();
+
   const [isEditingName, setIsEditingName] = useState(false);
   const [editedName, setEditedName] = useState(projectName);
 
@@ -52,7 +55,10 @@ export function UMLEditorHeader({
   };
 
   return (
-    <div className="flex items-center gap-2 px-3 py-2">
+    <div className={cn("flex items-center gap-2 px-3 py-2")} 
+    style={{
+      backgroundColor: editorBackground
+    }} >
       <Input
         value={isEditingName ? editedName : projectName}
         readOnly={!isEditingName}
