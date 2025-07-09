@@ -174,7 +174,7 @@ export function VersionDisplay({className}: {className?: string}) {
       </div>
 
       <Dialog open={showUpdateDialog} onOpenChange={setShowUpdateDialog}>
-        <DialogContent className="w-[280px] rounded-xl bg-zinc-900/80 backdrop-blur-sm border-0 [&>button]:text-white [&>button]:cursor-pointer [&>button:hover]:text-white/80">
+        <DialogContent className="w-[280px] rounded-xl bg-background backdrop-blur-sm border-0 [&>button]:text-white [&>button]:cursor-pointer [&>button:hover]:text-white/80">
           <div className="flex flex-col items-center gap-4 py-4">
             {/* App Icon */}
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -196,7 +196,7 @@ export function VersionDisplay({className}: {className?: string}) {
             {/* App Info */}
             <div className="space-y-3 w-full">
               <div className="text-center space-y-0.5">
-                <h2 className="text-xl font-semibold text-white">UML Editor</h2>
+                <h2 className="text-xl font-semibold text-foreground">UML Editor</h2>
                 <p className="text-xs text-gray-400">Version {version}</p>
                 <p className="text-[10px] text-gray-500 max-w-[240px] mx-auto mt-2">
                   A modern UML diagram editor with real-time preview and
@@ -206,7 +206,7 @@ export function VersionDisplay({className}: {className?: string}) {
               </div>
 
               {/* Status Message */}
-              <div className="text-xs text-gray-300 py-1.5">
+              <div className="text-xs text-foreground py-1.5">
                 {getStatusMessage()}
               </div>
 
