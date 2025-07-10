@@ -5,6 +5,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'src-tauri/**'
+      - 'src/**'
 
 jobs:
   publish-tauri:
