@@ -64,45 +64,12 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install
 
-      # Generate version start ----------------------------------
-      - name: Get last commit for .version-lock file
-        id: get_last_commit
-        shell: bash
-        run: |
-          # Try to download the lastcommit file
-          OLD_LAST_COMMIT=""
-          if curl -s -f -L "https://github.com/${{ github.repository }}/releases/latest/download/lastcommit" -o lastcommit; then
-            OLD_LAST_COMMIT=$(cat lastcommit)
-            echo "Found previous last commit: $OLD_LAST_COMMIT"
-          else
-            # If file not found, get the latest commit
-            OLD_LAST_COMMIT=$(git rev-parse HEAD)
-            echo "Using latest commit: $OLD_LAST_COMMIT"
-          fi
-          echo "OLD_LAST_COMMIT=$OLD_LAST_COMMIT" >> $GITHUB_ENV
-          echo "$OLD_LAST_COMMIT" > .version-lock
-          ls -l
-
       - name: Generate app version from package.json
         id: get_version
         # if: matrix.platform == 'macos-latest'
         shell: bash
         run: |
-
-          # Try to download the latest.json file to get version
-          VERSION=""
-          if curl -s -f -L "https://github.com/${{ github.repository }}/releases/latest/download/latest.json" -o latest.json; then
-            CURRENT_VERSION=$(node -p "require('./latest.json').version")
-            echo "Found current version: $CURRENT_VERSION"
-            
-            node scripts/version-upgrade.js
-            VERSION=$(node -p "require('./package.json').version")
-          else
-            node scripts/version-upgrade.js
-            VERSION=$(node -p "require('./package.json').version")
-            echo "No latest.json found, generating new version: $VERSION"
-          fi
-          
+          VERSION=$(node -p "require('./package.json').version")
           echo "--------------------------------"
           echo "The current version is: $VERSION"
           echo "--------------------------------"
@@ -147,21 +114,3 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-
-      # Save last commit for the next build ----------------------------------
-      - name: Upload lastcommit for the next build
-        if: matrix.platform == 'macos-latest'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_ID: ${{ steps.tauri_build.outputs.releaseId }}
-        run: |
-          # Get last commit from environment variable
-          LAST_COMMIT=$(git rev-parse HEAD)
-          # Upload lastcommit file to release
-          curl \
-            -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary "$LAST_COMMIT" \
-            "https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=lastcommit"
-      # End ----------------------------------
