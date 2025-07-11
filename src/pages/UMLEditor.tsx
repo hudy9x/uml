@@ -68,7 +68,7 @@ export default function UMLEditor() {
     <main className="uml-editor-page bg-[var(--background)]">
       <ResizablePanelGroup
         direction="horizontal"
-        style={{ height: "calc(100vh - 29px)" }}
+        style={{ width: "calc(100vw - 200px)", height: "calc(100vh - 29px)" }}
       >
         <ResizablePanel defaultSize={editorSize}>
           <div className="uml-editor-panel">
