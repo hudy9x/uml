@@ -2,6 +2,7 @@ import { VersionDisplay } from "./VersionDisplay";
 import { Github } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "./ui/switch";
+import { DeletedProjectsDialog } from "./DeletedProjectsDialog";
 
 export function Footer() {
   const { setTheme, theme } = useTheme();
@@ -10,6 +11,7 @@ export function Footer() {
     <footer className="flex items-center justify-between px-2 py-1 gap-2 border-t border-[var(--color-border)] relative">
       <div className="flex items-center gap-4">
         <VersionDisplay />
+        <DeletedProjectsDialog />
       </div>
 
       <div className="flex items-center gap-4">
