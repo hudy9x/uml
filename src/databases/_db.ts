@@ -1,16 +1,6 @@
 import Database from '@tauri-apps/plugin-sql';
 import { migrate } from './_migrations';
 
-export interface UMLProject {
-  id: string;
-  name: string;
-  content: string;
-  created_at: string;
-  updated_at: string;
-  is_deleted: number;
-  type?: string;
-}
-
 const DB_PATH = 'sqlite:uml-editor.db';
 
 export async function getDB() {
