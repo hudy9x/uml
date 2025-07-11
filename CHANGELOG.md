@@ -1,13 +1,13 @@
 ## What's Changed
 
-💥 Breaking Changes
+✨ Features
 
-- Breaking change: change ui and add new features (#17) ([1d86faa](../../commit/1d86faa))
+- Create history page and rolback ([6692510](../../commit/6692510))
 
 🔨 Other Changes
 
-- Change identifier name, load the project after initilizing datbase + change /create to /empty ([a36e694](../../commit/a36e694))
-- Type error ([e98ddcb](../../commit/e98ddcb))
+- Update README and add a MIT license ([7424794](../../commit/7424794))
+- Remove the auto versioning pipeline and build it by myself ([cc37f72](../../commit/cc37f72))
 
 
-📋 Full Changelog: [1d86faa...a36e694](../../compare/1d86faa...a36e694)
+📋 Full Changelog: [cc37f72...6692510](../../compare/cc37f72...6692510)
