@@ -111,6 +111,10 @@ function analyzeCommits(commits) {
     const lowerCommit = commit.toLowerCase();
     const firstWord = lowerCommit.split(' ')[0];
     let commitBumpType = 'none';
+
+    if (lowerCommit.startsWith('skip') || lowerCommit.includes('bump new version') || lowerCommit.includes('skip:')) {
+      return;
+    }
     
     // Check for breaking changes - highest priority
     if (lowerCommit.includes('breaking change') || lowerCommit.includes('!:')) {
