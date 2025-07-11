@@ -1,12 +1,9 @@
 ## What's Changed
 
-✨ Features
+🔨 Other Changes
 
-- Create history page and allow to rollback, delete a diagram permanent (#18) ([8d5b168](../../commit/8d5b168))
-
-🐛 Bug Fixes
-
-- The resizablePanel auto change the width without noticing ([ca7c433](../../commit/ca7c433))
+- Skip: add a condition to skip counting the version ([99678ed](../../commit/99678ed))
+- Skip the locked version and start counting from next commit message ([0101b60](../../commit/0101b60))
 
 
-📋 Full Changelog: [8d5b168...ca7c433](../../compare/8d5b168...ca7c433)
+📋 Full Changelog: [0101b60...99678ed](../../compare/0101b60...99678ed)
