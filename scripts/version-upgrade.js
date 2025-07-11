@@ -54,8 +54,8 @@ function getNewCommits() {
   
   try {
     if (lastProcessedCommit) {
-      // Get commits since last processed commit
-      return execSync(`git log ${lastProcessedCommit}..HEAD --pretty=format:"%s"`, { encoding: 'utf8' })
+      // Get commits since last processed commit, excluding the last processed commit itself
+      return execSync(`git log ${lastProcessedCommit}..HEAD --not ${lastProcessedCommit} --pretty=format:"%s"`, { encoding: 'utf8' })
         .split('\n')
         .filter(Boolean);
     } else {
