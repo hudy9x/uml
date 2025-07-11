@@ -11,6 +11,7 @@ export default function SaveCurrentRouter() {
 
   useEffect(() => {
     if (projects.length === 0) {
+      console.log('no projects => redirect to empty')
       navigate('/empty');
       return;
     }
@@ -21,6 +22,7 @@ export default function SaveCurrentRouter() {
       if (cachedRoute) {
         navigate(cachedRoute);
       } else {
+        console.log('no cached route => redirect to first project', projects)
         navigate(`/uml/${projects[0].id}`);
       }
       return;

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { UMLProject } from '@/databases/_types'
-import { listProjects, updateProject, deleteProject, detectUMLType } from '@/databases/projects'
+import { listProjects, updateProject, deleteProject, detectUMLType, restoreProject } from '@/databases/projects'
 
 interface ProjectState {
   projects: UMLProject[]
@@ -9,6 +9,7 @@ interface ProjectState {
   updateProjectContent: (id: string, content: string) => Promise<void>
   addProject: (project: UMLProject) => void
   deleteProject: (id: string) => Promise<void>
+  restoreProject: (project: UMLProject) => Promise<void>
 }
 
 export const useProjectStore = create<ProjectState>()((set) => ({
@@ -48,5 +49,12 @@ export const useProjectStore = create<ProjectState>()((set) => ({
     set((state: ProjectState) => ({
       projects: state.projects.filter((project) => project.id !== id)
     }))
+  },
+  restoreProject: async (project: UMLProject) => {
+    await restoreProject(project.id);
+    const restoredProject = { ...project, is_deleted: 0 };
+    set((state: ProjectState) => ({
+      projects: [restoredProject, ...state.projects]
+    }));
   }
 })) 

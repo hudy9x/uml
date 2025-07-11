@@ -1,6 +1,13 @@
 import { getDB } from './_db';
 import { UMLProject } from './_types';
 
+// Generate random string of 4-6 characters
+const generateRandomString = () => {
+  const length = Math.floor(Math.random() * 3) + 4; // Random length between 4-6
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+};
+
 export function detectUMLType(content: string): string {
   const lowerContent = content.toLowerCase();
   
@@ -41,9 +48,10 @@ export function detectUMLType(content: string): string {
 export async function createProject(name: string = 'Untitled UML', type?: string): Promise<UMLProject> {
   const db = await getDB();
   const defaultContent = `@startuml\nclass Example\n@enduml`;
+  const nameWithSuffix = `${name}-${generateRandomString()}`;
   const project: UMLProject = {
     id: crypto.randomUUID(),
-    name,
+    name: nameWithSuffix,
     content: defaultContent,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -113,5 +121,30 @@ export async function listProjects(): Promise<UMLProject[]> {
   const db = await getDB();
   return await db.select<UMLProject[]>(
     'SELECT * FROM uml_projects WHERE is_deleted = 0 ORDER BY updated_at DESC'
+  );
+}
+
+export async function getDeletedProjects(): Promise<UMLProject[]> {
+  const db = await getDB();
+  return await db.select<UMLProject[]>(
+    'SELECT * FROM uml_projects WHERE is_deleted = 1 ORDER BY updated_at DESC'
+  );
+}
+
+export async function restoreProject(id: string): Promise<void> {
+  const db = await getDB();
+  const now = new Date().toISOString();
+  
+  await db.execute(
+    'UPDATE uml_projects SET is_deleted = 0, updated_at = $1 WHERE id = $2',
+    [now, id]
+  );
+}
+
+export async function permanentlyDeleteProject(id: string): Promise<void> {
+  const db = await getDB();
+  await db.execute(
+    'DELETE FROM uml_projects WHERE id = $1',
+    [id]
   );
 }
