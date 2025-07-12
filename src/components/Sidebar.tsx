@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { useProjectStore } from "@/stores/project";
 import { createProject } from "@/databases/projects";
 import UmlIcon from "./UmlIcon";
+import CategoriesSection from "@/features/Category/CategoriesSection";
 
 export default function Sidebar() {
   const { projects, loadProjects, addProject, deleteProject } = useProjectStore();
@@ -82,6 +83,8 @@ export default function Sidebar() {
           })}
         </nav>
       </div>
+      <CategoriesSection />
+
     </aside>
   );
 }
