@@ -7,10 +7,14 @@ import AddCategoryButton from "./AddCategoryButton";
 
 interface CategoryItemProps {
   category: Category;
+  children: React.ReactNode;
 }
 
-export default function CategoryItem({ category }: CategoryItemProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export default function CategoryItem({
+  category,
+  children,
+}: CategoryItemProps) {
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const handleClick = (e: React.MouseEvent) => {
     setIsExpanded((prev) => !prev);
@@ -18,19 +22,26 @@ export default function CategoryItem({ category }: CategoryItemProps) {
 
   const categoryContent = (
     <div className="flex items-center justify-between px-2 pb-2">
-      <h2 className="text-primary uppercase text-[10px]">{category.name}</h2>
-      <AddCategoryButton />
+      <h2
+        onClick={handleClick}
+        className="text-primary/50 hover:text-primary uppercase text-[10px] cursor-pointer flex items-center gap-1"
+      >
+        <span># {category.name}</span>
+        <ChevronDown
+          className={cn(
+            "w-3 h-3 transition-transform duration-300",
+            isExpanded ? "" : "-rotate-90"
+          )}
+        />
+      </h2>
+      <AddCategoryButton className="opacity-0 transition-all duration-300 hover:scale-110 group-hover/category-item:opacity-100" />
     </div>
   );
 
   return (
-    <div className="text-sm">
+    <div className="category-item text-sm group/category-item">
       <CategoryActions category={category}>{categoryContent}</CategoryActions>
-      {isExpanded && (
-        <div className="pl-6">
-          {/* TODO: Add projects belonging to this category */}
-        </div>
-      )}
+      {isExpanded && <nav className="flex flex-col gap-0.5">{children}</nav>}
     </div>
   );
 }

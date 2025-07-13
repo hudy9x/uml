@@ -1,20 +1,32 @@
 import { useProjectStore } from "@/stores/project";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import DiagramItem from "./DiagramItem";
 
-export default function DiagramList({
+ function DiagramList({
   categoryId,
 }: {
   categoryId?: string | null;
 }) {
-  const projects = useProjectStore((state) => state.projects);
-  const loadProjects = useProjectStore((state) => state.loadProjects);
+  const projectByCategoryId = useProjectStore(
+    (state) => state.projectByCategoryId
+  );
+  const loadProjectsByCategoryId = useProjectStore(
+    (state) => state.loadProjectsByCategoryId
+  );
   const { umlId } = useParams();
+  const projects = projectByCategoryId[categoryId || "default"];
 
   useEffect(() => {
-    loadProjects(categoryId);
-  }, [loadProjects, categoryId]);
+    console.log("loadProjects", categoryId);
+    if (categoryId) {
+      loadProjectsByCategoryId(categoryId);
+    }
+  }, [loadProjectsByCategoryId, categoryId]);
+
+  if (!projects) {
+    return null;
+  }
 
   return projects.map((project, index) => {
     const nextProject = projects[index + 1];
@@ -34,3 +46,5 @@ export default function DiagramList({
     );
   });
 }
+
+export default memo(DiagramList);

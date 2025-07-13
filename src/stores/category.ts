@@ -25,6 +25,21 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
 
   loadCategories: async () => {
     const categories = await getAllCategories();
+    
+    // shift a default category to the top of the list
+    // this category is used to store diagrams that are not assigned to any category
+    if (!categories.find((c) => c.name === "Default")) {
+
+      categories.unshift({
+        id: "default",
+        name: "Default",
+        description: "Default category",
+        position: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+
     set({ categories });
   },
 

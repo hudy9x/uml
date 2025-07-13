@@ -1,4 +1,4 @@
-import { Category, Project } from '@/databases/_types';
+import { Category, UMLProject } from '@/databases/_types';
 
 // Sample Categories
 export const dummyCategories: Category[] = [
@@ -36,7 +36,7 @@ cloud "Frontend" {
   [Mobile App]
 }
 `;
-export const dummyProjects: Project[] = [
+export const dummyProjects: UMLProject[] = [
   {
     id: 'proj_1',
     name: 'E-commerce System Overview',
