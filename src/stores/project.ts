@@ -4,7 +4,7 @@ import { listProjects, updateProject, deleteProject, detectUMLType, restoreProje
 
 interface ProjectState {
   projects: UMLProject[]
-  loadProjects: () => Promise<void>
+  loadProjects: (categoryId?: string | null) => Promise<void>
   updateProjectName: (id: string, name: string) => Promise<void>
   updateProjectContent: (id: string, content: string) => Promise<void>
   addProject: (project: UMLProject) => void
@@ -14,8 +14,8 @@ interface ProjectState {
 
 export const useProjectStore = create<ProjectState>()((set) => ({
   projects: [],
-  loadProjects: async () => {
-    const list = await listProjects()
+  loadProjects: async (categoryId?: string | null) => {
+    const list = await listProjects(categoryId)
     const sortedProjects = list.sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )
