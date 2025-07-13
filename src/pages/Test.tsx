@@ -1,3 +1,5 @@
+import TestSection from "@/features/TestSection";
+
 export default function Test() {
-  return <div>Test</div>;
+  return <TestSection />;
 }
