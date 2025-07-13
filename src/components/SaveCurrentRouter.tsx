@@ -7,7 +7,7 @@ const CACHED_ROUTE_KEY = "last_uml_route";
 export default function SaveCurrentRouter() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { projects } = useProjectStore();
+  const projects = useProjectStore((state) => state.projects);
 
   useEffect(() => {
     if (projects.length === 0 && pathname !== "/empty") {
