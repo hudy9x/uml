@@ -1,4 +1,4 @@
-import { FolderPlus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCategoryStore } from "@/stores/category";
 
@@ -14,10 +14,10 @@ export default function AddCategoryButton() {
     <Button
       variant="ghost"
       size="icon"
-      className="h-4 w-4"
+      className="h-4 w-4 group"
       onClick={handleCreateCategory}
     >
-      <FolderPlus className="h-3 w-3" />
+      <Plus className="!h-3 !w-3 text-foreground/30 group-hover:text-foreground" />
     </Button>
   );
 } 

@@ -8,9 +8,11 @@ import { useProjectStore } from "@/stores/project";
 import { createProject } from "@/databases/projects";
 import UmlIcon from "./UmlIcon";
 import CategoriesSection from "@/features/Category/CategoriesSection";
+import CategoryDefault from "@/features/Category/CategoryDefault";
 
 export default function Sidebar() {
-  const { projects, loadProjects, addProject, deleteProject } = useProjectStore();
+  const { projects, loadProjects, addProject, deleteProject } =
+    useProjectStore();
   const navigate = useNavigate();
   const { umlId } = useParams();
 
@@ -24,15 +26,19 @@ export default function Sidebar() {
     navigate(`/uml/${project.id}`);
   }
 
-  async function handleDelete(e: React.MouseEvent, id: string, navigateTo: string | null) {
+  async function handleDelete(
+    e: React.MouseEvent,
+    id: string,
+    navigateTo: string | null
+  ) {
     e.preventDefault();
     e.stopPropagation();
     await deleteProject(id);
-    
+
     if (navigateTo) {
       navigate(`/uml/${navigateTo}`);
     } else {
-      navigate('/');
+      navigate("/");
     }
   }
 
@@ -44,27 +50,21 @@ export default function Sidebar() {
       </Button>
 
       <div className="mt-4">
-        <h2 className="text-primary uppercase text-[10px] px-2 pb-2">
-          My Diagrams
-        </h2>
-        <nav
-          className="flex flex-col gap-0.5 overflow-y-auto overflow-x-hidden pb-16 max-h-[calc(100vh-108px)] [&::-webkit-scrollbar]:w-1
-[&::-webkit-scrollbar-track]:bg-transparent
-[&::-webkit-scrollbar-thumb]:bg-gray-300"
-        >
+        <CategoryDefault>
           {projects.map((project, index) => {
-            const nextProject = projects[index + 1]
-            const prevProject = projects[index - 1]
-            const navigateTo = nextProject 
-              ? nextProject.id : prevProject 
-              ? prevProject.id : null
+            const nextProject = projects[index + 1];
+            const prevProject = projects[index - 1];
+            const navigateTo = nextProject
+              ? nextProject.id
+              : prevProject
+              ? prevProject.id
+              : null;
             return (
               <Link
                 key={project.id}
                 className={cn(
                   "w-full text-muted-foreground relative truncate hover:bg-background/70 text-xs font-normal px-2 py-2 rounded-sm flex items-center justify-between group",
-                  umlId === project.id &&
-                    "bg-background text-primary shadow"
+                  umlId === project.id && "bg-background text-primary shadow"
                 )}
                 to={`/uml/${project.id}`}
               >
@@ -79,12 +79,11 @@ export default function Sidebar() {
                   <X className="h-3 w-3" />
                 </button>
               </Link>
-            )
+            );
           })}
-        </nav>
+        </CategoryDefault>
       </div>
       <CategoriesSection />
-
     </aside>
   );
 }
