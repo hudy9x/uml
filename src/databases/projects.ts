@@ -168,14 +168,15 @@ export async function listProjects(
   categoryId?: string | null
 ): Promise<UMLProject[]> {
   const db = await getDB();
-  if (!categoryId) {
+  const mappedProjectCategoryQuery = `SELECT project_id FROM content_categories WHERE category_id = $1`
+  if (!categoryId || categoryId === "default") {
     return await db.select<UMLProject[]>(
-      "SELECT * FROM uml_projects WHERE is_deleted = 0 ORDER BY position"
+      `SELECT * FROM uml_projects WHERE is_deleted = 0 AND id NOT IN (${mappedProjectCategoryQuery}) ORDER BY position`
     );
   }
 
   return await db.select<UMLProject[]>(
-    "SELECT * FROM uml_projects WHERE is_deleted = 0 AND category_id = $1 ORDER BY position",
+    `SELECT * FROM uml_projects WHERE is_deleted = 0 AND id IN (${mappedProjectCategoryQuery}) ORDER BY position`,
     [categoryId]
   );
 }
