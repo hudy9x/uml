@@ -180,7 +180,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
   border-radius: 4px;
 }
 

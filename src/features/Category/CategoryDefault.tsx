@@ -14,7 +14,7 @@ export default function CategoryDefault({
         <h2 className="text-primary uppercase text-[10px]">My diagrams</h2>
         <AddCategoryButton />
       </div>
-      <nav className="flex flex-col gap-0.5 overflow-y-auto overflow-x-hidden">
+      <nav className="flex flex-col gap-0.5">
         {children}
       </nav>
     </div>

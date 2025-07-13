@@ -15,9 +15,11 @@ export default function DiagramCreate() {
   }
 
   return (
-    <Button variant="outline" onClick={handleCreate} className="w-full">
-      <Plus className="h-4 w-4" />
-      New Diagram
-    </Button>
+    <div className="px-3">
+      <Button variant="outline" onClick={handleCreate} className="w-full">
+        <Plus className="h-4 w-4" />
+        New Diagram
+      </Button>
+    </div>
   );
 }
