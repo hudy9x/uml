@@ -10,10 +10,10 @@ export async function createCategory(name: string, description?: string, positio
   // If position is not provided, get the max position and add 1
   if (!position) {
     const result = await db.select<[{ max_position: number }]>(
-      'SELECT COALESCE(COUNT(position), 0) as max_position FROM categories'
+      'SELECT COALESCE(MAX(position), 0) as max_position FROM categories'
     );
     console.log('max_position', result[0].max_position);
-    position = (result[0].max_position + 1) * 1000;
+    position = result[0].max_position + 200;
     console.log('position', position);
   }
 

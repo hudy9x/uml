@@ -45,14 +45,27 @@ export function detectUMLType(content: string): string {
   return 'unknown';
 }
 
+const getMaxPosition = async (table: string) => {
+  const db = await getDB();
+  const result = await db.select<[{ max_position: number }]>(
+    `SELECT COALESCE(MAX(position), 0) as max_position FROM ${table}`
+  );
+  return result[0].max_position + 200;
+}
+
 export async function createProject(name: string = 'Untitled UML', type?: string): Promise<UMLProject> {
   const db = await getDB();
   const defaultContent = `@startuml\nclass Example\n@enduml`;
   const nameWithSuffix = `${name}-${generateRandomString()}`;
+
+  const position = await getMaxPosition('uml_projects');
+  console.log('uml projects position', position)
+
   const project: UMLProject = {
     id: crypto.randomUUID(),
     name: nameWithSuffix,
     content: defaultContent,
+    position,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     is_deleted: 0,
@@ -60,8 +73,8 @@ export async function createProject(name: string = 'Untitled UML', type?: string
   };
   
   await db.execute(
-    'INSERT INTO uml_projects (id, name, content, created_at, updated_at, is_deleted, type) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-    [project.id, project.name, project.content, project.created_at, project.updated_at, project.is_deleted, project.type]
+    'INSERT INTO uml_projects (id, name, content, position, created_at, updated_at, is_deleted, type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+    [project.id, project.name, project.content, project.position, project.created_at, project.updated_at, project.is_deleted, project.type]
   );
   
   return project;
