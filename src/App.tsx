@@ -10,6 +10,7 @@ import { Layout } from './components/Layout';
 import { useEffect, useState } from 'react';
 import Empty from './pages/Empty';
 import { useProjectStore } from './stores/project';
+import Test from './pages/Test';
 
 // Initialize DB immediately
 initDB().catch(console.error);
@@ -47,6 +48,7 @@ function App() {
           </Route>
           <Route path="/empty" element={<Empty />} />
           <Route path="/preview" element={<Preview />} />
+          <Route path="/test" element={<Test />} />
         </Routes>
       </Layout>
     </BrowserRouter>
