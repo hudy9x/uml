@@ -1,6 +1,4 @@
 import CategoriesSection from "@/features/Category/CategoriesSection";
-import CategoryDefault from "@/features/Category/CategoryDefault";
-import DiagramList from "@/features/Diagram/DiagramList";
 import DiagramCreate from "@/features/Diagram/DiagramCreate";
 
 export default function Sidebar() {
@@ -9,10 +7,6 @@ export default function Sidebar() {
       <DiagramCreate />
 
       <div className="overflow-x-hidden overflow-y-auto h-[calc(100vh-100px)] px-3">
-        <CategoryDefault className="mt-4">
-          <DiagramList />
-        </CategoryDefault>
-
         <CategoriesSection />
       </div>
     </aside>
