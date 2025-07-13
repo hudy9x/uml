@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { atom, useAtom } from 'jotai';
 import { Category } from '@/databases/_types';
 import { 
   createCategory, 
@@ -20,16 +20,16 @@ interface CategoryStore {
   reorderCategoryList: (categoryIds: string[]) => Promise<void>;
 }
 
-export const useCategoryStore = create<CategoryStore>((set, get) => ({
-  categories: [],
+// Base atom for categories
+const categoriesAtom = atom<Category[]>([]);
 
-  loadCategories: async () => {
+// Action atoms
+const loadCategoriesAtom = atom(
+  null,
+  async (get, set) => {
     const categories = await getAllCategories();
     
-    // shift a default category to the top of the list
-    // this category is used to store diagrams that are not assigned to any category
     if (!categories.find((c) => c.name === "Default")) {
-
       categories.unshift({
         id: "default",
         name: "Default",
@@ -40,48 +40,98 @@ export const useCategoryStore = create<CategoryStore>((set, get) => ({
       });
     }
 
-    set({ categories });
-  },
+    set(categoriesAtom, categories);
+  }
+);
 
-  addCategory: (category: Category) => {
-    set((state) => ({
-      categories: [...state.categories, category]
-    }));
-  },
+const addCategoryAtom = atom(
+  null,
+  (get, set, category: Category) => {
+    const categories = get(categoriesAtom);
+    set(categoriesAtom, [...categories, category]);
+  }
+);
 
-  updateCategoryInStore: (category: Category) => {
-    set((state) => ({
-      categories: state.categories.map((c) => 
-        c.id === category.id ? category : c
-      )
-    }));
-  },
+const updateCategoryInStoreAtom = atom(
+  null,
+  (get, set, category: Category) => {
+    const categories = get(categoriesAtom);
+    set(categoriesAtom, categories.map((c) => 
+      c.id === category.id ? category : c
+    ));
+  }
+);
 
-  deleteCategoryFromStore: (id: string) => {
-    set((state) => ({
-      categories: state.categories.filter((c) => c.id !== id)
-    }));
-  },
+const deleteCategoryFromStoreAtom = atom(
+  null,
+  (get, set, id: string) => {
+    const categories = get(categoriesAtom);
+    set(categoriesAtom, categories.filter((c) => c.id !== id));
+  }
+);
 
-  createNewCategory: async (name: string, description?: string) => {
+const createNewCategoryAtom = atom(
+  null,
+  async (get, set, { name, description }: { name: string; description?: string }) => {
     const category = await createCategory(name, description);
-    get().addCategory(category);
+    const categories = get(categoriesAtom);
+    set(categoriesAtom, [...categories, category]);
     return category;
-  },
+  }
+);
 
-  updateExistingCategory: async (id: string, updates: Partial<Category>) => {
+const updateExistingCategoryAtom = atom(
+  null,
+  async (get, set, { id, updates }: { id: string; updates: Partial<Category> }) => {
     const updatedCategory = await updateCategory(id, updates);
-    get().updateCategoryInStore(updatedCategory);
-  },
+    const categories = get(categoriesAtom);
+    set(categoriesAtom, categories.map((c) => 
+      c.id === id ? updatedCategory : c
+    ));
+  }
+);
 
-  deleteExistingCategory: async (id: string) => {
+const deleteExistingCategoryAtom = atom(
+  null,
+  async (get, set, id: string) => {
     await deleteCategory(id);
-    get().deleteCategoryFromStore(id);
-  },
+    const categories = get(categoriesAtom);
+    set(categoriesAtom, categories.filter((c) => c.id !== id));
+  }
+);
 
-  reorderCategoryList: async (categoryIds: string[]) => {
+const reorderCategoryListAtom = atom(
+  null,
+  async (get, set, categoryIds: string[]) => {
     await reorderCategories(categoryIds);
     const categories = await getAllCategories();
-    set({ categories });
-  },
-})); 
+    set(categoriesAtom, categories);
+  }
+);
+
+// Hook to use the store
+export function useCategoryStore<T>(selector?: (state: CategoryStore) => T): T {
+  const [categories] = useAtom(categoriesAtom);
+  const [, loadCategories] = useAtom(loadCategoriesAtom);
+  const [, addCategory] = useAtom(addCategoryAtom);
+  const [, updateCategoryInStore] = useAtom(updateCategoryInStoreAtom);
+  const [, deleteCategoryFromStore] = useAtom(deleteCategoryFromStoreAtom);
+  const [, createNewCategory] = useAtom(createNewCategoryAtom);
+  const [, updateExistingCategory] = useAtom(updateExistingCategoryAtom);
+  const [, deleteExistingCategory] = useAtom(deleteExistingCategoryAtom);
+  const [, reorderCategoryList] = useAtom(reorderCategoryListAtom);
+
+  const store: CategoryStore = {
+    categories,
+    loadCategories: () => loadCategories(),
+    addCategory: (category) => addCategory(category),
+    updateCategoryInStore: (category) => updateCategoryInStore(category),
+    deleteCategoryFromStore: (id) => deleteCategoryFromStore(id),
+    createNewCategory: (name, description) => createNewCategory({ name, description }),
+    updateExistingCategory: (id, updates) => updateExistingCategory({ id, updates }),
+    deleteExistingCategory: (id) => deleteExistingCategory(id),
+    reorderCategoryList: (categoryIds) => reorderCategoryList(categoryIds),
+  };
+
+  return selector ? selector(store) : store as T;
+} 

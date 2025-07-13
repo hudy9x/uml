@@ -24,7 +24,7 @@ export default function CategoryItem({
     <div className="flex items-center justify-between px-2 pb-2">
       <h2
         onClick={handleClick}
-        className="text-primary/50 hover:text-primary uppercase text-[10px] cursor-pointer flex items-center gap-1"
+        className="text-foreground hover:text-primary uppercase text-[10px] cursor-pointer flex items-center gap-1"
       >
         <span># {category.name}</span>
         <ChevronDown

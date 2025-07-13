@@ -15,7 +15,7 @@ export default function RenameCategory({
   isEditing,
   onEditEnd,
 }: RenameCategoryProps) {
-  const { updateExistingCategory } = useCategoryStore();
+  const updateExistingCategory = useCategoryStore(state => state.updateExistingCategory);
   const [editedName, setEditedName] = useState(category.name);
   const inputRef = useRef<HTMLInputElement>(null);
 

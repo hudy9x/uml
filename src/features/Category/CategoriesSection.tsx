@@ -1,43 +1,43 @@
 import { useCategoryStore } from "@/stores/category";
 import CategoryItem from "./CategoryItem";
-import { useEffect, useMemo } from "react";
+import { useEffect, useCallback, memo } from "react";
 import DiagramList from "../Diagram/DiagramList";
 import { Category } from "@/databases/_types";
+
+const CategoryItemWithDiagrams = memo(({ category }: { category: Category }) => (
+  <CategoryItem key={category.id} category={category}>
+    <DiagramList categoryId={category.id} />
+  </CategoryItem>
+));
+
+CategoryItemWithDiagrams.displayName = 'CategoryItemWithDiagrams';
 
 export default function CategoriesSection() {
   const categories = useCategoryStore((state) => state.categories);
   const loadCategories = useCategoryStore((state) => state.loadCategories);
 
-  useEffect(() => {
+  const initializeCategories = useCallback(() => {
     console.log("called loadCategories");
     loadCategories();
-  }, []);
+  }, []); // loadCategories is stable from jotai
 
-  if (!categories) {
+  useEffect(() => {
+    initializeCategories();
+  }, [initializeCategories]);
+
+  if (!categories || categories.length === 0) {
     return null;
   }
 
-  console.trace("categories", categories);
-
-  // const renderCategory = useMemo(() => {
-  //   console.log("renderCategory", categories);
-  //   return categories.map((category) => {
-  //     return (
-  //       <CategoryItem key={category.id} category={category}>
-  //         <DiagramList categoryId={category.id} />
-  //       </CategoryItem>
-  //     );
-  //   });
-  // }, [categories]);
+  console.log("categories", categories);
 
   return (
     <div className="mt-4 mb-4 space-y-4">
-      {/* {renderCategory} */}
-
       {categories.map((category) => (
-        <CategoryItem key={category.id} category={category}>
-          <DiagramList categoryId={category.id} />
-        </CategoryItem>
+        <CategoryItemWithDiagrams 
+          key={category.id} 
+          category={category} 
+        />
       ))}
     </div>
   );
