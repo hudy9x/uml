@@ -1,4 +1,5 @@
 import CategoriesSection from "@/features/Category/CategoriesSection";
+import CategoriesSectionDnd from "@/features/Category/CategoriesSectionDnd";
 import DiagramCreate from "@/features/Diagram/DiagramCreate";
 
 export default function Sidebar() {
@@ -7,7 +8,8 @@ export default function Sidebar() {
       <DiagramCreate />
 
       <div className="overflow-x-hidden overflow-y-auto h-[calc(100vh-100px)] px-3">
-        <CategoriesSection />
+        {/* <CategoriesSection /> */}
+        <CategoriesSectionDnd />
       </div>
     </aside>
   );

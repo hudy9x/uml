@@ -160,6 +160,36 @@ export async function getCategoriesForProject(
   );
 }
 
+export async function reorderCategory({
+  categoryId,
+  toCategoryId,
+  beforeToCategoryId,
+}: {
+  categoryId: string;
+  toCategoryId: string;
+  beforeToCategoryId: string;
+}) {
+  const db = await getDB();
+
+  console.log('---------------------------------------')
+  console.log("categoryId", categoryId);
+  console.log("toCategoryId", toCategoryId);
+  console.log("beforeToCategoryId", beforeToCategoryId);
+
+  // const toCategory = await getCategoryById(toCategoryId);
+  // if (!toCategory) {
+  //   throw new Error("To category not found");
+  // }
+
+  // await db.execute(
+  //   "UPDATE categories SET position = position + 1 WHERE position >= $1",
+  //   [toCategoryId]
+  // );
+  // await db.execute(
+  //   "UPDATE categories SET position = $1 WHERE id = $2",
+  // )
+}
+
 // Reorder categories
 export async function reorderCategories(categoryIds: string[]): Promise<void> {
   const db = await getDB();

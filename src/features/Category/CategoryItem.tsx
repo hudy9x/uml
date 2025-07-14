@@ -4,19 +4,27 @@ import { Category } from "@/databases/_types";
 import { cn } from "@/lib/utils";
 import CategoryActions from "./CategoryActions";
 import AddCategoryButton from "./AddCategoryButton";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { DraggableAttributes } from "@dnd-kit/core";
 
 interface CategoryItemProps {
   category: Category;
   children: React.ReactNode;
+  attributes: DraggableAttributes;
+  listeners?: SyntheticListenerMap;
 }
 
 export default function CategoryItem({
   category,
   children,
+  attributes,
+  listeners,
 }: CategoryItemProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     setIsExpanded((prev) => !prev);
   };
 
@@ -26,7 +34,7 @@ export default function CategoryItem({
         onClick={handleClick}
         className="text-foreground hover:text-primary uppercase text-[10px] cursor-pointer flex items-center gap-1"
       >
-        <span># {category.name}</span>
+        <span {...attributes} {...listeners}># {category.name} {category.position}</span>
         <ChevronDown
           className={cn(
             "w-3 h-3 transition-transform duration-300",

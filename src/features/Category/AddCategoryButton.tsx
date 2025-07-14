@@ -4,7 +4,7 @@ import { useCategoryStore } from "@/stores/category";
 import { cn } from "@/lib/utils";
 
 export default function AddCategoryButton({className}: {className?: string}) {
-  const { createNewCategory } = useCategoryStore();
+  const createNewCategory = useCategoryStore((state) => state.createNewCategory);
 
   const handleCreateCategory = async () => {
     const name = "New Category";
