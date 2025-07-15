@@ -3,6 +3,7 @@ import { memo, useEffect, useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import DiagramItem from "./DiagramItem";
 import { getProjectListByCategoryId } from "@/databases/contentCategory";
+import { Project } from "@/databases/_types";
 
 const useFilteredProjects = (categoryId?: string | null) => {
   const projects = useProjectStore((state) => state.projects);
@@ -28,6 +29,10 @@ const useFilteredProjects = (categoryId?: string | null) => {
   return { filteredProjects };
 };
 
+const sortProjects = (projects: Project[]) => {
+  return projects.sort((a, b) => a.position - b.position);
+};
+
 function DiagramList({ categoryId }: { categoryId?: string | null }) {
   const { umlId } = useParams();
   const { filteredProjects } = useFilteredProjects(categoryId);
@@ -36,7 +41,7 @@ function DiagramList({ categoryId }: { categoryId?: string | null }) {
     return null;
   }
 
-  return filteredProjects.map((project, index) => {
+  return sortProjects(filteredProjects).map((project, index) => {
     const nextProject = filteredProjects[index + 1];
     const prevProject = filteredProjects[index - 1];
     const navigateTo = nextProject
