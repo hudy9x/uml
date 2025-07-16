@@ -3,6 +3,7 @@ import {
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -31,6 +32,14 @@ export const CategoryNDiagramDnDProvider = ({
   const [diagramIdByCategoryId, setDiagramIdByCategoryId] = useState<
     Record<string, string[]>
   >(diagramIdByCategoryIdData);
+
+  useEffect(() => {
+    setCategoryIds(categoryIdsData);
+  }, [categoryIdsData]);
+
+  useEffect(() => {
+    setDiagramIdByCategoryId(diagramIdByCategoryIdData);
+  }, [diagramIdByCategoryIdData]);
 
   return (
     <CategoryNDiagramDnDContext.Provider
