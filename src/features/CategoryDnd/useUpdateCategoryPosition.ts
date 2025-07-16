@@ -1,5 +1,11 @@
 import { useCategoryStore } from "@/stores/category";
-import { extractCategoryId } from "./CategoryDndContext";
+
+export const PREFIX = "category-";
+
+export function extractCategoryId(id: string) {
+  const extracted = id.replace(PREFIX, "");
+  return extracted === "default" ? "" : extracted;
+}
 
 export default function useUpdateCategoryPosition() {
   const categoryMetadatas = useCategoryStore((state) => state.categories);

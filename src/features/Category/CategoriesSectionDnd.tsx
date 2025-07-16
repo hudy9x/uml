@@ -36,16 +36,16 @@ CategoryItemWithDiagrams.displayName = "CategoryItemWithDiagrams";
 
 export default function CategoriesSectionDnd() {
   const categories = useCategoryStore((state) => state.categories);
-  const loadCategories = useCategoryStore((state) => state.loadCategories);
+  // const loadCategories = useCategoryStore((state) => state.loadCategories);
 
-  const initializeCategories = useCallback(() => {
-    // console.log("called loadCategories");
-    loadCategories();
-  }, []); // loadCategories is stable from jotai
+  // const initializeCategories = useCallback(() => {
+  //   // console.log("called loadCategories");
+  //   loadCategories();
+  // }, []); // loadCategories is stable from jotai
 
-  useEffect(() => {
-    initializeCategories();
-  }, [initializeCategories]);
+  // useEffect(() => {
+  //   initializeCategories();
+  // }, [initializeCategories]);
 
   if (!categories || categories.length === 0) {
     return null;
