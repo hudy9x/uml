@@ -49,7 +49,7 @@ export default function CategoryItem({
   return (
     <div className="category-item text-sm group/category-item">
       <CategoryActions category={category}>{categoryContent}</CategoryActions>
-      {isExpanded && <nav className="flex flex-col gap-0.5">{children}</nav>}
+      {isExpanded && children}
     </div>
   );
 }

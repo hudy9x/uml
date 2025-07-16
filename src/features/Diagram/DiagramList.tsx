@@ -41,23 +41,28 @@ function DiagramList({ categoryId }: { categoryId?: string | null }) {
     return null;
   }
 
-  return sortProjects(filteredProjects).map((project, index) => {
-    const nextProject = filteredProjects[index + 1];
-    const prevProject = filteredProjects[index - 1];
-    const navigateTo = nextProject
-      ? nextProject.id
-      : prevProject
-      ? prevProject.id
-      : null;
-    return (
-      <DiagramItem
-        key={project.id}
-        project={project}
-        currentUmlId={umlId || null}
-        nagivateToIdAfterDelete={navigateTo}
-      />
-    );
-  });
+  const sorted = sortProjects(filteredProjects);
+  const getNavigateToId = (index: number) => {
+    const nextProject = sorted[index + 1];
+    const prevProject = sorted[index - 1];
+    return nextProject ? nextProject.id : prevProject ? prevProject.id : null;
+  };
+  
+  return (
+    <nav className="flex flex-col gap-0.5">
+      {sorted.map((project, index) => {
+        const navigateTo = getNavigateToId(index);
+        return (
+          <DiagramItem
+            key={project.id}
+            project={project}
+            currentUmlId={umlId || null}
+            nagivateToIdAfterDelete={navigateTo}
+          />
+        );
+      })}
+    </nav>
+  );
 }
 
 export default memo(DiagramList);
