@@ -10,6 +10,8 @@ import {
 
 interface CategoryStore {
   categories: Category[];
+  isLoading: boolean;
+  isSuccess: boolean;
   loadCategories: () => Promise<void>;
   addCategory: (category: Category) => void;
   updateCategoryInStore: (category: Category) => void;
@@ -22,11 +24,21 @@ interface CategoryStore {
 
 // Base atom for categories
 const categoriesAtom = atom<Category[]>([]);
+const isLoadingAtom = atom(false);
+const isSuccessAtom = atom(false);
 
 // Action atoms
 const loadCategoriesAtom = atom(
   null,
   async (get, set) => {
+    // if (get(isLoadingAtom)) {
+    //   return;
+    // }
+
+    console.log("loadCategoriesAtom");
+
+    set(isLoadingAtom, true);
+    set(isSuccessAtom, false);
     const categories = await getAllCategories();
     
     if (!categories.find((c) => c.name === "Default")) {
@@ -41,6 +53,9 @@ const loadCategoriesAtom = atom(
     }
 
     set(categoriesAtom, categories);
+    set(isLoadingAtom, false);
+    set(isSuccessAtom, true);
+    console.log('set success loading category')
   }
 );
 
@@ -112,6 +127,8 @@ const reorderCategoryListAtom = atom(
 // Hook to use the store
 export function useCategoryStore<T>(selector?: (state: CategoryStore) => T): T {
   const [categories] = useAtom(categoriesAtom);
+  const [isLoading] = useAtom(isLoadingAtom);
+  const [isSuccess] = useAtom(isSuccessAtom);
   const [, loadCategories] = useAtom(loadCategoriesAtom);
   const [, addCategory] = useAtom(addCategoryAtom);
   const [, updateCategoryInStore] = useAtom(updateCategoryInStoreAtom);
@@ -123,6 +140,8 @@ export function useCategoryStore<T>(selector?: (state: CategoryStore) => T): T {
 
   const store: CategoryStore = {
     categories,
+    isLoading,
+    isSuccess,
     loadCategories: () => loadCategories(),
     addCategory: (category) => addCategory(category),
     updateCategoryInStore: (category) => updateCategoryInStore(category),
