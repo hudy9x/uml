@@ -19,12 +19,13 @@ import {
 import { memo, useEffect, useState } from "react";
 import { CategorySortableItem } from "./CategorySortableItem";
 import useUpdateCategoryPosition, { PREFIX } from "./useUpdateCategoryPosition";
+import { useCategoryNDiagramDnD } from "./CategoryNDiagramDndContext";
 
 function CategoryDndContextMain({
-  categories,
+  // categories,
   children,
 }: {
-  categories: string[];
+  // categories: string[];
   children: (
     catId: string,
     attributes: DraggableAttributes,
@@ -32,15 +33,16 @@ function CategoryDndContextMain({
   ) => React.ReactNode;
 }) {
   console.log('called CategoryDndContextMain')
-  
-  const [items, setItems] = useState(categories);
+
+  // const [items, setItems] = useState(categories);
+  const { categoryIds: items, setCategoryIds: setItems } = useCategoryNDiagramDnD();
   const { reorderCategoryHandler } = useUpdateCategoryPosition();
 
   // listen changes when adding or deleting category
-  useEffect(() => {
-    console.log("update category trigger by adding/deleting");
-    setItems(categories);
-  }, [categories]);
+  // useEffect(() => {
+  //   console.log("update category trigger by adding/deleting");
+  //   setItems(categories);
+  // }, [categories]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),

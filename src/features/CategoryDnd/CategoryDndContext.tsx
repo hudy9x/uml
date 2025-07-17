@@ -4,6 +4,7 @@ import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { useMemo } from "react";
 import CategoryDndContextMain from "./CategoryDndContextMain";
 import useConvertCategoryNDiagram from "./useConvertCategoryNDiagram";
+import { CategoryNDiagramDnDProvider } from "./CategoryNDiagramDndContext";
 
 export default function CategoryDndContext({
   children,
@@ -15,14 +16,27 @@ export default function CategoryDndContext({
     listeners?: SyntheticListenerMap
   ) => React.ReactNode;
 }) {
-  const { categoryIds, diagramIdsByCategory, isLoading } =
+  const { categoryIds, diagramIdsByCategory } =
     useConvertCategoryNDiagram();
 
   const view = useMemo(() => {
+    console.log("render CategoryDndContext");
     return (
-      <CategoryDndContextMain categories={categoryIds} children={children} />
+      <CategoryNDiagramDnDProvider
+        categoryIdsData={categoryIds}
+        diagramIdByCategoryIdData={diagramIdsByCategory}
+      >
+        <CategoryDndContextMain
+          // categories={categoryIds}
+          children={children}
+        />
+      </CategoryNDiagramDnDProvider>
     );
-  }, [categoryIds, children]);
+  }, [
+    JSON.stringify(categoryIds),
+    JSON.stringify(diagramIdsByCategory),
+    children,
+  ]);
 
   return view;
 }
