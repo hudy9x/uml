@@ -1,6 +1,6 @@
 import { useCategoryStore } from "@/stores/category";
 import CategoryItem from "./CategoryItem";
-import { useEffect, useCallback, memo } from "react";
+import { memo } from "react";
 import DiagramList from "../Diagram/DiagramList";
 import CategoryDndContext from "../CategoryDnd/CategoryDndContext";
 import { DraggableAttributes } from "@dnd-kit/core";
@@ -36,16 +36,6 @@ CategoryItemWithDiagrams.displayName = "CategoryItemWithDiagrams";
 
 export default function CategoriesSectionDnd() {
   const categories = useCategoryStore((state) => state.categories);
-  // const loadCategories = useCategoryStore((state) => state.loadCategories);
-
-  // const initializeCategories = useCallback(() => {
-  //   // console.log("called loadCategories");
-  //   loadCategories();
-  // }, []); // loadCategories is stable from jotai
-
-  // useEffect(() => {
-  //   initializeCategories();
-  // }, [initializeCategories]);
 
   if (!categories || categories.length === 0) {
     return null;

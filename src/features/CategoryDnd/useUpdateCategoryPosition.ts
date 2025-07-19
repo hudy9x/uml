@@ -1,9 +1,15 @@
 import { useCategoryStore } from "@/stores/category";
+import { DIAGRAM_PREFIX } from "./useConvertCategoryNDiagram";
 
 export const PREFIX = "category-";
 
 export function extractCategoryId(id: string) {
   const extracted = id.replace(PREFIX, "");
+  return extracted === "default" ? "" : extracted;
+}
+
+export function extractDiagramId(id: string) {
+  const extracted = id.replace(DIAGRAM_PREFIX, "");
   return extracted === "default" ? "" : extracted;
 }
 

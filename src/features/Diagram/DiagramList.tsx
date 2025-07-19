@@ -1,66 +1,70 @@
 import { useProjectStore } from "@/stores/project";
-import { memo, useEffect, useCallback, useState } from "react";
+import { memo } from "react";
 import { useParams } from "react-router-dom";
 import DiagramItem from "./DiagramItem";
-import { getProjectListByCategoryId } from "@/databases/contentCategory";
-import { Project } from "@/databases/_types";
+import DiagramSortableContext from "../DiagramDnd/DiagramSortableContext";
+import { useCategoryNDiagramDnD } from "../CategoryDnd/CategoryNDiagramDndContext";
+import { PREFIX } from "../CategoryDnd/useUpdateCategoryPosition";
 
-const useFilteredProjects = (categoryId?: string | null) => {
+function useGetDiagramById() {
   const projects = useProjectStore((state) => state.projects);
-  const [filteredIds, setFilteredIds] = useState<string[]>([]);
 
-  const filteredProjects =
-    categoryId === "default"
-      ? projects
-      : projects.filter((project) => filteredIds.includes(project.id));
-
-  const loadProjects = useCallback(() => {
-    if (categoryId && categoryId !== "default") {
-      getProjectListByCategoryId(categoryId).then((projects) => {
-        setFilteredIds(projects);
-      });
-    }
-  }, [categoryId]); // Remove loadProjectsByCategoryId from deps
-
-  useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
-
-  return { filteredProjects };
-};
-
-const sortProjects = (projects: Project[]) => {
-  return projects.sort((a, b) => a.position - b.position);
-};
+  return {
+    getDiagramById: (id: string) => {
+      return projects.find((p) => p.id === id);
+    },
+  };
+}
 
 function DiagramList({ categoryId }: { categoryId?: string | null }) {
+  const { diagramIdByCategoryId } = useCategoryNDiagramDnD();
+  const { getDiagramById } = useGetDiagramById();
+  const key = categoryId !== "default" ? `${PREFIX}${categoryId}` : "default";
+  const sorted = diagramIdByCategoryId[key] || [];
+
   const { umlId } = useParams();
-  const { filteredProjects } = useFilteredProjects(categoryId);
 
-  if (!filteredProjects || filteredProjects.length === 0) {
-    return null;
-  }
-
-  const sorted = sortProjects(filteredProjects);
   const getNavigateToId = (index: number) => {
     const nextProject = sorted[index + 1];
     const prevProject = sorted[index - 1];
-    return nextProject ? nextProject.id : prevProject ? prevProject.id : null;
+
+    const navigateId = nextProject
+      ? nextProject
+      : prevProject
+      ? prevProject
+      : null;
+
+    if (!navigateId) {
+      return null;
+    }
+
+    const splitedId = navigateId.split("#");
+
+    return splitedId[1];
   };
-  
+
   return (
     <nav className="flex flex-col gap-0.5">
-      {sorted.map((project, index) => {
-        const navigateTo = getNavigateToId(index);
-        return (
-          <DiagramItem
-            key={project.id}
-            project={project}
-            currentUmlId={umlId || null}
-            nagivateToIdAfterDelete={navigateTo}
-          />
-        );
-      })}
+      <DiagramSortableContext items={sorted}>
+        {({ itemId, attributes, listeners }) => {
+          const project = getDiagramById(itemId);
+          if (!project) {
+            return null;
+          }
+
+          const navigateTo = getNavigateToId(sorted.indexOf(itemId));
+
+          return (
+            <DiagramItem
+              attributes={attributes}
+              listeners={listeners}
+              project={project}
+              currentUmlId={umlId || null}
+              nagivateToIdAfterDelete={navigateTo}
+            />
+          );
+        }}
+      </DiagramSortableContext>
     </nav>
   );
 }

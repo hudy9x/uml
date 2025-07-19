@@ -34,7 +34,7 @@ export default function CategoryItem({
         onClick={handleClick}
         className="text-foreground hover:text-primary uppercase text-[10px] cursor-pointer flex items-center gap-1"
       >
-        <span {...attributes} {...listeners}># {category.name} {category.position}</span>
+        <span {...attributes} {...listeners}># {category.name}</span>
         <ChevronDown
           className={cn(
             "w-3 h-3 transition-transform duration-300",

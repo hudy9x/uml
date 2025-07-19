@@ -5,7 +5,7 @@ import { useProjectStore } from "@/stores/project";
 import { useNavigate } from "react-router-dom";
 
 export default function DiagramCreate() {
-  const { addProject } = useProjectStore();
+  const addProject = useProjectStore(state => state.addProject);
   const navigate = useNavigate();
 
   async function handleCreate() {

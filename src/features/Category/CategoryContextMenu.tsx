@@ -19,7 +19,7 @@ export default function CategoryContextMenu({
   onStartEdit,
   children,
 }: CategoryContextMenuProps) {
-  const { deleteExistingCategory } = useCategoryStore();
+  const deleteExistingCategory = useCategoryStore(state => state.deleteExistingCategory);
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.preventDefault();

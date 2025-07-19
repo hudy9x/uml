@@ -3,7 +3,7 @@ import { useContentCategoryStore } from "@/stores/contentCategory";
 import { PREFIX as CATEGORY_PREFIX } from "./useUpdateCategoryPosition";
 import { useProjectStore } from "@/stores/project";
 
-const DIAGRAM_PREFIX = "diagram-";
+export const DIAGRAM_PREFIX = "diagram-";
 
 export default function useConvertCategoryNDiagram(): {
   isLoading: boolean;
@@ -11,7 +11,7 @@ export default function useConvertCategoryNDiagram(): {
   diagramIdsByCategory: Record<string, string[]>;
 } {
   const diagramIds = useProjectStore((state) =>
-    state.projects.map((project) => project.id)
+    state.projects.sort((a, b) => a.position - b.position).map((project) => project.id)
   );
   const isSuccessProjects = useProjectStore((state) => state.isSuccess);
 
@@ -57,11 +57,11 @@ export default function useConvertCategoryNDiagram(): {
       if (!diagramIdsByCategory[key]) {
         diagramIdsByCategory[key] = [];
       }
-      diagramIdsByCategory[key].push(`${DIAGRAM_PREFIX}${dId}`);
+      diagramIdsByCategory[key].push(`${DIAGRAM_PREFIX}${key}#${dId}`);
       return;
     }
 
-    diagramIdsByCategory.default.push(`${DIAGRAM_PREFIX}${dId}`);
+    diagramIdsByCategory.default.push(`${DIAGRAM_PREFIX}default#${dId}`);
   });
 
   return {

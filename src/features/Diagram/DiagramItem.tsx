@@ -5,18 +5,37 @@ import { memo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useProjectStore } from "@/stores/project";
 import { X } from "lucide-react";
+import { DraggableAttributes } from "@dnd-kit/core";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { clearCacheRoute } from "@/lib/cache-route";
 
 function DiagramItem({
   project,
   currentUmlId,
   nagivateToIdAfterDelete,
+  attributes,
+  listeners,
 }: {
   project: UMLProject;
   currentUmlId: string | null;
   nagivateToIdAfterDelete: string | null;
+  attributes: DraggableAttributes;
+  listeners?: SyntheticListenerMap;
 }) {
-  const deleteProject = useProjectStore(state => state.deleteProject);
+  const deleteProject = useProjectStore((state) => state.deleteProject);
   const navigate = useNavigate();
+
+  const activeOtherUml = (navigateTo: string | null) => {
+    if (!currentUmlId || currentUmlId !== project.id) {
+      return;
+    }
+
+    if (navigateTo) {
+      navigate(`/uml/${navigateTo}`);
+    } else {
+      navigate("/");
+    }
+  };
 
   async function handleDelete(
     e: React.MouseEvent,
@@ -25,13 +44,10 @@ function DiagramItem({
   ) {
     e.preventDefault();
     e.stopPropagation();
-    await deleteProject(id);
 
-    if (navigateTo) {
-      navigate(`/uml/${navigateTo}`);
-    } else {
-      navigate("/");
-    }
+    await deleteProject(id);
+    clearCacheRoute();
+    activeOtherUml(navigateTo);
   }
 
   return (
@@ -44,8 +60,17 @@ function DiagramItem({
       to={`/uml/${project.id}`}
     >
       <div className="flex items-center gap-2 grow-0 w-[92%]">
+        <div
+          {...attributes}
+          {...listeners}
+          className="absolute group/diagram-item transition-all duration-300 hover:w-full hover:backdrop-blur-xs hover:bg-foreground/20 left-0 top-0 w-7 h-full bg-transparent cursor-grab"
+        >
+          <span className="absolute invisible group-hover/diagram-item:visible pointer-events-none left-0 top-0 w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+            Drag me to sort
+          </span>
+        </div>
         <UmlIcon type={project.type || "sequence"} />
-        <span className="truncate">{project.name}</span>
+        <span className="truncate">{project.name} - {project.position}</span>
       </div>
       <button
         onClick={(e) => handleDelete(e, project.id, nagivateToIdAfterDelete)}
