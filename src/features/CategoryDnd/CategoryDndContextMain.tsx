@@ -30,6 +30,7 @@ import {
   updateDiagramCategory,
 } from "@/databases/contentCategory";
 import useUpdateDiagramPosition from "./useUpdateDiagramPosition";
+import { toast } from "sonner";
 
 function CategoryDndContextMain({
   // categories,
@@ -61,6 +62,11 @@ function CategoryDndContextMain({
   );
 
   function moveCategory(activeId: string, overId: string) {
+    if (overId === "category-default") {
+      toast.warning("You can't move a category to the default category");
+      return;
+    }
+
     if (activeId !== overId) {
       setItems((items) => {
         const oldIndex = items.indexOf(activeId);
