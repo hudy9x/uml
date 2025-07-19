@@ -81,7 +81,7 @@ const updateProjectContentAtom = atom(
   null,
   async (get, set, { id, content }: { id: string; content: string }) => {
     const type = detectUMLType(content);
-    await updateProject(id, { content });
+    await updateProject(id, { content, type });
     const projects = get(projectsAtom);
     set(
       projectsAtom,
