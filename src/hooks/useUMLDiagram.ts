@@ -16,6 +16,7 @@ export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
   const [umlCode, setUmlCode] = useState(initialCode);
   const [svgContent, setSvgContent] = useState("");
   const { previewBackground, isDarkBackground } = useBackground();
+  const updateProjectContent = useProjectStore((state) => state.updateProjectContent);
 
   const changeBackground = (isDark: boolean, umlCode: string) => {
     if (isDark) {
@@ -54,7 +55,7 @@ root {
       if (umlId) {
         StatusBadge.loading(true);
         try {
-          await useProjectStore.getState().updateProjectContent(umlId, umlCode);
+          await updateProjectContent(umlId, umlCode);
           StatusBadge.loading(false);
         } catch (error) {
           StatusBadge.loading(false);

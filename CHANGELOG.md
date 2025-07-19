@@ -2,8 +2,10 @@
 
 🔨 Other Changes
 
-- Skip: add a condition to skip counting the version ([99678ed](../../commit/99678ed))
-- Skip the locked version and start counting from next commit message ([0101b60](../../commit/0101b60))
+- Fix build error ([306abd5](../../commit/306abd5))
+- NOT allow to move category to default category ([622f5d5](../../commit/622f5d5))
+- Remove diagram's position ([48ecb59](../../commit/48ecb59))
+- Bump new version ([89049dd](../../commit/89049dd))
 
 
-📋 Full Changelog: [0101b60...99678ed](../../compare/0101b60...99678ed)
+📋 Full Changelog: [89049dd...306abd5](../../compare/89049dd...306abd5)

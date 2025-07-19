@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { UMLProject } from "../databases/_types";
-import { getDeletedProjects, permanentlyDeleteProject } from "../databases/projects";
+import {
+  getDeletedProjects,
+  permanentlyDeleteProject,
+} from "../databases/projects";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -19,7 +22,7 @@ export function DeletedProjectsDialog() {
   const [deletedProjects, setDeletedProjects] = useState<UMLProject[]>([]);
   const [loading, setLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  const restoreProject = useProjectStore(state => state.restoreProject);
+  const restoreProject = useProjectStore((state) => state.restoreProject);
 
   const loadDeletedProjects = async () => {
     const projects = await getDeletedProjects();
@@ -66,16 +69,22 @@ export function DeletedProjectsDialog() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Deleted UML Diagrams</DialogTitle>
+            <DialogTitle className="text-foreground">
+              Deleted UML Diagrams
+            </DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <div className="flex items-center justify-between pb-2">
-              <p className="text-sm text-muted-foreground">
-                There are {deletedProjects.length} deleted diagrams left
-              </p>
-            </div>
+            {deletedProjects.length > 1 ? (
+              <div className="flex items-center justify-between pb-2">
+                <p className="text-sm text-muted-foreground">
+                  There are {deletedProjects.length} deleted diagrams left
+                </p>
+              </div>
+            ) : null}
             {deletedProjects.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center">No deleted diagrams found</p>
+              <p className="border border-dashed border-muted-foreground/50 rounded-md p-4 text-sm text-muted-foreground text-center">
+                No deleted diagrams found
+              </p>
             ) : (
               <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
                 {deletedProjects.map((project) => (
@@ -84,9 +93,15 @@ export function DeletedProjectsDialog() {
                     className="flex items-center justify-between p-3 rounded-lg border border-border bg-card"
                   >
                     <div className="space-y-1">
-                      <h3 className="text-sm font-medium text-foreground">{project.name}</h3>
+                      <h3 className="text-sm font-medium text-foreground">
+                        {project.name}
+                      </h3>
                       <p className="text-xs text-muted-foreground">
-                        Updated {format(new Date(project.updated_at), "MMM d, yyyy HH:mm")}
+                        Updated{" "}
+                        {format(
+                          new Date(project.updated_at),
+                          "MMM d, yyyy HH:mm"
+                        )}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -115,24 +130,29 @@ export function DeletedProjectsDialog() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!confirmDelete} onOpenChange={() => setConfirmDelete(null)}>
+      <Dialog
+        open={!!confirmDelete}
+        onOpenChange={() => setConfirmDelete(null)}
+      >
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-destructive">Confirm Permanent Delete</DialogTitle>
+            <DialogTitle className="text-destructive">
+              Confirm Permanent Delete
+            </DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              This action cannot be undone. This will permanently delete the UML diagram.
+              This action cannot be undone. This will permanently delete the UML
+              diagram.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="space-y-2 sm:space-y-0">
-            <Button
-              variant="outline"
-              onClick={() => setConfirmDelete(null)}
-            >
+            <Button variant="outline" onClick={() => setConfirmDelete(null)}>
               Cancel
             </Button>
             <Button
               variant="destructive"
-              onClick={() => confirmDelete && handlePermanentDelete(confirmDelete)}
+              onClick={() =>
+                confirmDelete && handlePermanentDelete(confirmDelete)
+              }
               disabled={loading}
             >
               Delete Permanently
@@ -142,4 +162,4 @@ export function DeletedProjectsDialog() {
       </Dialog>
     </>
   );
-} 
+}

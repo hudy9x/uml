@@ -18,7 +18,7 @@ import { useProjectStore } from "@/stores/project";
 export default function UMLEditor() {
   const { umlId } = useParams();
   const navigate = useNavigate();
-  const { projects } = useProjectStore();
+  const projects = useProjectStore((state) => state.projects);
   const projectName = projects.find(p => p.id === umlId)?.name ?? "";
   const maxEditorSize = 100;
   const [editorSize, setEditorSize] = useState(30);
