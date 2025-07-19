@@ -125,7 +125,7 @@ export async function getProject(id: string): Promise<UMLProject | undefined> {
 
 export async function updateProject(
   id: string,
-  updates: Partial<Pick<UMLProject, "content" | "name" | "type">>
+  updates: Partial<Pick<UMLProject, "content" | "name" | "type" | "position">>
 ): Promise<void> {
   const db = await getDB();
   const now = new Date().toISOString();
@@ -152,6 +152,13 @@ export async function updateProject(
       [updates.type, now, id]
     );
   }
+
+  if (updates.position !== undefined) {
+    await db.execute(
+      "UPDATE uml_projects SET position = $1, updated_at = $2 WHERE id = $3",
+      [updates.position, now, id]
+    );
+  }
 }
 
 export async function deleteProject(id: string): Promise<void> {
@@ -162,6 +169,8 @@ export async function deleteProject(id: string): Promise<void> {
     "UPDATE uml_projects SET is_deleted = 1, updated_at = $1 WHERE id = $2",
     [now, id]
   );
+
+  await db.execute(`DELETE FROM content_categories WHERE project_id = $1`, [id]);
 }
 
 export async function listProjects(
