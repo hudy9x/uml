@@ -2,8 +2,10 @@
 
 🔨 Other Changes
 
-- Remember the expanded state of each category ([456f35c](../../commit/456f35c))
-- Bump new version ([ad3c161](../../commit/ad3c161))
+- Fix build error ([306abd5](../../commit/306abd5))
+- NOT allow to move category to default category ([622f5d5](../../commit/622f5d5))
+- Remove diagram's position ([48ecb59](../../commit/48ecb59))
+- Bump new version ([89049dd](../../commit/89049dd))
 
 
-📋 Full Changelog: [ad3c161...456f35c](../../compare/ad3c161...456f35c)
+📋 Full Changelog: [89049dd...306abd5](../../compare/89049dd...306abd5)
