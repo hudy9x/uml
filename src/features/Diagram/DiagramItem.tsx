@@ -70,7 +70,7 @@ function DiagramItem({
           </span>
         </div>
         <UmlIcon type={project.type || "sequence"} />
-        <span className="truncate">{project.name} - {project.position}</span>
+        <span className="truncate">{project.name}</span>
       </div>
       <button
         onClick={(e) => handleDelete(e, project.id, nagivateToIdAfterDelete)}
