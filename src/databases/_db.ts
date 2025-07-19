@@ -60,5 +60,5 @@ export async function initDB() {
     CREATE INDEX IF NOT EXISTS idx_content_categories_category ON content_categories(category_id)
   `);
 
-  // await migrate(db);
+  await migrate(db);
 }

@@ -18,7 +18,7 @@ export function UMLEditorHeader({
   onOpenPreview,
 }: UMLEditorHeaderProps) {
   const { editorBackground } = useBackground();
-  const { updateProjectName } = useProjectStore();
+  const updateProjectName = useProjectStore((state) => state.updateProjectName);
   const { umlId } = useParams();
 
   const [isEditingName, setIsEditingName] = useState(false);

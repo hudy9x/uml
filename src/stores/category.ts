@@ -30,7 +30,7 @@ const isSuccessAtom = atom(false);
 // Action atoms
 const loadCategoriesAtom = atom(
   null,
-  async (get, set) => {
+  async (_, set) => {
     // if (get(isLoadingAtom)) {
     //   return;
     // }
@@ -117,7 +117,7 @@ const deleteExistingCategoryAtom = atom(
 
 const reorderCategoryListAtom = atom(
   null,
-  async (get, set, categoryIds: string[]) => {
+  async (_, set, categoryIds: string[]) => {
     await reorderCategories(categoryIds);
     const categories = await getAllCategories();
     set(categoriesAtom, categories);

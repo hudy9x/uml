@@ -6,7 +6,7 @@ import { createProject } from "@/databases/projects";
 
 export default function Empty() {
   const navigate = useNavigate();
-  const { addProject } = useProjectStore();
+  const addProject = useProjectStore((state) => state.addProject);
 
   const handleCreate = async () => {
     const project = await createProject();

@@ -13,7 +13,7 @@ import { useProjectStore } from './stores/project';
 import Test from './pages/Test';
 import { useContentCategoryStore } from './stores/contentCategory';
 import { useCategoryStore } from './stores/category';
-import { Circle, LoaderCircle } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 
 // Initialize DB immediately
 initDB().catch(console.error);

@@ -16,7 +16,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { CategorySortableItem } from "./CategorySortableItem";
 import useUpdateCategoryPosition, {
   PREFIX as CATEGORY_PREFIX,
