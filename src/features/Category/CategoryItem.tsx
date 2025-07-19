@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Category } from "@/databases/_types";
 import { cn } from "@/lib/utils";
@@ -6,6 +5,7 @@ import CategoryActions from "./CategoryActions";
 import AddCategoryButton from "./AddCategoryButton";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { DraggableAttributes } from "@dnd-kit/core";
+import { useCollapsedCategory } from "./useCollapsedCategory";
 
 interface CategoryItemProps {
   category: Category;
@@ -20,12 +20,12 @@ export default function CategoryItem({
   attributes,
   listeners,
 }: CategoryItemProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const { isExpanded, toggleExpanded } = useCollapsedCategory(category.id);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    setIsExpanded((prev) => !prev);
+    toggleExpanded();
   };
 
   const categoryContent = (
@@ -34,7 +34,9 @@ export default function CategoryItem({
         onClick={handleClick}
         className="text-foreground hover:text-primary uppercase text-[10px] cursor-pointer flex items-center gap-1"
       >
-        <span {...attributes} {...listeners}># {category.name}</span>
+        <span {...attributes} {...listeners}>
+          # {category.name}
+        </span>
         <ChevronDown
           className={cn(
             "w-3 h-3 transition-transform duration-300",

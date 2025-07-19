@@ -63,7 +63,7 @@ function DiagramItem({
         <div
           {...attributes}
           {...listeners}
-          className="absolute group/diagram-item transition-all duration-300 hover:w-full hover:backdrop-blur-xs hover:bg-foreground/20 left-0 top-0 w-7 h-full bg-transparent cursor-grab"
+          className="absolute group/diagram-item transition-all duration-100 hover:w-full hover:backdrop-blur-xs hover:bg-foreground/20 left-0 top-0 w-7 h-full bg-transparent cursor-grab"
         >
           <span className="absolute invisible group-hover/diagram-item:visible pointer-events-none left-0 top-0 w-full h-full flex items-center justify-center text-xs text-muted-foreground">
             Drag me to sort
