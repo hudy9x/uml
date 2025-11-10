@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Folder, FolderClosed, FolderOpen } from "lucide-react";
 import { Category } from "@/databases/_types";
 import { cn } from "@/lib/utils";
 import CategoryActions from "./CategoryActions";
@@ -6,6 +6,9 @@ import AddCategoryButton from "./AddCategoryButton";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { DraggableAttributes } from "@dnd-kit/core";
 import { useCollapsedCategory } from "./useCollapsedCategory";
+
+import FolderIcon from "@/assets/folder.png";
+import FolderOpenIcon from "@/assets/open-folder.png";
 
 interface CategoryItemProps {
   category: Category;
@@ -34,8 +37,11 @@ export default function CategoryItem({
         onClick={handleClick}
         className="text-foreground hover:text-primary uppercase text-[10px] cursor-pointer flex items-center gap-1"
       >
-        <span {...attributes} {...listeners}>
-          # {category.name}
+        <span {...attributes} {...listeners} className="flex items-center gap-2">
+          {isExpanded 
+            ? <img className="size-4 inline-block" src={FolderIcon}/> 
+            : <img className="size-4 inline-block" src={FolderOpenIcon}/>  }
+          {category.name}
         </span>
         <ChevronDown
           className={cn(
