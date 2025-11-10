@@ -4,8 +4,8 @@ import { Plus } from "lucide-react";
 import { useProjectStore } from "@/stores/project";
 import { useNavigate } from "react-router-dom";
 
-export default function DiagramCreate() {
-  const addProject = useProjectStore(state => state.addProject);
+export default function DiagramCreate({ className }: { className?: string }) {
+  const addProject = useProjectStore((state) => state.addProject);
   const navigate = useNavigate();
 
   async function handleCreate() {
@@ -15,8 +15,8 @@ export default function DiagramCreate() {
   }
 
   return (
-    <div className="px-3">
-      <Button variant="outline" onClick={handleCreate} className="w-full">
+    <div className="w-full">
+      <Button variant="outline" onClick={handleCreate} className={className ?? "w-full"}>
         <Plus className="h-4 w-4" />
         New Diagram
       </Button>

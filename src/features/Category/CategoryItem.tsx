@@ -1,4 +1,4 @@
-import { ChevronDown, Folder, FolderClosed, FolderOpen } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Category } from "@/databases/_types";
 import { cn } from "@/lib/utils";
 import CategoryActions from "./CategoryActions";
