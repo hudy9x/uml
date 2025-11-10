@@ -15,7 +15,7 @@ interface UseUMLDiagramProps {
 export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
   const [umlCode, setUmlCode] = useState(initialCode);
   const [svgContent, setSvgContent] = useState("");
-  const { previewBackground, isDarkBackground } = useBackground();
+  const { previewBackground, isDarkBackground, previewUrl } = useBackground();
   const updateProjectContent = useProjectStore((state) => state.updateProjectContent);
 
   const changeBackground = (isDark: boolean, umlCode: string) => {
@@ -41,9 +41,8 @@ root {
 
       // Generate SVG
       try {
-        const res = await fetch(
-          `https://www.plantuml.com/plantuml/${isDarkBackground ? 'd' : ''}svg/${encoded}`
-        );
+        const base = (previewUrl ?? '').replace(/\/$/, '');
+        const res = await fetch(`${base}/svg/${encoded}`);
         const svg = await res.text();
         setSvgContent(svg);
       } catch (error) {
@@ -64,7 +63,7 @@ root {
     }, 800);
 
     return () => clearTimeout(debounceTimeout);
-  }, [umlCode, umlId, isDarkBackground]);
+  }, [umlCode, umlId, isDarkBackground, previewUrl]);
 
   return {
     umlCode,

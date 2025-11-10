@@ -3,6 +3,7 @@ import { Github } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "./ui/switch";
 import { DeletedProjectsDialog } from "./DeletedProjectsDialog";
+import { PreviewUrlDialog } from "./PreviewUrlDialog";
 
 export function Footer() {
   const { setTheme, theme } = useTheme();
@@ -12,6 +13,7 @@ export function Footer() {
       <div className="flex items-center gap-4">
         <VersionDisplay />
         <DeletedProjectsDialog />
+        <PreviewUrlDialog />
       </div>
 
       <div className="flex items-center gap-4">
