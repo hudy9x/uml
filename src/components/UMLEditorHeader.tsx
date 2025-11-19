@@ -5,17 +5,21 @@ import { cn } from "../lib/utils";
 import { useBackground } from "../hooks/useBackground";
 import { useProjectStore } from "@/stores/project";
 import { useParams } from "react-router-dom";
+import { Button } from "./ui/button";
+import { Save } from "lucide-react";
 
 interface UMLEditorHeaderProps {
   projectName: string;
   umlCode: string;
   onOpenPreview: () => void;
+  onSave?: () => void;
 }
 
 export function UMLEditorHeader({
   projectName,
   umlCode,
   onOpenPreview,
+  onSave,
 }: UMLEditorHeaderProps) {
   const { editorBackground } = useBackground();
   const updateProjectName = useProjectStore((state) => state.updateProjectName);
@@ -54,10 +58,10 @@ export function UMLEditorHeader({
   };
 
   return (
-    <div className={cn("flex items-center gap-2 px-3 py-2")} 
-    style={{
-      backgroundColor: editorBackground
-    }} >
+    <div className={cn("flex items-center gap-2 px-3 py-2")}
+      style={{
+        backgroundColor: editorBackground
+      }} >
       <Input
         value={isEditingName ? editedName : projectName}
         readOnly={!isEditingName}
@@ -67,6 +71,12 @@ export function UMLEditorHeader({
         onClick={handleInputClick}
         className="max-w-[300px] bg-transparent cursor-pointer"
       />
+      <div className="flex-1" />
+      {onSave && (
+        <Button variant="ghost" size="icon" onClick={onSave} title="Save (Cmd+S)">
+          <Save size={18} />
+        </Button>
+      )}
       <DiagramActionsDropdown
         umlCode={umlCode}
         projectName={projectName}
