@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import {
@@ -53,7 +53,7 @@ interface FileExplorerProps {
     selectedPath?: string | null;
 }
 
-export function FileExplorerDnd({ onFileSelect, selectedPath }: FileExplorerProps) {
+function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerProps) {
     const [rootPath, setRootPath] = useState<string | null>(null);
     const [files, setFiles] = useState<FileEntry[]>([]);
     const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
@@ -505,3 +505,5 @@ export function FileExplorerDnd({ onFileSelect, selectedPath }: FileExplorerProp
         </DndContext>
     );
 }
+
+export const FileExplorerDnd = memo(FileExplorerDndComponent);

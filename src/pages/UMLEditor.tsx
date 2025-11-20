@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ResizableHandle,
@@ -124,11 +124,11 @@ export default function UMLEditor() {
     }
   }
 
-  const handleFileSelect = (path: string, content: string) => {
+  const handleFileSelect = useCallback((path: string, content: string) => {
     setCurrentFilePath(path);
     setUmlCode(content);
     // Optionally update URL or state to reflect file mode
-  };
+  }, [setUmlCode]);
 
   return (
     <main className="uml-editor-page bg-[var(--background)]">
