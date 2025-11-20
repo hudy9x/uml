@@ -114,7 +114,12 @@ export default function UMLEditor() {
         style={{ width: "100vw", height: "calc(100vh - 29px)" }}
       >
         <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-          <FileExplorer onFileSelect={handleFileSelect} />
+          <div className="h-full border-r bg-muted/10">
+            <FileExplorer
+              onFileSelect={handleFileSelect}
+              selectedPath={currentFilePath}
+            />
+          </div>
         </ResizablePanel>
 
         <ResizableHandle className="bg-transparent hover:bg-foreground/40" withHandle />
