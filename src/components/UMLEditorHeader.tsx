@@ -73,7 +73,7 @@ export function UMLEditorHeader({
       />
       <div className="flex-1" />
       {onSave && (
-        <Button variant="ghost" size="icon" onClick={onSave} title="Save (Cmd+S)">
+        <Button variant="outline" size="icon" onClick={onSave} title="Save (Cmd+S)">
           <Save size={18} />
         </Button>
       )}

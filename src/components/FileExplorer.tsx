@@ -347,14 +347,14 @@ export function FileExplorer({ onFileSelect, selectedPath }: FileExplorerProps) 
                     {rootPath.split(/[/\\]/).pop()}
                 </span>
                 <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleOpenFolder} title="Change Folder">
-                        <FolderInput size={14} />
+                    <Button variant="outline" size="icon" className="h-6 w-6" onClick={handleOpenFolder} title="Change Folder">
+                        <FolderInput size={12} />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openCreateDialog(rootPath, "file")}>
-                        <FilePlus size={14} />
+                    <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => openCreateDialog(rootPath, "file")}>
+                        <FilePlus size={12} />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openCreateDialog(rootPath, "folder")}>
-                        <FolderPlus size={14} />
+                    <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => openCreateDialog(rootPath, "folder")}>
+                        <FolderPlus size={12} />
                     </Button>
                 </div>
             </div>
