@@ -15,7 +15,7 @@ import { useUMLDiagram } from "../hooks/useUMLDiagram";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
-import { FileExplorer } from "../components/FileExplorer";
+import { FileExplorerDnd } from "../components/FileExplorerDnd";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
@@ -138,7 +138,7 @@ export default function UMLEditor() {
       >
         <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
           <div className="h-full border-r bg-muted/10">
-            <FileExplorer
+            <FileExplorerDnd
               onFileSelect={handleFileSelect}
               selectedPath={currentFilePath}
             />
