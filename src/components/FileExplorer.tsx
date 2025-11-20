@@ -5,14 +5,14 @@ import {
     ChevronRight,
     ChevronDown,
     File,
-    Folder,
-    FolderOpen,
     Trash2,
     Edit2,
     FilePlus,
     FolderPlus,
     FolderInput,
 } from "lucide-react";
+import folderIcon from "@/assets/folder.png";
+import openFolderIcon from "@/assets/open-folder.png";
 import {
     ContextMenu,
     ContextMenuContent,
@@ -290,7 +290,7 @@ export function FileExplorer({ onFileSelect, selectedPath }: FileExplorerProps) 
                             </span>
                             <span className="mr-2 text-accent-foreground">
                                 {entry.is_dir ? (
-                                    isExpanded ? <FolderOpen size={16} className="text-blue-400" /> : <Folder size={16} className="text-blue-400" />
+                                    <img src={isExpanded ? openFolderIcon : folderIcon} alt="folder" className="w-4 h-4" />
                                 ) : (
                                     <File size={16} className="text-gray-400" />
                                 )}
@@ -332,7 +332,7 @@ export function FileExplorer({ onFileSelect, selectedPath }: FileExplorerProps) 
     if (!rootPath) {
         return (
             <div className="h-full flex flex-col items-center justify-center p-4 text-center bg-muted/10 border-r">
-                <FolderOpen size={48} className="text-muted-foreground mb-4" />
+                <img src={openFolderIcon} alt="folder" className="w-12 h-12 opacity-70 mb-4" />
                 <h3 className="font-semibold mb-2">No Folder Open</h3>
                 <p className="text-sm text-muted-foreground mb-4">Open a folder to start browsing files.</p>
                 <Button onClick={handleOpenFolder}>Open Folder</Button>

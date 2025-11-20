@@ -32,6 +32,29 @@ export default function UMLEditor() {
     initialCode: "",
   });
 
+  // Load last opened file on mount
+  useEffect(() => {
+    const lastFile = localStorage.getItem("lastOpenedFile");
+    if (lastFile) {
+      invoke<string>("read_file_content", { path: lastFile })
+        .then((content) => {
+          setCurrentFilePath(lastFile);
+          setUmlCode(content);
+        })
+        .catch((err) => {
+          console.error("Failed to load last opened file:", err);
+          toast.error(`Failed to load last opened file: ${err}`);
+        });
+    }
+  }, [setUmlCode]);
+
+  // Save current file path to storage
+  useEffect(() => {
+    if (currentFilePath) {
+      localStorage.setItem("lastOpenedFile", currentFilePath);
+    }
+  }, [currentFilePath]);
+
   const { previewWindow, openPreviewWindow } = usePreviewWindow({
     umlCode,
     projectName: currentFilePath ? currentFilePath.split('/').pop() || projectName : projectName,
