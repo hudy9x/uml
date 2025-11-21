@@ -432,13 +432,13 @@ function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerPr
                         {rootPath.split(/[/\\]/).pop()}
                     </span>
                     <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleOpenFolder} title="Change Folder">
+                        <Button variant="outline" size="icon" className="" onClick={handleOpenFolder} title="Change Folder">
                             <FolderInput size={14} />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openCreateDialog(rootPath, "file")}>
+                        <Button variant="outline" size="icon" className="" onClick={() => openCreateDialog(rootPath, "file")}>
                             <FilePlus size={14} />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => openCreateDialog(rootPath, "folder")}>
+                        <Button variant="outline" size="icon" className="" onClick={() => openCreateDialog(rootPath, "folder")}>
                             <FolderPlus size={14} />
                         </Button>
                     </div>
