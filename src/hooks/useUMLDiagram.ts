@@ -1,22 +1,21 @@
 import { useState, useEffect } from "react";
 import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
-import { useProjectStore } from "@/stores/project";
+import { invoke } from "@tauri-apps/api/core";
 import { useBackground } from "./useBackground";
 import { StatusBadge } from "@/lib/status-badge";
 
 let debounceTimeout: number;
 
 interface UseUMLDiagramProps {
-  umlId?: string;
   initialCode?: string;
+  filePath?: string | null;
 }
 
-export function useUMLDiagram({ umlId, initialCode = "" }: UseUMLDiagramProps) {
+export function useUMLDiagram({ initialCode = "", filePath }: UseUMLDiagramProps) {
   const [umlCode, setUmlCode] = useState(initialCode);
   const [svgContent, setSvgContent] = useState("");
   const { previewBackground, isDarkBackground, previewUrl } = useBackground();
-  const updateProjectContent = useProjectStore((state) => state.updateProjectContent);
 
   const changeBackground = (isDark: boolean, umlCode: string) => {
     if (isDark) {
@@ -50,20 +49,21 @@ root {
         toast.error("Failed to load UML diagram");
       }
 
-      // Save if we have a umlId
-      if (umlId) {
+      // Autosave to file system if we have a file path
+      if (filePath) {
         StatusBadge.loading(true);
         try {
-          await updateProjectContent(umlId, umlCode);
+          await invoke("write_file_content", { path: filePath, content: umlCode });
           StatusBadge.loading(false);
         } catch (error) {
+          console.error("Failed to autosave file:", error);
           StatusBadge.loading(false);
         }
       }
     }, 800);
 
     return () => clearTimeout(debounceTimeout);
-  }, [umlCode, umlId, isDarkBackground, previewUrl]);
+  }, [umlCode, filePath, isDarkBackground, previewUrl]);
 
   return {
     umlCode,

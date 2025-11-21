@@ -28,8 +28,8 @@ export default function UMLEditor() {
   const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
 
   const { umlCode, setUmlCode, svgContent } = useUMLDiagram({
-    umlId,
     initialCode: "",
+    filePath: currentFilePath,
   });
 
   // Load last opened file on mount
