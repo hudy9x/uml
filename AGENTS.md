@@ -25,5 +25,9 @@ Code style (agents must follow)
 Tooling rules
 - Cursor / Copilot rules: no `.cursor` or `.cursorrules` and no `.github/copilot-instructions.md` were found in repo — none to enforce.
 
+Documentation
+- [Creating a CodeMirror Linter](docs/creating-codemirror-linter.md) — Guide on implementing custom linters for syntax error highlighting
+- [Detecting PlantUML Syntax](docs/detecting-plantuml-syntax.md) — Guide on parsing and detecting PlantUML message syntax with regex patterns
+
 Scope
 - This file applies to the entire repository. Follow these rules when making edits, running commands, or authoring changes.
