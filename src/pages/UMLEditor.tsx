@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "../components/ui/resizable";
-import { getProject } from "../databases/projects";
 import { toast } from "sonner";
 import { UMLEditorHeader } from "../components/UMLEditorHeader";
 import { UMLEditorPanel } from "../components/UMLEditorPanel";
@@ -19,7 +18,6 @@ import { Explorer } from "@/features/Explorer";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
-  const navigate = useNavigate();
   const projects = useProjectStore((state) => state.projects);
   const projectName = projects.find(p => p.id === umlId)?.name ?? "";
   const maxEditorSize = 100;
@@ -79,66 +77,20 @@ export default function UMLEditor() {
     },
   });
 
-  useEffect(() => {
-    if (!umlId && !currentFilePath) {
-      // If no ID and no file selected, maybe just show empty or default?
-      // But existing logic redirects to home.
-      // We'll keep existing logic for now if no file is selected.
-      // toast.warning("No project selected");
-      // navigate("/");
-      return;
-    }
-
-    if (umlId && !currentFilePath) {
-      loadProject();
-    }
-  }, [umlId, currentFilePath]);
-
-  // Keyboard shortcut for saving
-  useEffect(() => {
-    const handleKeyDown = async (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "s") {
-        e.preventDefault();
-        if (currentFilePath) {
-          await saveFile();
-        } else {
-          toast.info("Save is only available for files in this mode");
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentFilePath, umlCode]);
-
-  async function loadProject() {
-    if (!umlId) return;
-
-    const project = await getProject(umlId);
-    if (!project) {
-      toast.error("Project not found");
-      navigate("/");
-      return;
-    }
-
-    setUmlCode(project.content);
+  const autoSave = (content: string) => {
+    setUmlCode(content)
   }
 
-  async function saveFile() {
-    if (!currentFilePath) return;
+  const handleFileSelect = useCallback(async (path: string, _content: string) => {
+    // Always read fresh content from file, ignore cached content
     try {
-      await invoke("write_file_content", { path: currentFilePath, content: umlCode });
-      toast.success("File saved");
+      const freshContent = await invoke<string>("read_file_content", { path });
+      setCurrentFilePath(path);
+      setUmlCode(freshContent);
     } catch (error) {
-      console.error("Failed to save file:", error);
-      toast.error(`Failed to save file: ${error}`);
+      console.error("Failed to read file:", error);
+      toast.error(`Failed to read file: ${error}`);
     }
-  }
-
-  const handleFileSelect = useCallback((path: string, content: string) => {
-    setCurrentFilePath(path);
-    setUmlCode(content);
-    // Optionally update URL or state to reflect file mode
   }, [setUmlCode]);
 
   return (
@@ -176,7 +128,7 @@ export default function UMLEditor() {
               />
               <UMLEditorPanel
                 umlCode={umlCode}
-                onChange={(value) => setUmlCode(value)}
+                onChange={(value) => autoSave(value)}
               />
             </div>
           </ResizablePanel>
