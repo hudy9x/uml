@@ -16,8 +16,6 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
 import { Explorer } from "@/features/Explorer";
-import { Button } from "@/components/ui/button";
-import { PanelLeft } from "lucide-react";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
@@ -137,19 +135,6 @@ export default function UMLEditor() {
     <div className="flex flex-col h-screen">
       {/* Main Editor Area */}
       <main className="uml-editor-page bg-[var(--background)] flex-1 relative">
-        {/* Floating toggle button when explorer is hidden */}
-        {!isExplorerVisible && (
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute top-2 left-2 z-50"
-            onClick={() => setIsExplorerVisible(true)}
-            title="Show Explorer"
-          >
-            <PanelLeft size={16} />
-          </Button>
-        )}
-
         <ResizablePanelGroup
           direction="horizontal"
           style={{ width: "100vw", height: "calc(100vh - 29px)" }}
@@ -175,6 +160,8 @@ export default function UMLEditor() {
                 projectName={projectName}
                 umlCode={umlCode}
                 currentFilePath={currentFilePath}
+                isExplorerVisible={isExplorerVisible}
+                onToggleExplorer={() => setIsExplorerVisible(!isExplorerVisible)}
                 onOpenPreview={openPreviewWindow}
               />
               <UMLEditorPanel
