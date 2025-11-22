@@ -172,8 +172,9 @@ export default function UMLEditor() {
           <ResizablePanel defaultSize={editorSize} minSize={30}>
             <div className="flex flex-col h-full">
               <UMLEditorHeader
-                projectName={currentFilePath ? currentFilePath.split(/[/\\]/).pop() || "Untitled" : projectName}
+                projectName={projectName}
                 umlCode={umlCode}
+                currentFilePath={currentFilePath}
                 onOpenPreview={openPreviewWindow}
               />
               <UMLEditorPanel
