@@ -19,7 +19,7 @@ export default function TestPage() {
   return (
     <div className="h-screen w-screen" style={{ backgroundColor: previewBackground }}>
       <ZoomableView className="h-full">
-        <img src={`${previewUrl}svg/${diagram}`} />
+        <img src={`${previewUrl}/svg/${diagram}`} />
       </ZoomableView>
     </div>
   );
