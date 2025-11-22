@@ -5,13 +5,14 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FolderOpen, FilePlus, FolderPlus, MoreVertical } from "lucide-react";
+import { FolderOpen, FilePlus, FolderPlus, MoreVertical, Search } from "lucide-react";
 
 interface ExplorerActionsMenuProps {
     rootPath: string | null;
     onOpenFolder: () => void;
     onCreateFile: () => void;
     onCreateFolder: () => void;
+    onSearchFile: () => void;
 }
 
 export function ExplorerActionsMenu({
@@ -19,6 +20,7 @@ export function ExplorerActionsMenu({
     onOpenFolder,
     onCreateFile,
     onCreateFolder,
+    onSearchFile,
 }: ExplorerActionsMenuProps) {
     return (
         <DropdownMenu>
@@ -34,17 +36,21 @@ export function ExplorerActionsMenu({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" sideOffset={5}>
                 <DropdownMenuItem className="cursor-pointer" onClick={onOpenFolder}>
-                    <FolderOpen size={14} className="mr-2" />
+                    <FolderOpen size={14} className="" />
                     Open Folder
                 </DropdownMenuItem>
                 {rootPath && (
                     <>
+                        <DropdownMenuItem className="cursor-pointer" onClick={onSearchFile}>
+                            <Search size={14} className="" />
+                            Search File
+                        </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={onCreateFile}>
-                            <FilePlus size={14} className="mr-2" />
+                            <FilePlus size={14} className="" />
                             New File
                         </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={onCreateFolder}>
-                            <FolderPlus size={14} className="mr-2" />
+                            <FolderPlus size={14} className="" />
                             New Folder
                         </DropdownMenuItem>
                     </>

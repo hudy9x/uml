@@ -10,6 +10,7 @@ import { ExplorerEmptyState } from "./ExplorerEmptyState";
 import { ExplorerCreateDialog } from "./ExplorerCreateDialog";
 import { ExplorerRenameDialog } from "./ExplorerRenameDialog";
 import { ExplorerDragOverlay } from "./ExplorerDragOverlay";
+import { ExplorerFileSearchDialog } from "./ExplorerFileSearchDialog";
 
 function ExplorerComponent({
     onFileSelect,
@@ -62,6 +63,23 @@ function ExplorerComponent({
     const [renameItemPath, setRenameItemPath] = useState("");
     const [renameItemName, setRenameItemName] = useState("");
 
+    const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+
+    // Keyboard shortcut for file search (Ctrl/Cmd+P)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "p") {
+                e.preventDefault();
+                if (rootPath) {
+                    setIsSearchDialogOpen(true);
+                }
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [rootPath]);
+
     // Load directory when rootPath changes
     useEffect(() => {
         if (rootPath) {
@@ -90,6 +108,20 @@ function ExplorerComponent({
         }
     };
 
+    const handleSearchFile = () => {
+        setIsSearchDialogOpen(true);
+    };
+
+    const handleFileSelectFromSearch = async (path: string) => {
+        // Use the existing handleFileClick logic but construct a FileEntry
+        try {
+            const fileName = path.split("/").pop() || "";
+            await handleFileClick({ name: fileName, path, is_dir: false });
+        } catch (error) {
+            console.error("Failed to open file from search:", error);
+        }
+    };
+
     // Show empty state if no folder is open
     if (!rootPath) {
         return <ExplorerEmptyState onOpenFolder={handleOpenFolder} />;
@@ -106,6 +138,7 @@ function ExplorerComponent({
                     onOpenFolder={handleOpenFolder}
                     onCreateFile={() => openCreateDialog(rootPath, "file")}
                     onCreateFolder={() => openCreateDialog(rootPath, "folder")}
+                    onSearchFile={handleSearchFile}
                 />
 
                 {/* File Tree */}
@@ -140,6 +173,14 @@ function ExplorerComponent({
                 itemPath={renameItemPath}
                 onClose={() => setIsRenameDialogOpen(false)}
                 onRename={renameNode}
+            />
+
+            <ExplorerFileSearchDialog
+                isOpen={isSearchDialogOpen}
+                onClose={() => setIsSearchDialogOpen(false)}
+                files={files}
+                rootPath={rootPath}
+                onFileSelect={handleFileSelectFromSearch}
             />
 
             {/* Drag Overlay */}
