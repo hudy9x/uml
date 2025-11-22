@@ -24,7 +24,7 @@ export function UMLEditorHeader({
     : "No file selected";
 
   return (
-    <div className={cn("flex items-center gap-2 px-3 py-2 justify-between")}
+    <div className={cn("flex items-center gap-2 px-3 py-2 justify-between border-b")}
       style={{
         backgroundColor: editorBackground
       }} >

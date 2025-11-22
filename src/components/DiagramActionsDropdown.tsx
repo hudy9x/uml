@@ -19,10 +19,10 @@ interface ExportActionsDropdownProps {
   onOpenPreview: () => void;
 }
 
-export function DiagramActionsDropdown({ 
-  umlCode, 
+export function DiagramActionsDropdown({
+  umlCode,
   projectName,
-  onOpenPreview 
+  onOpenPreview
 }: ExportActionsDropdownProps) {
   const handleDownloadPNG = async () => {
     if (!umlCode) {
@@ -36,7 +36,7 @@ export function DiagramActionsDropdown({
       const imageBlob = await res.blob();
       const imageData = await imageBlob.arrayBuffer();
       const uint8Array = new Uint8Array(imageData);
-      
+
       const filePath = await save({
         defaultPath: `${projectName || 'diagram'}.png`,
         filters: [{
@@ -97,7 +97,7 @@ export function DiagramActionsDropdown({
 
       const image = await TauriImage.fromBytes(uint8Array);
       await writeImage(image);
-      
+
       toast.success('Diagram copied to clipboard!');
     } catch (error) {
       console.error('Error copying diagram to clipboard:', error);
@@ -108,12 +108,12 @@ export function DiagramActionsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="focus-visible:ring-0 focus-visible:ring-offset-0"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 focus-visible:ring-0 focus-visible:ring-offset-0"
         >
-          <MoreVertical className="h-4 w-4" />
+          <MoreVertical size={14} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[200px]">
