@@ -26,7 +26,12 @@ export default function UMLEditor() {
   const [editorSize, setEditorSize] = useState(30);
 
   const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
-  const [isExplorerVisible, setIsExplorerVisible] = useState(true);
+
+  // Load explorer visibility state from localStorage
+  const [isExplorerVisible, setIsExplorerVisible] = useState(() => {
+    const saved = localStorage.getItem("explorerVisible");
+    return saved !== null ? saved === "true" : true; // Default to true if not set
+  });
 
   const { umlCode, setUmlCode, svgContent } = useUMLDiagram({
     initialCode: "",
@@ -47,14 +52,19 @@ export default function UMLEditor() {
           toast.error(`Failed to load last opened file: ${err}`);
         });
     }
-  }, [setUmlCode]);
+  }, []);
 
-  // Save current file path to storage
+  // Persist currentFilePath to localStorage
   useEffect(() => {
     if (currentFilePath) {
       localStorage.setItem("lastOpenedFile", currentFilePath);
     }
   }, [currentFilePath]);
+
+  // Persist explorer visibility state
+  useEffect(() => {
+    localStorage.setItem("explorerVisible", String(isExplorerVisible));
+  }, [isExplorerVisible]);
 
   const { previewWindow, openPreviewWindow } = usePreviewWindow({
     umlCode,
