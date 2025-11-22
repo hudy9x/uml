@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import {
   ResizableHandle,
@@ -7,7 +7,7 @@ import {
 } from "../components/ui/resizable";
 import { toast } from "sonner";
 import { UMLEditorHeader } from "../components/UMLEditorHeader";
-import { UMLEditorPanel } from "../components/UMLEditorPanel";
+import { UMLEditorPanel, UMLEditorPanelRef } from "../components/UMLEditorPanel";
 import { UMLPreviewPanel } from "../components/UMLPreviewPanel";
 import { usePreviewWindow } from "../components/PreviewWindowManager";
 import { useUMLDiagram } from "../hooks/useUMLDiagram";
@@ -15,6 +15,7 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
 import { Explorer } from "@/features/Explorer";
+import { parseUMLMessages, findMessageLine } from "../lib/uml-parser";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
@@ -24,6 +25,7 @@ export default function UMLEditor() {
   const [editorSize, setEditorSize] = useState(30);
 
   const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
+  const editorRef = useRef<UMLEditorPanelRef>(null);
 
   // Load explorer visibility state from localStorage
   const [isExplorerVisible, setIsExplorerVisible] = useState(() => {
@@ -93,6 +95,23 @@ export default function UMLEditor() {
     }
   }, [setUmlCode]);
 
+  // Parse UML messages for click-to-navigate functionality
+  const umlMessages = useMemo(() => {
+    return parseUMLMessages(umlCode);
+  }, [umlCode]);
+
+  // Handle message click from preview panel
+  const handleMessageClick = useCallback((messageText: string, from?: string, to?: string) => {
+    const lineNumber = findMessageLine(umlMessages, messageText, from, to);
+
+    if (lineNumber) {
+      editorRef.current?.jumpToLine(lineNumber);
+      console.log(`Jumping to line ${lineNumber} for message: "${messageText}"`);
+    } else {
+      console.warn(`Could not find line for message: "${messageText}"`);
+    }
+  }, [umlMessages]);
+
   return (
     <div className="flex flex-col h-screen">
       {/* Main Editor Area */}
@@ -127,6 +146,7 @@ export default function UMLEditor() {
                 onOpenPreview={openPreviewWindow}
               />
               <UMLEditorPanel
+                ref={editorRef}
                 umlCode={umlCode}
                 onChange={(value) => autoSave(value)}
               />
@@ -137,7 +157,11 @@ export default function UMLEditor() {
             defaultSize={maxEditorSize - editorSize}
             minSize={20}
           >
-            <UMLPreviewPanel svgContent={svgContent} hidden={!!previewWindow} />
+            <UMLPreviewPanel
+              svgContent={svgContent}
+              hidden={!!previewWindow}
+              onMessageClick={handleMessageClick}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       </main>

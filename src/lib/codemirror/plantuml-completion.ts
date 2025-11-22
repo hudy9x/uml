@@ -42,7 +42,7 @@ const snippets: Completion[] = [
     type: 'keyword',
     detail: 'Add a note',
     info: 'Adds a note to the diagram',
-    apply: 'note left\n  \nend note',
+    apply: 'note left\n ${1:message} \nend note',
   },
   {
     label: 'section',
