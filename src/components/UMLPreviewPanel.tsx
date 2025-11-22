@@ -7,7 +7,7 @@ import { useEffect } from "react";
 interface UMLPreviewPanelProps {
   svgContent: string;
   hidden?: boolean;
-  onMessageClick?: (messageText: string, from?: string, to?: string) => void;
+  onMessageClick?: (messageText: string, from?: string, to?: string, messageIndex?: number) => void;
 }
 
 export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPreviewPanelProps) {
@@ -22,7 +22,7 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
       const target = ev.target as HTMLElement;
       const parent = target.parentNode as HTMLElement;
 
-      messages.forEach((message) => {
+      messages.forEach((message, messageIndex) => {
         if (message === parent) {
           // Extract message text from the SVG
           // The message text is typically in a <text> element within the message group
@@ -51,10 +51,10 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
             }
           }
 
-          console.log("Clicked message:", { messageText, fromParticipant, toParticipant });
+          console.log("Clicked message:", { messageText, fromParticipant, toParticipant, messageIndex });
 
           if (messageText) {
-            onMessageClick(messageText, fromParticipant || undefined, toParticipant || undefined);
+            onMessageClick(messageText, fromParticipant || undefined, toParticipant || undefined, messageIndex);
           }
           return;
         }

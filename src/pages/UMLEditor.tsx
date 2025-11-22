@@ -95,22 +95,22 @@ export default function UMLEditor() {
     }
   }, [setUmlCode]);
 
-  // Parse UML messages for click-to-navigate functionality
-  const umlMessages = useMemo(() => {
-    return parseUMLMessages(umlCode);
-  }, [umlCode]);
-
   // Handle message click from preview panel
-  const handleMessageClick = useCallback((messageText: string, from?: string, to?: string) => {
-    const lineNumber = findMessageLine(umlMessages, messageText, from, to);
+  const handleMessageClick = useCallback((messageText: string, _from?: string, _to?: string, messageIndex?: number) => {
+    if (messageIndex === undefined) {
+      console.warn('No message index provided');
+      return;
+    }
+
+    const lineNumber = findMessageLine(messageIndex, umlCode);
 
     if (lineNumber) {
       editorRef.current?.jumpToLine(lineNumber);
-      console.log(`Jumping to line ${lineNumber} for message: "${messageText}"`);
+      console.log(`Jumping to line ${lineNumber} for message: "${messageText}" (SVG index ${messageIndex})`);
     } else {
-      console.warn(`Could not find line for message: "${messageText}"`);
+      console.warn(`Could not find line for message at SVG index ${messageIndex}`);
     }
-  }, [umlMessages]);
+  }, [umlCode]);
 
   return (
     <div className="flex flex-col h-screen">

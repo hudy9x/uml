@@ -58,35 +58,55 @@ export function parseUMLMessages(umlCode: string): UMLMessage[] {
 }
 
 /**
- * Find the line number for a message based on its text and participants
- * Returns the first matching line number, or null if not found
+ * Find the line number for a message based on SVG message index
+ * Scans the UML code line by line to find the Nth message occurrence
  */
 export function findMessageLine(
-    messages: UMLMessage[],
-    messageText: string,
-    fromParticipant?: string,
-    toParticipant?: string
+    svgMessageIndex: number,
+    umlCode: string
 ): number | null {
-    // Try to find exact match with participants if provided
-    if (fromParticipant && toParticipant) {
-        const exactMatch = messages.find(
-            (msg) =>
-                msg.text === messageText &&
-                msg.from.toLowerCase() === fromParticipant.toLowerCase() &&
-                msg.to.toLowerCase() === toParticipant.toLowerCase()
-        );
-        if (exactMatch) return exactMatch.lineNumber;
+    const lines = umlCode.split('\n');
+
+    // Regular expression to match PlantUML message syntax
+    // Matches: participant -> participant: message
+    // Also matches: participant -> participant (without message)
+    // Supports: ->, -->, <-, <--, etc.
+    const messageRegex = /^\s*(?:\d+\s+)?["\w\s]+?\s*<?-{1,2}>?\s*["\w\s]+?(?:\s*:\s*.+)?$/;
+
+    let messageCount = 0;
+
+    console.log("lines", lines)
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+
+        // Skip comments, empty lines, and PlantUML directives
+        if (
+            !line ||
+            line.startsWith("'") ||
+            line.startsWith("@") ||
+            line.startsWith("==") ||
+            line.startsWith("title") ||
+            line.startsWith("participant") ||
+            line.startsWith("autonumber") ||
+            line.startsWith("activate") ||
+            line.startsWith("deactivate") ||
+            line.startsWith("note")
+        ) {
+            continue;
+        }
+
+        // Check if this line matches message syntax
+        if (messageRegex.test(line)) {
+            console.log(i, `Found message: ${line}`, svgMessageIndex, messageCount);
+            // If this is the message we're looking for
+            if (messageCount === svgMessageIndex) {
+                console.log("result", i + 1)
+                return i + 1; // Return 1-indexed line number
+            }
+            messageCount++;
+        }
     }
-
-    // Try to find match with just message text
-    const textMatch = messages.find((msg) => msg.text === messageText);
-    if (textMatch) return textMatch.lineNumber;
-
-    // Try partial match (in case of truncated text in SVG)
-    const partialMatch = messages.find((msg) =>
-        msg.text.includes(messageText) || messageText.includes(msg.text)
-    );
-    if (partialMatch) return partialMatch.lineNumber;
 
     return null;
 }
