@@ -1,4 +1,4 @@
-import { CompletionContext, CompletionResult, Completion } from '@codemirror/autocomplete';
+import { CompletionContext, CompletionResult, Completion, snippet } from '@codemirror/autocomplete';
 
 const keywords = [
   'actor',
@@ -35,28 +35,28 @@ const snippets: Completion[] = [
     type: 'keyword',
     detail: 'Start UML diagram',
     info: 'Begins a new UML diagram',
-    apply: '@startuml\n\n@enduml',
+    apply: snippet('@startuml\n#{app -> client}\n@enduml'),
   },
   {
     label: 'note',
     type: 'keyword',
     detail: 'Add a note',
     info: 'Adds a note to the diagram',
-    apply: 'note left\n ${1:message} \nend note',
+    apply: snippet('note left\n #{message} \nend note'),
   },
   {
     label: 'section',
     type: 'keyword',
     detail: 'Add a section',
     info: 'Adds a section title',
-    apply: '== Section Title ==',
+    apply: snippet('== #{title} =='),
   },
   {
     label: 'message',
     type: 'keyword',
     detail: 'Add a message',
     info: 'Adds a message between participants',
-    apply: '${1:sender} -> ${2:receiver}: ${3:message}',
+    apply: snippet('#{sender} -> #{receiver}: #{message}'),
   }
 ];
 
