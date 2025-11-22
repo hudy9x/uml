@@ -15,7 +15,7 @@ import { useUMLDiagram } from "../hooks/useUMLDiagram";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
-import { FileExplorerDnd } from "../components/FileExplorerDnd";
+import { Explorer } from "@/features/Explorer";
 import { Button } from "@/components/ui/button";
 import { PanelLeft } from "lucide-react";
 
@@ -158,7 +158,7 @@ export default function UMLEditor() {
             <>
               <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
                 <div className="h-full border-r bg-muted/10">
-                  <FileExplorerDnd
+                  <Explorer
                     onFileSelect={handleFileSelect}
                     selectedPath={currentFilePath}
                     isExplorerVisible={isExplorerVisible}
