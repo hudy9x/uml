@@ -1,6 +1,8 @@
 import { LanguageSupport, StreamLanguage, StringStream } from '@codemirror/language';
 import { autocompletion } from '@codemirror/autocomplete';
+import { linter } from '@codemirror/lint';
 import { plantUMLCompletions } from './plantuml-completion';
+import { lintPlantUML } from './plantuml-linter';
 
 interface PlantUMLState {
   tokenize: null | ((stream: StringStream, state: PlantUMLState) => string | null);
@@ -11,7 +13,7 @@ interface PlantUMLState {
 
 export const plantumlLanguage = StreamLanguage.define<PlantUMLState>({
   name: "plantuml",
-  
+
   startState: () => ({
     tokenize: null,
     context: null,
@@ -126,6 +128,7 @@ export const plantumlLanguage = StreamLanguage.define<PlantUMLState>({
 
 export function plantUML() {
   return new LanguageSupport(plantumlLanguage, [
-    autocompletion({ override: [plantUMLCompletions] })
+    autocompletion({ override: [plantUMLCompletions] }),
+    linter(lintPlantUML)
   ]);
 }
