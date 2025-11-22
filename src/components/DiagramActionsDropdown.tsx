@@ -55,33 +55,6 @@ export function DiagramActionsDropdown({
     }
   };
 
-  const handleSaveUMLCode = async () => {
-    if (!umlCode) {
-      toast.error('No UML code to save');
-      return;
-    }
-
-    try {
-      const filePath = await save({
-        defaultPath: `${projectName || 'diagram'}.pu`,
-        filters: [{
-          name: 'PlantUML',
-          extensions: ['pu']
-        }]
-      });
-
-      if (filePath) {
-        const encoder = new TextEncoder();
-        const uint8Array = encoder.encode(umlCode);
-        await writeFile(filePath, uint8Array);
-        toast.success('UML code saved successfully!');
-      }
-    } catch (error) {
-      console.error('Error saving UML code:', error);
-      toast.error('Failed to save UML code');
-    }
-  };
-
   const handleCopyToClipboard = async () => {
     if (!umlCode) {
       toast.error('No diagram to copy');
@@ -120,10 +93,6 @@ export function DiagramActionsDropdown({
         <DropdownMenuItem className="cursor-pointer" onClick={handleDownloadPNG}>
           <ImageDown className="h-4 w-4 mr-2" />
           Download as image
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={handleSaveUMLCode}>
-          <Save className="h-4 w-4 mr-2" />
-          Save as .pu file
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={handleCopyToClipboard}>
           <Images className="h-4 w-4 mr-2" />

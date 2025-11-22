@@ -13,7 +13,7 @@ interface UMLEditorPanelProps {
 export function UMLEditorPanel({ umlCode, onChange }: UMLEditorPanelProps) {
   const { theme } = useTheme();
   const [editorTheme, setEditorTheme] = useState(githubLight);
-  
+
   useEffect(() => {
     setEditorTheme(theme === 'dark' ? materialDark : githubLight);
   }, [theme]);
@@ -21,7 +21,7 @@ export function UMLEditorPanel({ umlCode, onChange }: UMLEditorPanelProps) {
   return (
     <CodeMirror
       value={umlCode}
-      height="100%"
+      height="calc(100% - 50px)"
       onChange={onChange}
       className="h-full"
       theme={editorTheme}
