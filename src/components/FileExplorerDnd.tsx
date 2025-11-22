@@ -9,7 +9,10 @@ import {
     Edit2,
     FilePlus,
     FolderPlus,
-    FolderInput,
+    FolderOpen,
+    PanelLeftClose,
+    PanelLeft,
+    MoreVertical,
 } from "lucide-react";
 import folderIcon from "@/assets/folder.png";
 import openFolderIcon from "@/assets/open-folder.png";
@@ -28,6 +31,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import {
@@ -51,9 +60,11 @@ interface FileEntry {
 interface FileExplorerProps {
     onFileSelect: (path: string, content: string) => void;
     selectedPath?: string | null;
+    isExplorerVisible: boolean;
+    onToggleExplorer: () => void;
 }
 
-function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerProps) {
+function FileExplorerDndComponent({ onFileSelect, selectedPath, isExplorerVisible, onToggleExplorer }: FileExplorerProps) {
     const [rootPath, setRootPath] = useState<string | null>(null);
     const [files, setFiles] = useState<FileEntry[]>([]);
     const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
@@ -70,6 +81,9 @@ function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerPr
 
     // Drag and drop state
     const [activeItem, setActiveItem] = useState<FileEntry | null>(null);
+
+    // Hover state for showing folder actions
+    const [hoveredFolder, setHoveredFolder] = useState<string | null>(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -88,10 +102,14 @@ function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerPr
         const savedExpanded = localStorage.getItem("expandedFolders");
         if (savedExpanded) {
             try {
-                setExpandedPaths(new Set(JSON.parse(savedExpanded)));
+                const paths = JSON.parse(savedExpanded);
+                setExpandedPaths(new Set(paths));
             } catch (e) {
                 console.error("Failed to parse expanded folders", e);
             }
+        } else if (savedPath) {
+            // Auto-expand root folder on first load
+            setExpandedPaths(new Set([savedPath]));
         }
     }, []);
 
@@ -348,6 +366,7 @@ function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerPr
     const FileTreeItem = ({ entry, depth }: { entry: FileEntry; depth: number }) => {
         const isExpanded = expandedPaths.has(entry.path);
         const isSelected = selectedPath === entry.path;
+        const isHovered = hoveredFolder === entry.path;
 
         return (
             <div>
@@ -357,27 +376,59 @@ function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerPr
                             <ContextMenuTrigger>
                                 <div
                                     className={cn(
-                                        "flex items-center py-1 px-2 cursor-pointer text-sm select-none transition-colors",
+                                        "group flex items-center justify-between py-0.5 px-2 cursor-pointer text-sm select-none transition-colors",
                                         isSelected ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
                                     )}
                                     style={{ paddingLeft: `${depth * 12 + 8}px` }}
                                     onClick={() => handleFileClick(entry)}
+                                    onMouseEnter={() => entry.is_dir && setHoveredFolder(entry.path)}
+                                    onMouseLeave={() => setHoveredFolder(null)}
                                 >
-                                    <span className="mr-1 opacity-70">
-                                        {entry.is_dir ? (
-                                            isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />
-                                        ) : (
-                                            <span className="w-[14px]" />
-                                        )}
-                                    </span>
-                                    <span className="mr-2 text-accent-foreground">
-                                        {entry.is_dir ? (
-                                            <img src={isExpanded ? openFolderIcon : folderIcon} alt="folder" className="w-4 h-4" />
-                                        ) : (
-                                            <File size={16} className="text-gray-400" />
-                                        )}
-                                    </span>
-                                    <span className="truncate">{entry.name}</span>
+                                    <div className="flex items-center flex-1 min-w-0">
+                                        <span className="mr-1 opacity-70">
+                                            {entry.is_dir ? (
+                                                isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />
+                                            ) : (
+                                                <span className="w-[14px]" />
+                                            )}
+                                        </span>
+                                        <span className="mr-2 text-accent-foreground">
+                                            {entry.is_dir ? (
+                                                <img src={isExpanded ? openFolderIcon : folderIcon} alt="folder" className="w-4 h-4" />
+                                            ) : (
+                                                <File size={16} className="text-gray-400" />
+                                            )}
+                                        </span>
+                                        <span className="truncate">{entry.name}</span>
+                                    </div>
+                                    {entry.is_dir && isHovered && (
+                                        <div className="flex gap-0.5 opacity-0 group-hover:opacity-100" onClick={(e) => e.stopPropagation()}>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-5 w-5"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openCreateDialog(entry.path, "file");
+                                                }}
+                                                title="New File"
+                                            >
+                                                <FilePlus size={12} />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-5 w-5"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    openCreateDialog(entry.path, "folder");
+                                                }}
+                                                title="New Folder"
+                                            >
+                                                <FolderPlus size={12} />
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                             </ContextMenuTrigger>
                             <ContextMenuContent>
@@ -427,80 +478,123 @@ function FileExplorerDndComponent({ onFileSelect, selectedPath }: FileExplorerPr
     return (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
             <div className="h-full flex flex-col bg-muted/10 border-r">
-                <div className="p-2 border-b flex items-center justify-between">
-                    <span className="font-semibold text-sm truncate max-w-[100px]" title={rootPath}>
-                        {rootPath.split(/[/\\]/).pop()}
-                    </span>
+                {/* Explorer Header */}
+                <div className="flex items-center justify-between px-3 py-2 border-b bg-background">
+                    <h2 className="text-sm font-semibold uppercase tracking-wide">Explorer</h2>
                     <div className="flex gap-1">
-                        <Button variant="outline" size="icon" className="" onClick={handleOpenFolder} title="Change Folder">
-                            <FolderInput size={14} />
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6"
+                            onClick={onToggleExplorer}
+                            title={isExplorerVisible ? "Hide Explorer" : "Show Explorer"}
+                        >
+                            {isExplorerVisible ? <PanelLeftClose size={14} /> : <PanelLeft size={14} />}
                         </Button>
-                        <Button variant="outline" size="icon" className="" onClick={() => openCreateDialog(rootPath, "file")}>
-                            <FilePlus size={14} />
-                        </Button>
-                        <Button variant="outline" size="icon" className="" onClick={() => openCreateDialog(rootPath, "folder")}>
-                            <FolderPlus size={14} />
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                    title="More Actions"
+                                >
+                                    <MoreVertical size={14} />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" sideOffset={5}>
+                                <DropdownMenuItem className="cursor-pointer" onClick={handleOpenFolder}>
+                                    <FolderOpen size={14} className="mr-2" />
+                                    Open Folder
+                                </DropdownMenuItem>
+                                {rootPath && (
+                                    <>
+                                        <DropdownMenuItem className="cursor-pointer" onClick={() => openCreateDialog(rootPath, "file")}>
+                                            <FilePlus size={14} className="mr-2" />
+                                            New File
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className="cursor-pointer" onClick={() => openCreateDialog(rootPath, "folder")}>
+                                            <FolderPlus size={14} className="mr-2" />
+                                            New Folder
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
-                <div className="flex-1 overflow-auto py-2">
-                    {files.map((entry) => (
-                        <FileTreeItem key={entry.path} entry={entry} depth={0} />
-                    ))}
+
+                {/* File Tree */}
+                <div className="flex-1 overflow-auto">
+                    <div className="py-1">
+                        {rootPath && (
+                            <FileTreeItem
+                                entry={{
+                                    name: rootPath.split(/[/\\]/).pop() || rootPath,
+                                    path: rootPath,
+                                    is_dir: true,
+                                    children: files
+                                }}
+                                depth={0}
+                            />
+                        )}
+                    </div>
                 </div>
-
-                {/* Create Dialog */}
-                <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Create New {createType === "file" ? "File" : "Folder"}</DialogTitle>
-                        </DialogHeader>
-                        <Input
-                            value={newItemName}
-                            onChange={(e) => setNewItemName(e.target.value)}
-                            placeholder={`Enter ${createType} name`}
-                            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-                            autoFocus
-                        />
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleCreate}>Create</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-
-                {/* Rename Dialog */}
-                <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Rename</DialogTitle>
-                        </DialogHeader>
-                        <Input
-                            value={renameItemName}
-                            onChange={(e) => setRenameItemName(e.target.value)}
-                            placeholder="Enter new name"
-                            onKeyDown={(e) => e.key === "Enter" && handleRename()}
-                            autoFocus
-                        />
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsRenameDialogOpen(false)}>Cancel</Button>
-                            <Button onClick={handleRename}>Rename</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
             </div>
 
+            {/* Create Dialog */}
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Create New {createType === "file" ? "File" : "Folder"}</DialogTitle>
+                    </DialogHeader>
+                    <Input
+                        value={newItemName}
+                        onChange={(e) => setNewItemName(e.target.value)}
+                        placeholder={`Enter ${createType} name`}
+                        onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+                    />
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleCreate}>Create</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Rename Dialog */}
+            <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Rename</DialogTitle>
+                    </DialogHeader>
+                    <Input
+                        value={renameItemName}
+                        onChange={(e) => setRenameItemName(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleRename()}
+                    />
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsRenameDialogOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleRename}>Rename</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {/* Drag Overlay */}
             <DragOverlay>
-                {activeItem && (
-                    <div className="bg-primary/10 rounded-sm px-2 py-1 text-xs flex items-center gap-2">
+                {activeItem ? (
+                    <div className="flex items-center gap-2 px-2 py-1 bg-background border rounded shadow-lg">
                         {activeItem.is_dir ? (
                             <img src={folderIcon} alt="folder" className="w-4 h-4" />
                         ) : (
-                            <File size={16} className="text-gray-400" />
+                            <File size={16} className="opacity-70" />
                         )}
-                        {activeItem.name}
+                        <span className="text-sm">{activeItem.name}</span>
                     </div>
-                )}
+                ) : null}
             </DragOverlay>
         </DndContext>
     );

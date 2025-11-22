@@ -16,6 +16,8 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
 import { FileExplorerDnd } from "../components/FileExplorerDnd";
+import { Button } from "@/components/ui/button";
+import { PanelLeft } from "lucide-react";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
@@ -26,6 +28,7 @@ export default function UMLEditor() {
   const [editorSize, setEditorSize] = useState(30);
 
   const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
+  const [isExplorerVisible, setIsExplorerVisible] = useState(true);
 
   const { umlCode, setUmlCode, svgContent } = useUMLDiagram({
     initialCode: "",
@@ -131,47 +134,63 @@ export default function UMLEditor() {
   }, [setUmlCode]);
 
   return (
-    <main className="uml-editor-page bg-[var(--background)]">
-      <ResizablePanelGroup
-        direction="horizontal"
-        style={{ width: "100vw", height: "calc(100vh - 29px)" }}
-      >
-        <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-          <div className="h-full border-r bg-muted/10">
-            <FileExplorerDnd
-              onFileSelect={handleFileSelect}
-              selectedPath={currentFilePath}
-            />
-          </div>
-        </ResizablePanel>
+    <div className="flex flex-col h-screen">
+      {/* Main Editor Area */}
+      <main className="uml-editor-page bg-[var(--background)] flex-1 relative">
+        {/* Floating toggle button when explorer is hidden */}
+        {!isExplorerVisible && (
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute top-2 left-2 z-50"
+            onClick={() => setIsExplorerVisible(true)}
+            title="Show Explorer"
+          >
+            <PanelLeft size={16} />
+          </Button>
+        )}
 
-        <ResizableHandle className="bg-transparent hover:bg-foreground/40" withHandle />
-
-        <ResizablePanel defaultSize={80}>
-          <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={editorSize}>
-              <div className="uml-editor-panel">
-                <UMLEditorHeader
-                  projectName={currentFilePath ? currentFilePath.split(/[/\\]/).pop() || "Untitled" : projectName}
-                  umlCode={umlCode}
-                  onOpenPreview={openPreviewWindow}
-                  onSave={currentFilePath ? saveFile : undefined}
-                />
-                <UMLEditorPanel
-                  umlCode={umlCode}
-                  onChange={(value) => setUmlCode(value)}
-                />
-              </div>
-            </ResizablePanel>
-
-            <ResizableHandle className="bg-transparent hover:bg-foreground/40" withHandle />
-
-            <ResizablePanel defaultSize={maxEditorSize - editorSize}>
-              <UMLPreviewPanel svgContent={svgContent} hidden={!!previewWindow} />
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </main>
+        <ResizablePanelGroup
+          direction="horizontal"
+          style={{ width: "100vw", height: "calc(100vh - 29px)" }}
+        >
+          {isExplorerVisible && (
+            <>
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                <div className="h-full border-r bg-muted/10">
+                  <FileExplorerDnd
+                    onFileSelect={handleFileSelect}
+                    selectedPath={currentFilePath}
+                    isExplorerVisible={isExplorerVisible}
+                    onToggleExplorer={() => setIsExplorerVisible(!isExplorerVisible)}
+                  />
+                </div>
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+            </>
+          )}
+          <ResizablePanel defaultSize={editorSize} minSize={30}>
+            <div className="flex flex-col h-full">
+              <UMLEditorHeader
+                projectName={currentFilePath ? currentFilePath.split(/[/\\]/).pop() || "Untitled" : projectName}
+                umlCode={umlCode}
+                onOpenPreview={openPreviewWindow}
+              />
+              <UMLEditorPanel
+                umlCode={umlCode}
+                onChange={(value) => setUmlCode(value)}
+              />
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel
+            defaultSize={maxEditorSize - editorSize}
+            minSize={20}
+          >
+            <UMLPreviewPanel svgContent={svgContent} hidden={!!previewWindow} />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </main>
+    </div>
   );
 }
