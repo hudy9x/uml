@@ -2,7 +2,7 @@ import { LanguageSupport, StreamLanguage, StringStream } from '@codemirror/langu
 import { autocompletion } from '@codemirror/autocomplete';
 import { linter } from '@codemirror/lint';
 import { plantUMLCompletions } from './plantuml-completion';
-import { lintPlantUML } from './plantuml-linter';
+import { lintPlantUML } from '../codemirror-linter';
 
 interface PlantUMLState {
   tokenize: null | ((stream: StringStream, state: PlantUMLState) => string | null);

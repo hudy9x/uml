@@ -3,13 +3,16 @@ import { plantUML } from "../lib/codemirror/plantuml";
 import { materialDark } from "@uiw/codemirror-theme-material";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { useTheme } from "next-themes";
-import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
+import { useEffect, useState, useRef, forwardRef, useImperativeHandle, useMemo } from "react";
 import { EditorView } from "@codemirror/view";
 import { EditorSelection } from "@codemirror/state";
+import { lintGutter } from "@codemirror/lint";
+import "../styles/codemirror-lint.css";
 
 interface UMLEditorPanelProps {
   umlCode: string;
   onChange: (value: string) => void;
+  onErrorCountChange?: (count: number) => void;
 }
 
 export interface UMLEditorPanelRef {
@@ -17,14 +20,44 @@ export interface UMLEditorPanelRef {
 }
 
 export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>(
-  ({ umlCode, onChange }, ref) => {
+  ({ umlCode, onChange, onErrorCountChange }, ref) => {
     const { theme } = useTheme();
     const [editorTheme, setEditorTheme] = useState(githubLight);
     const editorRef = useRef<ReactCodeMirrorRef>(null);
+    const [hasErrors, setHasErrors] = useState(false);
 
     useEffect(() => {
       setEditorTheme(theme === 'dark' ? materialDark : githubLight);
     }, [theme]);
+
+    // Count errors in UML code whenever it changes
+    useEffect(() => {
+      if (!onErrorCountChange) return;
+
+      // Simple error detection - count lines with empty messages after colon
+      const lines = umlCode.split('\n');
+      let errorCount = 0;
+
+      const emptyMessageRegex = /^\s*(?:\d+\s+)?["\w\s]+?\s*<?-{1,2}>?\s*["\w\s]+?\s*:\s*$/;
+
+      for (const line of lines) {
+        if (emptyMessageRegex.test(line)) {
+          errorCount++;
+        }
+      }
+
+      setHasErrors(errorCount > 0);
+      onErrorCountChange(errorCount);
+    }, [umlCode, onErrorCountChange]);
+
+    // Conditionally include lintGutter only when there are errors
+    const extensions = useMemo(() => {
+      const baseExtensions: any[] = [plantUML()];
+      if (hasErrors) {
+        baseExtensions.push(lintGutter());
+      }
+      return baseExtensions;
+    }, [hasErrors]);
 
     // Expose jumpToLine method to parent via ref
     useImperativeHandle(ref, () => ({
@@ -67,7 +100,7 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
         onChange={onChange}
         className="h-full"
         theme={editorTheme}
-        extensions={[plantUML()]}
+        extensions={extensions}
         basicSetup={{
           lineNumbers: true,
           highlightActiveLineGutter: true,

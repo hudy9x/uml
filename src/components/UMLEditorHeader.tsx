@@ -1,14 +1,16 @@
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
 import { cn } from "../lib/utils";
 import { useBackground } from "../hooks/useBackground";
-import { File, PanelLeft } from "lucide-react";
+import { File, PanelLeft, AlertCircle } from "lucide-react";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 
 interface UMLEditorHeaderProps {
   projectName: string;
   umlCode: string;
   currentFilePath: string | null;
   isExplorerVisible: boolean;
+  errorCount?: number;
   onToggleExplorer: () => void;
   onOpenPreview: () => void;
 }
@@ -18,6 +20,7 @@ export function UMLEditorHeader({
   umlCode,
   currentFilePath,
   isExplorerVisible,
+  errorCount = 0,
   onToggleExplorer,
   onOpenPreview,
 }: UMLEditorHeaderProps) {
@@ -49,6 +52,14 @@ export function UMLEditorHeader({
           </Button>
         )}
         <span className="font-medium">{filename}</span>
+
+        {/* Error count badge */}
+        {errorCount > 0 && (
+          <Badge variant="destructive" className="h-5 px-1.5 text-xs flex items-center gap-1">
+            <AlertCircle size={12} />
+            {errorCount}
+          </Badge>
+        )}
       </div>
 
       {/* Actions on the right */}

@@ -26,6 +26,7 @@ export default function UMLEditor() {
 
   const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
   const editorRef = useRef<UMLEditorPanelRef>(null);
+  const [errorCount, setErrorCount] = useState(0);
 
   // Load explorer visibility state from localStorage
   const [isExplorerVisible, setIsExplorerVisible] = useState(() => {
@@ -142,6 +143,7 @@ export default function UMLEditor() {
                 umlCode={umlCode}
                 currentFilePath={currentFilePath}
                 isExplorerVisible={isExplorerVisible}
+                errorCount={errorCount}
                 onToggleExplorer={() => setIsExplorerVisible(!isExplorerVisible)}
                 onOpenPreview={openPreviewWindow}
               />
@@ -149,6 +151,7 @@ export default function UMLEditor() {
                 ref={editorRef}
                 umlCode={umlCode}
                 onChange={(value) => autoSave(value)}
+                onErrorCountChange={setErrorCount}
               />
             </div>
           </ResizablePanel>

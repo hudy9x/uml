@@ -41,6 +41,7 @@ root {
       // Generate SVG
       try {
         const base = (previewUrl ?? '').replace(/\/$/, '');
+        console.log("URL", `${base}/svg/${encoded}`)
         const res = await fetch(`${base}/svg/${encoded}`);
         const svg = await res.text();
         setSvgContent(svg);
