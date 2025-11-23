@@ -13,6 +13,8 @@ interface UMLPreviewPanelProps {
 export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPreviewPanelProps) {
   const { previewBackground } = useBackground();
 
+  // Add a click event on the svg content
+  // User can click on the message to trigger a Jump_To_Line action
   useEffect(() => {
     if (!onMessageClick) return;
 
