@@ -1,72 +1,68 @@
-import { useState } from "react";
-import { Input } from "./ui/input";
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
 import { cn } from "../lib/utils";
 import { useBackground } from "../hooks/useBackground";
-import { useProjectStore } from "@/stores/project";
-import { useParams } from "react-router-dom";
+import { File, PanelLeft, AlertCircle } from "lucide-react";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 
 interface UMLEditorHeaderProps {
   projectName: string;
   umlCode: string;
+  currentFilePath: string | null;
+  isExplorerVisible: boolean;
+  errorCount?: number;
+  onToggleExplorer: () => void;
   onOpenPreview: () => void;
 }
 
 export function UMLEditorHeader({
   projectName,
   umlCode,
+  currentFilePath,
+  isExplorerVisible,
+  errorCount = 0,
+  onToggleExplorer,
   onOpenPreview,
 }: UMLEditorHeaderProps) {
   const { editorBackground } = useBackground();
-  const updateProjectName = useProjectStore((state) => state.updateProjectName);
-  const { umlId } = useParams();
 
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [editedName, setEditedName] = useState(projectName);
-
-  const handleNameSave = async () => {
-    if (editedName === projectName || !umlId) {
-      setIsEditingName(false);
-      return;
-    }
-    await updateProjectName(umlId, editedName);
-    setIsEditingName(false);
-  };
-
-  const handleInputClick = () => {
-    setIsEditingName(true);
-    setEditedName(projectName);
-  };
-
-  const handleNameKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleNameSave();
-      (e.target as HTMLInputElement).blur();
-    } else if (e.key === "Escape") {
-      setIsEditingName(false);
-      setEditedName(projectName);
-      (e.target as HTMLInputElement).blur();
-    }
-  };
-
-  const handleBlur = () => {
-    handleNameSave();
-  };
+  // Extract filename from path
+  const filename = currentFilePath
+    ? currentFilePath.split(/[/\\]/).pop()
+    : "No file selected";
 
   return (
-    <div className={cn("flex items-center gap-2 px-3 py-2")} 
-    style={{
-      backgroundColor: editorBackground
-    }} >
-      <Input
-        value={isEditingName ? editedName : projectName}
-        readOnly={!isEditingName}
-        onChange={(e) => setEditedName(e.target.value)}
-        onKeyDown={handleNameKeyDown}
-        onBlur={handleBlur}
-        onClick={handleInputClick}
-        className="max-w-[300px] bg-transparent cursor-pointer"
-      />
+    <div className={cn("flex items-center gap-2 px-3 py-2 justify-between border-b")}
+      style={{
+        backgroundColor: editorBackground
+      }} >
+      {/* Filename on the left with toggle button when explorer is hidden */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        {isExplorerVisible ? (
+          <File size={14} className="opacity-70" />
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5 -ml-1"
+            onClick={onToggleExplorer}
+            title="Show Explorer"
+          >
+            <PanelLeft size={14} />
+          </Button>
+        )}
+        <span className="font-medium">{filename}</span>
+
+        {/* Error count badge */}
+        {errorCount > 0 && (
+          <Badge variant="destructive" className="h-5 px-1.5 text-xs flex items-center gap-1">
+            <AlertCircle size={12} />
+            {errorCount}
+          </Badge>
+        )}
+      </div>
+
+      {/* Actions on the right */}
       <DiagramActionsDropdown
         umlCode={umlCode}
         projectName={projectName}

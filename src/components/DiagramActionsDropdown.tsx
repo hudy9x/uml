@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { ExternalLink, MoreVertical, Images, ImageDown, Save } from "lucide-react";
+import { ExternalLink, MoreVertical, Images, ImageDown } from "lucide-react";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeFile } from "@tauri-apps/plugin-fs";
 import { writeImage } from '@tauri-apps/plugin-clipboard-manager';
@@ -19,10 +19,10 @@ interface ExportActionsDropdownProps {
   onOpenPreview: () => void;
 }
 
-export function DiagramActionsDropdown({ 
-  umlCode, 
+export function DiagramActionsDropdown({
+  umlCode,
   projectName,
-  onOpenPreview 
+  onOpenPreview
 }: ExportActionsDropdownProps) {
   const handleDownloadPNG = async () => {
     if (!umlCode) {
@@ -36,7 +36,7 @@ export function DiagramActionsDropdown({
       const imageBlob = await res.blob();
       const imageData = await imageBlob.arrayBuffer();
       const uint8Array = new Uint8Array(imageData);
-      
+
       const filePath = await save({
         defaultPath: `${projectName || 'diagram'}.png`,
         filters: [{
@@ -55,33 +55,6 @@ export function DiagramActionsDropdown({
     }
   };
 
-  const handleSaveUMLCode = async () => {
-    if (!umlCode) {
-      toast.error('No UML code to save');
-      return;
-    }
-
-    try {
-      const filePath = await save({
-        defaultPath: `${projectName || 'diagram'}.pu`,
-        filters: [{
-          name: 'PlantUML',
-          extensions: ['pu']
-        }]
-      });
-
-      if (filePath) {
-        const encoder = new TextEncoder();
-        const uint8Array = encoder.encode(umlCode);
-        await writeFile(filePath, uint8Array);
-        toast.success('UML code saved successfully!');
-      }
-    } catch (error) {
-      console.error('Error saving UML code:', error);
-      toast.error('Failed to save UML code');
-    }
-  };
-
   const handleCopyToClipboard = async () => {
     if (!umlCode) {
       toast.error('No diagram to copy');
@@ -97,7 +70,7 @@ export function DiagramActionsDropdown({
 
       const image = await TauriImage.fromBytes(uint8Array);
       await writeImage(image);
-      
+
       toast.success('Diagram copied to clipboard!');
     } catch (error) {
       console.error('Error copying diagram to clipboard:', error);
@@ -108,22 +81,18 @@ export function DiagramActionsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="focus-visible:ring-0 focus-visible:ring-offset-0"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 focus-visible:ring-0 focus-visible:ring-offset-0"
         >
-          <MoreVertical className="h-4 w-4" />
+          <MoreVertical size={14} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[200px]">
         <DropdownMenuItem className="cursor-pointer" onClick={handleDownloadPNG}>
           <ImageDown className="h-4 w-4 mr-2" />
           Download as image
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={handleSaveUMLCode}>
-          <Save className="h-4 w-4 mr-2" />
-          Save as .pu file
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={handleCopyToClipboard}>
           <Images className="h-4 w-4 mr-2" />

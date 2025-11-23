@@ -1,0 +1,12 @@
+/* Custom styling for CodeMirror lint gutter */
+.cm-lint-marker-error {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background-color: #ef4444 !important;
+  margin-left: 4px !important;
+}
+
+.cm-lintGutter {
+  width: auto !important;
+}
