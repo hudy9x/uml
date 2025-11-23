@@ -1,7 +1,7 @@
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
 import { cn } from "../lib/utils";
 import { useBackground } from "../hooks/useBackground";
-import { File, PanelLeft, AlertCircle } from "lucide-react";
+import { File, PanelLeft, AlertCircle, ExternalLink } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
@@ -63,11 +63,21 @@ export function UMLEditorHeader({
       </div>
 
       {/* Actions on the right */}
-      <DiagramActionsDropdown
-        umlCode={umlCode}
-        projectName={projectName}
-        onOpenPreview={onOpenPreview}
-      />
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6"
+          onClick={onOpenPreview}
+          title="Open in new window"
+        >
+          <ExternalLink size={14} />
+        </Button>
+        <DiagramActionsDropdown
+          umlCode={umlCode}
+          projectName={projectName}
+        />
+      </div>
     </div>
   );
 }

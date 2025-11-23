@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { ExternalLink, MoreVertical, Images, ImageDown } from "lucide-react";
+import { MoreVertical, Images, ImageDown } from "lucide-react";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeFile } from "@tauri-apps/plugin-fs";
 import { writeImage } from '@tauri-apps/plugin-clipboard-manager';
@@ -16,13 +16,11 @@ import { Image as TauriImage } from "@tauri-apps/api/image";
 interface ExportActionsDropdownProps {
   umlCode: string;
   projectName: string;
-  onOpenPreview: () => void;
 }
 
 export function DiagramActionsDropdown({
   umlCode,
   projectName,
-  onOpenPreview
 }: ExportActionsDropdownProps) {
   const handleDownloadPNG = async () => {
     if (!umlCode) {
@@ -97,10 +95,6 @@ export function DiagramActionsDropdown({
         <DropdownMenuItem className="cursor-pointer" onClick={handleCopyToClipboard}>
           <Images className="h-4 w-4 mr-2" />
           Copy as Image
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer" onClick={onOpenPreview}>
-          <ExternalLink className="h-4 w-4 mr-2" />
-          Open in new window
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
