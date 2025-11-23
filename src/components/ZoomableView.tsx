@@ -1,4 +1,4 @@
-import { Search, ZoomIn, ZoomOut } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import {
   TransformWrapper,
   TransformComponent,
@@ -17,19 +17,24 @@ interface ZoomableViewProps {
 
 // Separate component for controls to ensure useControls is used within context
 function Controls() {
-  const { zoomIn, zoomOut, resetTransform } = useControls();
+  const { zoomIn, zoomOut, resetTransform, centerView } = useControls();
+
+  const handleReset = () => {
+    resetTransform();
+    centerView(1, 0); // Reset to scale 1 and center
+  };
 
   return (
     <div className="absolute bottom-2 right-2 flex gap-2 z-10">
       <div className="flex flex-col gap-2">
-        <Button variant="outline" size="icon" onClick={() => zoomIn()}>
+        <Button variant="outline" size="icon" onClick={() => zoomIn()} title="Zoom In">
           <ZoomIn />
         </Button>
-        <Button variant="outline" size="icon" onClick={() => zoomOut()}>
+        <Button variant="outline" size="icon" onClick={() => zoomOut()} title="Zoom Out">
           <ZoomOut />
         </Button>
-        <Button variant="outline" size="icon" onClick={() => resetTransform()}>
-          <Search />{" "}
+        <Button variant="outline" size="icon" onClick={handleReset} title="Reset & Center">
+          <Maximize2 />
         </Button>
       </div>
     </div>
