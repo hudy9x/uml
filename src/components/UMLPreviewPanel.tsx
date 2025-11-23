@@ -13,6 +13,20 @@ interface UMLPreviewPanelProps {
 export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPreviewPanelProps) {
   const { previewBackground } = useBackground();
 
+  // Flash effect to highlight clicked text elements
+  const flashTextElement = (textElement: SVGTextElement) => {
+    // Store original fill color
+    const originalFill = textElement.getAttribute('fill') || '#000000';
+
+    // Change to highlight color
+    textElement.setAttribute('fill', '#FF0000'); // Gold/yellow color
+
+    // Revert back to original color after animation
+    setTimeout(() => {
+      textElement.setAttribute('fill', originalFill);
+    }, 200); // Flash duration: 200ms
+  };
+
   // Add a click event on the svg content
   // User can click on the message to trigger a Jump_To_Line action
   useEffect(() => {
@@ -54,6 +68,11 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
           }
 
           console.log("Clicked message:", { messageText, fromParticipant, toParticipant, messageIndex });
+
+          // Flash all text elements in the clicked message
+          textElements.forEach(textEl => {
+            flashTextElement(textEl as SVGTextElement);
+          });
 
           if (messageText) {
             onMessageClick(messageText, fromParticipant || undefined, toParticipant || undefined, messageIndex);
