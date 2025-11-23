@@ -10,3 +10,29 @@
 .cm-lintGutter {
   width: auto !important;
 }
+
+/* Custom scrollbar styling for CodeMirror */
+.cm-scroller::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  /* Thin horizontal scrollbar */
+}
+
+.cm-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.3);
+  border-radius: 4px;
+}
+
+.cm-scroller::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 128, 0.5);
+}
+
+/* For Firefox */
+.cm-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
+}
