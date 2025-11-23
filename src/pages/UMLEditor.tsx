@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
   ResizableHandle,
@@ -15,7 +15,7 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
 import { Explorer } from "@/features/Explorer";
-import { parseUMLMessages, findMessageLine } from "../lib/uml-parser";
+import { findMessageLine } from "../lib/uml-parser";
 
 export default function UMLEditor() {
   const { umlId } = useParams();

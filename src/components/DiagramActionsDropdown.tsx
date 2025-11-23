@@ -1,5 +1,5 @@
 import { Button } from "./ui/button";
-import { ExternalLink, MoreVertical, Images, ImageDown, Save } from "lucide-react";
+import { ExternalLink, MoreVertical, Images, ImageDown } from "lucide-react";
 import { save } from "@tauri-apps/plugin-dialog";
 import { writeFile } from "@tauri-apps/plugin-fs";
 import { writeImage } from '@tauri-apps/plugin-clipboard-manager';
