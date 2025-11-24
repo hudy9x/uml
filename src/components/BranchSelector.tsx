@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GitBranch, Check } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { getCurrentBranch, getAllBranches, switchBranch } from "@/lib/gitUtils";
@@ -13,6 +13,8 @@ export function BranchSelector({ workingDir = "." }: BranchSelectorProps) {
     const [branches, setBranches] = useState<string[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isWindowFocused, setIsWindowFocused] = useState(true);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const loadBranchData = async () => {
         const [current, all] = await Promise.all([
@@ -23,9 +25,43 @@ export function BranchSelector({ workingDir = "." }: BranchSelectorProps) {
         setBranches(all);
     };
 
+    // Track window focus state
     useEffect(() => {
+        const handleFocus = () => setIsWindowFocused(true);
+        const handleBlur = () => setIsWindowFocused(false);
+
+        window.addEventListener("focus", handleFocus);
+        window.addEventListener("blur", handleBlur);
+
+        return () => {
+            window.removeEventListener("focus", handleFocus);
+            window.removeEventListener("blur", handleBlur);
+        };
+    }, []);
+
+    // Initial load and auto-reload when focused
+    useEffect(() => {
+        // Load immediately
         loadBranchData();
-    }, [workingDir]);
+
+        // Clear any existing interval
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+
+        // Set up auto-reload every 1 second when window is focused
+        if (isWindowFocused) {
+            intervalRef.current = setInterval(() => {
+                loadBranchData();
+            }, 1000);
+        }
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [workingDir, isWindowFocused]);
 
     const handleSwitchBranch = async (branchName: string) => {
         if (branchName === currentBranch) {
