@@ -5,6 +5,7 @@ fn greet(name: &str) -> String {
 }
 
 mod files;
+mod git;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -16,6 +17,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             greet,
             files::list_dir,
@@ -24,7 +26,11 @@ pub fn run() {
             files::create_directory,
             files::create_file,
             files::delete_node,
-            files::rename_node
+            files::rename_node,
+            git::get_current_branch,
+            git::get_all_branches,
+            git::switch_branch,
+            git::get_git_status
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

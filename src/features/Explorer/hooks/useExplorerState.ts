@@ -1,11 +1,19 @@
 import { useState, useEffect } from "react";
 import { FileEntry } from "../types";
+import { useExplorerRootPath } from "@/stores/explorer";
 
 export function useExplorerState() {
-    const [rootPath, setRootPath] = useState<string | null>(null);
+    const [rootPath, setRootPathLocal] = useState<string | null>(null);
+    const [, setGlobalRootPath] = useExplorerRootPath();
     const [files, setFiles] = useState<FileEntry[]>([]);
     const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
     const [hoveredFolder, setHoveredFolder] = useState<string | null>(null);
+
+    // Wrapper to update both local and global state
+    const setRootPath = (path: string | null) => {
+        setRootPathLocal(path);
+        setGlobalRootPath(path);
+    };
 
     // Load saved folder and expanded paths from localStorage
     useEffect(() => {
