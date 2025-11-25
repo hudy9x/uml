@@ -1,14 +1,12 @@
 ## What's Changed
 
-✨ Features
-
-- Replace current file manager to project folder (#22) ([ba598b3](../../commit/ba598b3))
-
 🔨 Other Changes
 
-- Migrate open window action to outside the dropdown ([0d0da4a](../../commit/0d0da4a))
-- Add reset zoom ([cd44a0a](../../commit/cd44a0a))
-- Update height of horizontal scrollbar ([e91b1c2](../../commit/e91b1c2))
+- Change active color ([192b310](../../commit/192b310))
+- Reload explorer folder when changes happen ([98a47a2](../../commit/98a47a2))
+- Auto reload branch selector every 1000ms ([fb56cc7](../../commit/fb56cc7))
+- Add git branch selector to footer section ([05d7954](../../commit/05d7954))
+- Upgrade version ([c082c3e](../../commit/c082c3e))
 
 
-📋 Full Changelog: [ba598b3...0d0da4a](../../compare/ba598b3...0d0da4a)
+📋 Full Changelog: [c082c3e...192b310](../../compare/c082c3e...192b310)

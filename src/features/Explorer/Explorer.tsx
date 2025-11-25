@@ -52,7 +52,6 @@ function ExplorerComponent({
     // Drag and drop
     const {
         activeItem,
-        setActiveItem,
         sensors,
         handleDragEnd,
     } = useExplorerDragDrop({
