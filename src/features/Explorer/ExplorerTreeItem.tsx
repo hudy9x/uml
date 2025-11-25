@@ -62,7 +62,7 @@ export function ExplorerTreeItem({
                             <div
                                 className={cn(
                                     "group flex items-center justify-between py-0.5 px-2 cursor-pointer text-sm select-none transition-colors",
-                                    isSelected ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+                                    isSelected ? "bg-black/70 text-white" : "hover:bg-accent/50"
                                 )}
                                 style={{ paddingLeft: `${depth * 12 + 8}px` }}
                                 onClick={() => onFileClick(entry)}
@@ -77,7 +77,7 @@ export function ExplorerTreeItem({
                                             <span className="w-[14px]" />
                                         )}
                                     </span>
-                                    <span className="mr-2 text-accent-foreground">
+                                    <span className="mr-2 text-indigo-900">
                                         {entry.is_dir ? (
                                             <img src={isExpanded ? openFolderIcon : folderIcon} alt="folder" className="w-4 h-4" />
                                         ) : (
