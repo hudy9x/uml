@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo, useRef } from "react";
 import { DndContext } from "@dnd-kit/core";
 import { ExplorerProps } from "./types";
 import { useExplorerState } from "./hooks/useExplorerState";
@@ -11,6 +11,7 @@ import { ExplorerCreateDialog } from "./ExplorerCreateDialog";
 import { ExplorerRenameDialog } from "./ExplorerRenameDialog";
 import { ExplorerDragOverlay } from "./ExplorerDragOverlay";
 import { ExplorerFileSearchDialog } from "./ExplorerFileSearchDialog";
+import { checkAndReloadExplorer } from "@/lib/explorerReloadUtils";
 
 function ExplorerComponent({
     onFileSelect,
@@ -49,7 +50,12 @@ function ExplorerComponent({
     });
 
     // Drag and drop
-    const { activeItem, sensors, handleDragEnd } = useExplorerDragDrop({
+    const {
+        activeItem,
+        setActiveItem,
+        sensors,
+        handleDragEnd,
+    } = useExplorerDragDrop({
         files,
         loadDir,
     });
@@ -64,6 +70,24 @@ function ExplorerComponent({
     const [renameItemName, setRenameItemName] = useState("");
 
     const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+
+    // Window focus state and file structure hash for auto-reload
+    const [isWindowFocused, setIsWindowFocused] = useState(true);
+    const fileStructureHashRef = useRef<string>("");
+
+    // Track window focus state
+    useEffect(() => {
+        const handleFocus = () => setIsWindowFocused(true);
+        const handleBlur = () => setIsWindowFocused(false);
+
+        window.addEventListener("focus", handleFocus);
+        window.addEventListener("blur", handleBlur);
+
+        return () => {
+            window.removeEventListener("focus", handleFocus);
+            window.removeEventListener("blur", handleBlur);
+        };
+    }, []);
 
     // Keyboard shortcut for file search (Ctrl/Cmd+P)
     useEffect(() => {
@@ -86,6 +110,28 @@ function ExplorerComponent({
             loadDir(rootPath);
         }
     }, [rootPath]);
+
+    // Auto-reload file structure when changes are detected (only when window is focused)
+    useEffect(() => {
+        if (!rootPath || !isWindowFocused) return;
+
+        const checkForChanges = async () => {
+            const newHash = await checkAndReloadExplorer(
+                rootPath,
+                fileStructureHashRef.current,
+                loadDir
+            );
+            fileStructureHashRef.current = newHash;
+        };
+
+        // Check immediately
+        checkForChanges();
+
+        // Poll every 2 seconds when window is focused
+        const interval = setInterval(checkForChanges, 2000);
+
+        return () => clearInterval(interval);
+    }, [rootPath, isWindowFocused, loadDir]);
 
     // Dialog handlers
     const openCreateDialog = (parentPath: string, type: "file" | "folder") => {
