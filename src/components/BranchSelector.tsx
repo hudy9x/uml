@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { GitBranch, Check } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { getCurrentBranch, getAllBranches, switchBranch } from "@/lib/gitUtils";
 import { toast } from "sonner";
 
@@ -90,37 +95,31 @@ export function BranchSelector({ workingDir = "." }: BranchSelectorProps) {
     }
 
     return (
-        <Popover open={isOpen} onOpenChange={setIsOpen}>
-            <PopoverTrigger asChild>
+        <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-1 text-xs hover:bg-primary/10 px-1 py-0.5 rounded cursor-pointer">
                     <GitBranch className="h-3 w-3" />
                     <span>{currentBranch}</span>
                 </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-64 p-2" align="start" side="top">
-                <div className="space-y-1">
-                    <div className="px-2 py-1 text-xs font-semibold text-muted-foreground">
-                        Switch Branch
-                    </div>
-                    <div className="max-h-64 overflow-y-auto">
-                        {branches.map((branch) => (
-                            <button
-                                key={branch}
-                                onClick={() => handleSwitchBranch(branch)}
-                                disabled={isLoading}
-                                className="w-full flex items-center justify-between px-2 py-1.5 text-xs hover:bg-accent rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <span className={branch === currentBranch ? "font-semibold" : ""}>
-                                    {branch}
-                                </span>
-                                {branch === currentBranch && (
-                                    <Check className="h-3 w-3 text-primary" />
-                                )}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </PopoverContent>
-        </Popover>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" side="top" className="w-64 max-h-64 overflow-y-auto">
+                {branches.map((branch) => (
+                    <DropdownMenuItem
+                        key={branch}
+                        onClick={() => handleSwitchBranch(branch)}
+                        disabled={isLoading}
+                        className="cursor-pointer"
+                    >
+                        <GitBranch className="h-3 w-3 mr-2" />
+                        <span className={branch === currentBranch ? "font-semibold" : ""}>
+                            {branch}
+                        </span>
+                        {branch === currentBranch && (
+                            <Check className="h-3 w-3 text-primary ml-auto" />
+                        )}
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }
