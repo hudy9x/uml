@@ -110,6 +110,7 @@ export function BranchSelector({ workingDir = "." }: BranchSelectorProps) {
                         disabled={isLoading}
                         className="cursor-pointer"
                     >
+                        <GitBranch className="h-3 w-3 mr-2" />
                         <span className={branch === currentBranch ? "font-semibold" : ""}>
                             {branch}
                         </span>
