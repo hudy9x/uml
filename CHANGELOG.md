@@ -1,12 +1,16 @@
 ## What's Changed
 
+✨ Features
+
+- Integrate github (#23) ([f9bc4f7](../../commit/f9bc4f7))
+
+🐛 Bug Fixes
+
+- Turn off git branch, cuz it open terminal in windows ([62e994c](../../commit/62e994c))
+
 🔨 Other Changes
 
-- Change active color ([192b310](../../commit/192b310))
-- Reload explorer folder when changes happen ([98a47a2](../../commit/98a47a2))
-- Auto reload branch selector every 1000ms ([fb56cc7](../../commit/fb56cc7))
-- Add git branch selector to footer section ([05d7954](../../commit/05d7954))
-- Upgrade version ([c082c3e](../../commit/c082c3e))
+- Change github branches popover to dropdown ([ec86e28](../../commit/ec86e28))
 
 
-📋 Full Changelog: [c082c3e...192b310](../../compare/c082c3e...192b310)
+📋 Full Changelog: [f9bc4f7...62e994c](../../compare/f9bc4f7...62e994c)
