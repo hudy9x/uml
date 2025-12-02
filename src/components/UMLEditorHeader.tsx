@@ -1,7 +1,7 @@
 import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
 import { cn } from "../lib/utils";
 import { useBackground } from "../hooks/useBackground";
-import { File, PanelLeft, AlertCircle, ExternalLink } from "lucide-react";
+import { File, PanelLeft, AlertCircle, ExternalLink, PanelBottomClose, PanelBottomOpen } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 
@@ -10,8 +10,10 @@ interface UMLEditorHeaderProps {
   umlCode: string;
   currentFilePath: string | null;
   isExplorerVisible: boolean;
+  isEditorVisible: boolean;
   errorCount?: number;
   onToggleExplorer: () => void;
+  onToggleEditor: () => void;
   onOpenPreview: () => void;
 }
 
@@ -20,8 +22,10 @@ export function UMLEditorHeader({
   umlCode,
   currentFilePath,
   isExplorerVisible,
+  isEditorVisible,
   errorCount = 0,
   onToggleExplorer,
+  onToggleEditor,
   onOpenPreview,
 }: UMLEditorHeaderProps) {
   const { editorBackground } = useBackground();
@@ -64,6 +68,15 @@ export function UMLEditorHeader({
 
       {/* Actions on the right */}
       <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6"
+          onClick={onToggleEditor}
+          title={isEditorVisible ? "Hide Editor" : "Show Editor"}
+        >
+          {isEditorVisible ? <PanelBottomClose size={14} /> : <PanelBottomOpen size={14} />}
+        </Button>
         <Button
           variant="ghost"
           size="icon"

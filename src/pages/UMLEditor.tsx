@@ -16,6 +16,8 @@ import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
 import { Explorer } from "@/features/Explorer";
 import { findMessageLine } from "../lib/uml-parser";
+import { Button } from "@/components/ui/button";
+import { PanelLeftOpen } from "lucide-react";
 
 export default function UMLEditor() {
   const { umlId } = useParams();
@@ -31,6 +33,12 @@ export default function UMLEditor() {
   // Load explorer visibility state from localStorage
   const [isExplorerVisible, setIsExplorerVisible] = useState(() => {
     const saved = localStorage.getItem("explorerVisible");
+    return saved !== null ? saved === "true" : true; // Default to true if not set
+  });
+
+  // Load editor visibility state from localStorage
+  const [isEditorVisible, setIsEditorVisible] = useState(() => {
+    const saved = localStorage.getItem("editorVisible");
     return saved !== null ? saved === "true" : true; // Default to true if not set
   });
 
@@ -66,6 +74,11 @@ export default function UMLEditor() {
   useEffect(() => {
     localStorage.setItem("explorerVisible", String(isExplorerVisible));
   }, [isExplorerVisible]);
+
+  // Persist editor visibility state
+  useEffect(() => {
+    localStorage.setItem("editorVisible", String(isEditorVisible));
+  }, [isEditorVisible]);
 
   const { previewWindow, openPreviewWindow } = usePreviewWindow({
     umlCode,
@@ -117,6 +130,18 @@ export default function UMLEditor() {
     <div className="flex flex-col h-screen">
       {/* Main Editor Area */}
       <main className="uml-editor-page bg-[var(--background)] flex-1 relative">
+        {/* Floating button to show editor when hidden */}
+        {!isEditorVisible && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditorVisible(true)}
+            className="absolute top-2 left-2 z-50 gap-2 shadow-lg"
+          >
+            <PanelLeftOpen size={16} />
+          </Button>
+        )}
+
         <ResizablePanelGroup
           direction="horizontal"
           style={{ width: "100vw", height: "calc(100vh - 29px)" }}
@@ -136,26 +161,32 @@ export default function UMLEditor() {
               <ResizableHandle withHandle />
             </>
           )}
-          <ResizablePanel defaultSize={editorSize} minSize={30}>
-            <div className="flex flex-col h-full">
-              <UMLEditorHeader
-                projectName={projectName}
-                umlCode={umlCode}
-                currentFilePath={currentFilePath}
-                isExplorerVisible={isExplorerVisible}
-                errorCount={errorCount}
-                onToggleExplorer={() => setIsExplorerVisible(!isExplorerVisible)}
-                onOpenPreview={openPreviewWindow}
-              />
-              <UMLEditorPanel
-                ref={editorRef}
-                umlCode={umlCode}
-                onChange={(value) => autoSave(value)}
-                onErrorCountChange={setErrorCount}
-              />
-            </div>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
+          {isEditorVisible && (
+            <>
+              <ResizablePanel defaultSize={editorSize} minSize={30}>
+                <div className="flex flex-col h-full">
+                  <UMLEditorHeader
+                    projectName={projectName}
+                    umlCode={umlCode}
+                    currentFilePath={currentFilePath}
+                    isExplorerVisible={isExplorerVisible}
+                    isEditorVisible={isEditorVisible}
+                    errorCount={errorCount}
+                    onToggleExplorer={() => setIsExplorerVisible(!isExplorerVisible)}
+                    onToggleEditor={() => setIsEditorVisible(!isEditorVisible)}
+                    onOpenPreview={openPreviewWindow}
+                  />
+                  <UMLEditorPanel
+                    ref={editorRef}
+                    umlCode={umlCode}
+                    onChange={(value) => autoSave(value)}
+                    onErrorCountChange={setErrorCount}
+                  />
+                </div>
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+            </>
+          )}
           <ResizablePanel
             defaultSize={maxEditorSize - editorSize}
             minSize={20}
