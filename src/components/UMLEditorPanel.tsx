@@ -17,6 +17,7 @@ interface UMLEditorPanelProps {
 
 export interface UMLEditorPanelRef {
   jumpToLine: (lineNumber: number) => void;
+  deleteLine: (lineNumber: number) => void;
 }
 
 export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>(
@@ -59,7 +60,7 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
       return baseExtensions;
     }, [hasErrors]);
 
-    // Expose jumpToLine method to parent via ref
+    // Expose jumpToLine and deleteLine methods to parent via ref
     useImperativeHandle(ref, () => ({
       jumpToLine: (lineNumber: number) => {
         const view = editorRef.current?.view;
@@ -88,6 +89,28 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
           view.focus();
         } catch (error) {
           console.error(`Failed to jump to line ${lineNumber}:`, error);
+        }
+      },
+      deleteLine: (lineNumber: number) => {
+        const view = editorRef.current?.view;
+        if (!view) return;
+
+        try {
+          // Get the line object for the target line number
+          const line = view.state.doc.line(lineNumber);
+
+          // Delete the entire line including the newline character
+          view.dispatch({
+            changes: {
+              from: line.from,
+              to: line.to + 1, // +1 to include the newline character
+            },
+          });
+
+          // Focus the editor
+          view.focus();
+        } catch (error) {
+          console.error(`Failed to delete line ${lineNumber}:`, error);
         }
       },
     }), []);
