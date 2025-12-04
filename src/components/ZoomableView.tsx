@@ -1,4 +1,4 @@
-import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { ZoomIn, ZoomOut, MapPin } from "lucide-react";
 import {
   TransformWrapper,
   TransformComponent,
@@ -34,7 +34,7 @@ function Controls() {
           <ZoomOut />
         </Button>
         <Button variant="outline" size="icon" onClick={handleReset} title="Reset & Center">
-          <Maximize2 />
+          <MapPin />
         </Button>
       </div>
     </div>

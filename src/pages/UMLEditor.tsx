@@ -126,6 +126,34 @@ export default function UMLEditor() {
     }
   }, [umlCode]);
 
+  // Handle message delete from preview panel
+  const handleMessageDelete = useCallback((messageIndex: number) => {
+    const lineNumber = findMessageLine(messageIndex, umlCode);
+
+    if (lineNumber) {
+      editorRef.current?.deleteLine(lineNumber);
+      console.log(`Deleted line ${lineNumber} for message at SVG index ${messageIndex}`);
+      toast.success('Message deleted');
+    } else {
+      console.warn(`Could not find line for message at SVG index ${messageIndex}`);
+      toast.error('Could not find message line');
+    }
+  }, [umlCode]);
+
+  // Handle message edit from preview panel
+  const handleMessageEdit = useCallback((messageIndex: number, newMessage: string) => {
+    const lineNumber = findMessageLine(messageIndex, umlCode);
+
+    if (lineNumber) {
+      editorRef.current?.replaceMessage(lineNumber, newMessage);
+      console.log(`Replaced message on line ${lineNumber} with: "${newMessage}"`);
+      toast.success('Message updated');
+    } else {
+      console.warn(`Could not find line for message at SVG index ${messageIndex}`);
+      toast.error('Could not find message line');
+    }
+  }, [umlCode]);
+
   return (
     <div className="flex flex-col h-screen">
       {/* Main Editor Area */}
@@ -195,6 +223,8 @@ export default function UMLEditor() {
               svgContent={svgContent}
               hidden={!!previewWindow}
               onMessageClick={handleMessageClick}
+              onMessageDelete={handleMessageDelete}
+              onMessageEdit={handleMessageEdit}
             />
           </ResizablePanel>
         </ResizablePanelGroup>

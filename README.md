@@ -11,6 +11,7 @@ A modern, intuitive desktop application for creating and editing UML diagrams wi
 
 ## ✨ Features
 
+### Core Features
 - 🚀 Real-time UML diagram rendering and preview
 - 💻 Desktop-native performance with Tauri
 - 🎨 Modern UI with shadcn/ui components
@@ -20,6 +21,14 @@ A modern, intuitive desktop application for creating and editing UML diagrams wi
 - 💾 Local project management and storage
 - 🎯 Zoom and pan controls for diagram viewing
 - 🌙 Light/Dark theme support
+
+### Interactive Features
+- 🎯 **Click-to-Jump**: Click any message in the preview to jump to the exact line in the code editor
+- 🗑️ **Quick Delete**: Remove messages directly from the preview with a single click
+- ✏️ **Inline Editing**: Edit message content directly from the preview without navigating to code
+- 👁️ **Toggle Panels**: Show/hide explorer or code editor panels for focused workflow
+- 📁 **File Explorer**: Browse and open UML files from your local folder structure
+
 
 ## 🚀 Prerequisites
 

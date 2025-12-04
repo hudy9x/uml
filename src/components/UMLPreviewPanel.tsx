@@ -2,16 +2,33 @@ import { useBackground } from "@/hooks/useBackground";
 import { ZoomableView } from "./ZoomableView";
 import { Badge } from "./ui/badge";
 import { Check, RefreshCcw } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { MessageToolbar } from "./MessageToolbar";
 
 interface UMLPreviewPanelProps {
   svgContent: string;
   hidden?: boolean;
   onMessageClick?: (messageText: string, from?: string, to?: string, messageIndex?: number) => void;
+  onMessageDelete?: (messageIndex: number) => void;
+  onMessageEdit?: (messageIndex: number, newMessage: string) => void;
 }
 
-export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPreviewPanelProps) {
+export function UMLPreviewPanel({
+  svgContent,
+  hidden,
+  onMessageClick,
+  onMessageDelete,
+  onMessageEdit,
+}: UMLPreviewPanelProps) {
   const { previewBackground } = useBackground();
+  const [toolbarOpen, setToolbarOpen] = useState(false);
+  const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 0 });
+  const [selectedMessage, setSelectedMessage] = useState<{
+    text: string;
+    from?: string;
+    to?: string;
+    index?: number;
+  } | null>(null);
 
   // Flash effect to highlight clicked text elements
   const flashTextElement = (textElement: SVGTextElement) => {
@@ -19,7 +36,7 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
     const originalFill = textElement.getAttribute('fill') || '#000000';
 
     // Change to highlight color
-    textElement.setAttribute('fill', '#FF0000'); // Gold/yellow color
+    textElement.setAttribute('fill', '#FF0000'); // Red color
 
     // Revert back to original color after animation
     setTimeout(() => {
@@ -28,7 +45,7 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
   };
 
   // Add a click event on the svg content
-  // User can click on the message to trigger a Jump_To_Line action
+  // User can click on the message to show the toolbar
   useEffect(() => {
     if (!onMessageClick) return;
 
@@ -41,7 +58,6 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
       messages.forEach((message, messageIndex) => {
         if (message === parent) {
           // Extract message text from the SVG
-          // The message text is typically in a <text> element within the message group
           const textElements = message.querySelectorAll("text");
           let messageText = "";
           let fromParticipant = "";
@@ -54,7 +70,6 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
           }
 
           // Try to extract participant information from the message structure
-          // This is a heuristic approach based on PlantUML SVG structure
           const allTexts = Array.from(textElements).map(t => t.textContent?.trim() || "");
 
           // If we have at least 3 text elements, they might be: from, arrow, to, message
@@ -74,9 +89,28 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
             flashTextElement(textEl as SVGTextElement);
           });
 
-          if (messageText) {
+          // Store selected message data
+          setSelectedMessage({
+            text: messageText,
+            from: fromParticipant || undefined,
+            to: toParticipant || undefined,
+            index: messageIndex,
+          });
+
+          // Calculate toolbar position near the clicked element
+          const rect = target.getBoundingClientRect();
+          setToolbarPosition({
+            x: rect.left + rect.width / 2,
+            y: rect.bottom + 10,
+          });
+
+          // Immediately jump to code when message is clicked
+          if (messageText && onMessageClick) {
             onMessageClick(messageText, fromParticipant || undefined, toParticipant || undefined, messageIndex);
           }
+
+          // Show toolbar
+          setToolbarOpen(true);
           return;
         }
       });
@@ -99,6 +133,32 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
     };
   }, [svgContent, onMessageClick]);
 
+  const handleJumpToCode = () => {
+    if (selectedMessage && onMessageClick) {
+      onMessageClick(
+        selectedMessage.text,
+        selectedMessage.from,
+        selectedMessage.to,
+        selectedMessage.index
+      );
+    }
+    setToolbarOpen(false);
+  };
+
+  const handleDelete = () => {
+    if (selectedMessage?.index !== undefined && onMessageDelete) {
+      onMessageDelete(selectedMessage.index);
+    }
+    setToolbarOpen(false);
+  };
+
+  const handleEditMessage = (newMessage: string) => {
+    if (selectedMessage?.index !== undefined && onMessageEdit) {
+      onMessageEdit(selectedMessage.index, newMessage);
+    }
+    setToolbarOpen(false);
+  };
+
   return (
     <div className={`uml-preview-card relative ${hidden ? "hidden" : ""}`}
       style={{ height: "100%", backgroundColor: previewBackground }}>
@@ -116,6 +176,16 @@ export function UMLPreviewPanel({ svgContent, hidden, onMessageClick }: UMLPrevi
           className="max-w-full h-[calc(100vh - 34px)] uml-preview"
         />
       </ZoomableView>
+
+      <MessageToolbar
+        open={toolbarOpen}
+        position={toolbarPosition}
+        currentMessage={selectedMessage?.text}
+        onJumpToCode={handleJumpToCode}
+        onDelete={handleDelete}
+        onEditMessage={handleEditMessage}
+        onOpenChange={setToolbarOpen}
+      />
     </div>
   );
-} 
+}

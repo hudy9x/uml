@@ -1,8 +1,12 @@
 ## What's Changed
 
-♻️ Refactoring
+✨ Features
 
-- Temporary remove git branch (#24) ([efc0e34](../../commit/efc0e34))
+- Hide uml editor (#25) ([f4ccc3a](../../commit/f4ccc3a))
+
+🔨 Other Changes
+
+- Add toolbar with jumpToLine and delete button ([e302c37](../../commit/e302c37))
 
 
-📋 Full Changelog: [efc0e34...efc0e34](../../compare/efc0e34...efc0e34)
+📋 Full Changelog: [f4ccc3a...e302c37](../../compare/f4ccc3a...e302c37)

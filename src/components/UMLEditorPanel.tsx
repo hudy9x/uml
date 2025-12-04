@@ -17,6 +17,8 @@ interface UMLEditorPanelProps {
 
 export interface UMLEditorPanelRef {
   jumpToLine: (lineNumber: number) => void;
+  deleteLine: (lineNumber: number) => void;
+  replaceMessage: (lineNumber: number, newMessage: string) => void;
 }
 
 export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>(
@@ -59,7 +61,7 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
       return baseExtensions;
     }, [hasErrors]);
 
-    // Expose jumpToLine method to parent via ref
+    // Expose jumpToLine, deleteLine, and replaceMessage methods to parent via ref
     useImperativeHandle(ref, () => ({
       jumpToLine: (lineNumber: number) => {
         const view = editorRef.current?.view;
@@ -88,6 +90,66 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
           view.focus();
         } catch (error) {
           console.error(`Failed to jump to line ${lineNumber}:`, error);
+        }
+      },
+      deleteLine: (lineNumber: number) => {
+        const view = editorRef.current?.view;
+        if (!view) return;
+
+        try {
+          // Get the line object for the target line number
+          const line = view.state.doc.line(lineNumber);
+
+          // Delete the entire line including the newline character
+          view.dispatch({
+            changes: {
+              from: line.from,
+              to: line.to + 1, // +1 to include the newline character
+            },
+          });
+
+          // Focus the editor
+          view.focus();
+        } catch (error) {
+          console.error(`Failed to delete line ${lineNumber}:`, error);
+        }
+      },
+      replaceMessage: (lineNumber: number, newMessage: string) => {
+        const view = editorRef.current?.view;
+        if (!view) return;
+
+        try {
+          // Get the line object for the target line number
+          const line = view.state.doc.line(lineNumber);
+          const lineText = line.text;
+
+          // Find the colon position to replace only the message part
+          const colonIndex = lineText.indexOf(':');
+
+          if (colonIndex === -1) {
+            console.warn(`No colon found in line ${lineNumber}`);
+            return;
+          }
+
+          // Calculate positions for replacement
+          // Replace from after the colon to the end of the line
+          const replaceFrom = line.from + colonIndex + 1;
+          const replaceTo = line.to;
+
+          // Dispatch transaction to replace the message part
+          view.dispatch({
+            changes: {
+              from: replaceFrom,
+              to: replaceTo,
+              insert: ` ${newMessage}`,
+            },
+            selection: EditorSelection.cursor(replaceFrom + newMessage.length + 1),
+          });
+
+          // Focus the editor
+          view.focus();
+        } catch (error) {
+          console.error(`Failed to replace message on line ${lineNumber}:`, error);
         }
       },
     }), []);
