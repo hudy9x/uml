@@ -1,12 +1,22 @@
 use tauri::command;
 use std::process::Command;
 
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x08000000;
+
 #[command]
 pub fn get_current_branch(working_dir: String) -> Result<String, String> {
-    let output = Command::new("git")
-        .current_dir(&working_dir)
-        .args(["branch", "--show-current"])
-        .output()
+    let mut cmd = Command::new("git");
+    cmd.current_dir(&working_dir)
+        .args(["branch", "--show-current"]);
+    
+    #[cfg(target_os = "windows")]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+    
+    let output = cmd.output()
         .map_err(|e| format!("Failed to execute git command: {}", e))?;
 
     if !output.status.success() {
@@ -22,10 +32,14 @@ pub fn get_current_branch(working_dir: String) -> Result<String, String> {
 
 #[command]
 pub fn get_all_branches(working_dir: String) -> Result<Vec<String>, String> {
-    let output = Command::new("git")
-        .current_dir(&working_dir)
-        .args(["branch", "--list"])
-        .output()
+    let mut cmd = Command::new("git");
+    cmd.current_dir(&working_dir)
+        .args(["branch", "--list"]);
+    
+    #[cfg(target_os = "windows")]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+    
+    let output = cmd.output()
         .map_err(|e| format!("Failed to execute git command: {}", e))?;
 
     if !output.status.success() {
@@ -46,10 +60,14 @@ pub fn get_all_branches(working_dir: String) -> Result<Vec<String>, String> {
 
 #[command]
 pub fn switch_branch(working_dir: String, branch: String) -> Result<String, String> {
-    let output = Command::new("git")
-        .current_dir(&working_dir)
-        .args(["checkout", &branch])
-        .output()
+    let mut cmd = Command::new("git");
+    cmd.current_dir(&working_dir)
+        .args(["checkout", &branch]);
+    
+    #[cfg(target_os = "windows")]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+    
+    let output = cmd.output()
         .map_err(|e| format!("Failed to execute git command: {}", e))?;
 
     if !output.status.success() {
@@ -61,10 +79,14 @@ pub fn switch_branch(working_dir: String, branch: String) -> Result<String, Stri
 
 #[command]
 pub fn get_git_status(working_dir: String) -> Result<std::collections::HashMap<String, String>, String> {
-    let output = Command::new("git")
-        .current_dir(&working_dir)
-        .args(["status", "--short", "--porcelain"])
-        .output()
+    let mut cmd = Command::new("git");
+    cmd.current_dir(&working_dir)
+        .args(["status", "--short", "--porcelain"]);
+    
+    #[cfg(target_os = "windows")]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+    
+    let output = cmd.output()
         .map_err(|e| format!("Failed to execute git command: {}", e))?;
 
     if !output.status.success() {
