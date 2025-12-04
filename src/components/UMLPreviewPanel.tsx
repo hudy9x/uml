@@ -104,6 +104,11 @@ export function UMLPreviewPanel({
             y: rect.bottom + 10,
           });
 
+          // Immediately jump to code when message is clicked
+          if (messageText && onMessageClick) {
+            onMessageClick(messageText, fromParticipant || undefined, toParticipant || undefined, messageIndex);
+          }
+
           // Show toolbar
           setToolbarOpen(true);
           return;

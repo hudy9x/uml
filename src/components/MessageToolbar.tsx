@@ -1,7 +1,7 @@
 import { Popover, PopoverContent } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Code2, Trash2, Edit3, Check } from "lucide-react";
+import { Trash2, Edit3, Check, CircleDot } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface MessageToolbarProps {
@@ -103,7 +103,7 @@ export function MessageToolbar({
                             onClick={onJumpToCode}
                             title="Jump to Code"
                         >
-                            <Code2 className="h-4 w-4" />
+                            <CircleDot className="h-4 w-4" />
                         </Button>
                         <Button
                             variant="ghost"
