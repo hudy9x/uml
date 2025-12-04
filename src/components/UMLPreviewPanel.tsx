@@ -10,7 +10,7 @@ interface UMLPreviewPanelProps {
   hidden?: boolean;
   onMessageClick?: (messageText: string, from?: string, to?: string, messageIndex?: number) => void;
   onMessageDelete?: (messageIndex: number) => void;
-  onMessageEdit?: (messageIndex: number) => void;
+  onMessageEdit?: (messageIndex: number, newMessage: string) => void;
 }
 
 export function UMLPreviewPanel({
@@ -147,9 +147,9 @@ export function UMLPreviewPanel({
     setToolbarOpen(false);
   };
 
-  const handleEdit = () => {
+  const handleEditMessage = (newMessage: string) => {
     if (selectedMessage?.index !== undefined && onMessageEdit) {
-      onMessageEdit(selectedMessage.index);
+      onMessageEdit(selectedMessage.index, newMessage);
     }
     setToolbarOpen(false);
   };
@@ -175,9 +175,10 @@ export function UMLPreviewPanel({
       <MessageToolbar
         open={toolbarOpen}
         position={toolbarPosition}
+        currentMessage={selectedMessage?.text}
         onJumpToCode={handleJumpToCode}
         onDelete={handleDelete}
-        onEdit={handleEdit}
+        onEditMessage={handleEditMessage}
         onOpenChange={setToolbarOpen}
       />
     </div>

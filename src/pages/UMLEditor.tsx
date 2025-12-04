@@ -141,13 +141,13 @@ export default function UMLEditor() {
   }, [umlCode]);
 
   // Handle message edit from preview panel
-  const handleMessageEdit = useCallback((messageIndex: number) => {
+  const handleMessageEdit = useCallback((messageIndex: number, newMessage: string) => {
     const lineNumber = findMessageLine(messageIndex, umlCode);
 
     if (lineNumber) {
-      editorRef.current?.jumpToLine(lineNumber);
-      console.log(`Editing line ${lineNumber} for message at SVG index ${messageIndex}`);
-      toast.info('Jump to line to edit message');
+      editorRef.current?.replaceMessage(lineNumber, newMessage);
+      console.log(`Replaced message on line ${lineNumber} with: "${newMessage}"`);
+      toast.success('Message updated');
     } else {
       console.warn(`Could not find line for message at SVG index ${messageIndex}`);
       toast.error('Could not find message line');
