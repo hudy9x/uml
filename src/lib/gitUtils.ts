@@ -123,3 +123,13 @@ export function getEffectiveGitStatus(
 
     return undefined;
 }
+
+export async function gitPull(workingDir: string): Promise<{ success: boolean; output: string }> {
+    try {
+        const output = await invoke<string>("git_pull", { workingDir });
+        return { success: true, output };
+    } catch (error) {
+        console.error("Failed to git pull:", error);
+        return { success: false, output: String(error) };
+    }
+}

@@ -129,3 +129,26 @@ pub fn get_git_status(working_dir: String) -> Result<std::collections::HashMap<S
     Ok(status_map)
 }
 
+#[command]
+pub fn git_pull(working_dir: String) -> Result<String, String> {
+    let mut cmd = Command::new("git");
+    cmd.current_dir(&working_dir)
+        .args(["pull"]);
+    
+    #[cfg(target_os = "windows")]
+    cmd.creation_flags(CREATE_NO_WINDOW);
+    
+    let output = cmd.output()
+        .map_err(|e| format!("Failed to execute git command: {}", e))?;
+
+    // Combine stdout and stderr for complete output
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    let combined_output = format!("{}{}", stdout, stderr);
+
+    if !output.status.success() {
+        return Err(combined_output);
+    }
+
+    Ok(combined_output)
+}

@@ -7,3 +7,11 @@ const explorerRootPathAtom = atom<string | null>(null);
 export function useExplorerRootPath() {
     return useAtom(explorerRootPathAtom);
 }
+
+// Atom to trigger explorer reload (increment to trigger)
+const explorerReloadTriggerAtom = atom<number>(0);
+
+// Hook to trigger explorer reload
+export function useExplorerReloadTrigger() {
+    return useAtom(explorerReloadTriggerAtom);
+}

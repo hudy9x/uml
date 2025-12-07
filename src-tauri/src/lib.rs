@@ -30,7 +30,8 @@ pub fn run() {
             git::get_current_branch,
             git::get_all_branches,
             git::switch_branch,
-            git::get_git_status
+            git::get_git_status,
+            git::git_pull
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
