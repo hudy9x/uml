@@ -1,6 +1,7 @@
 use std::process::Command;
 use std::path::PathBuf;
 use std::fs;
+use tauri::Manager;
 
 #[derive(Debug, serde::Serialize)]
 pub struct DiagramOutput {
@@ -10,6 +11,7 @@ pub struct DiagramOutput {
 
 #[tauri::command]
 pub async fn generate_diagram(
+    app: tauri::AppHandle,
     file_path: String,
     format: Option<String>,
 ) -> Result<DiagramOutput, String> {
@@ -22,36 +24,57 @@ pub async fn generate_diagram(
 
     #[cfg(target_os = "windows")]
     {
-        generate_diagram_windows(file_path, format).await
+        generate_diagram_windows(app, file_path, format).await
     }
 
     #[cfg(not(target_os = "windows"))]
     {
-        generate_diagram_unix(file_path, format).await
+        generate_diagram_unix(app, file_path, format).await
+    }
+}
+
+// Helper function to find plantuml directory
+fn get_plantuml_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+    // Try resource directory first (production build)
+    if let Ok(resource_path) = app.path().resource_dir() {
+        let plantuml_dir = resource_path.join("plantuml-portable").join("bin");
+        let plantuml_jar = plantuml_dir.join("plantuml-1.2025.10.jar");
+        if plantuml_jar.exists() {
+            return Ok(plantuml_dir);
+        }
+    }
+    
+    // Fallback to development path
+    // In development, the executable is in target/debug, so we go up to src-tauri
+    let exe_path = std::env::current_exe()
+        .map_err(|e| format!("Failed to get current exe path: {}", e))?;
+    
+    // Navigate from target/debug to src-tauri
+    let src_tauri = exe_path
+        .parent() // target/debug
+        .and_then(|p| p.parent()) // target
+        .and_then(|p| p.parent()) // src-tauri
+        .ok_or("Failed to navigate to src-tauri directory")?;
+    
+    let plantuml_dir = src_tauri.join("plantuml-portable").join("bin");
+    let plantuml_jar = plantuml_dir.join("plantuml-1.2025.10.jar");
+    
+    if plantuml_jar.exists() {
+        Ok(plantuml_dir)
+    } else {
+        Err(format!("PlantUML jar not found at: {:?}", plantuml_jar))
     }
 }
 
 // Windows implementation
 #[cfg(target_os = "windows")]
 async fn generate_diagram_windows(
+    app: tauri::AppHandle,
     file_path: String,
     format: String,
 ) -> Result<DiagramOutput, String> {
-    // Get the base directory (where the Tauri app is running)
-    let app_dir = std::env::current_exe()
-        .map_err(|e| format!("Failed to get current exe path: {}", e))?
-        .parent()
-        .ok_or("Failed to get parent directory")?
-        .to_path_buf();
-
-    // Construct paths to PlantUML resources
-    let plantuml_dir = app_dir.join("plantuml-portable").join("bin");
+    let plantuml_dir = get_plantuml_dir(&app)?;
     let plantuml_jar = plantuml_dir.join("plantuml-1.2025.10.jar");
-    
-    // Check if PlantUML jar exists
-    if !plantuml_jar.exists() {
-        return Err(format!("PlantUML jar not found at: {:?}", plantuml_jar));
-    }
 
     // Create a temporary output directory
     let temp_dir = std::env::temp_dir().join("plantuml_output");
@@ -99,24 +122,12 @@ async fn generate_diagram_windows(
 // macOS/Linux implementation
 #[cfg(not(target_os = "windows"))]
 async fn generate_diagram_unix(
+    app: tauri::AppHandle,
     file_path: String,
     format: String,
 ) -> Result<DiagramOutput, String> {
-    // Get the base directory (where the Tauri app is running)
-    let app_dir = std::env::current_exe()
-        .map_err(|e| format!("Failed to get current exe path: {}", e))?
-        .parent()
-        .ok_or("Failed to get parent directory")?
-        .to_path_buf();
-
-    // Construct paths to PlantUML resources
-    let plantuml_dir = app_dir.join("plantuml-portable").join("bin");
+    let plantuml_dir = get_plantuml_dir(&app)?;
     let plantuml_jar = plantuml_dir.join("plantuml-1.2025.10.jar");
-    
-    // Check if PlantUML jar exists
-    if !plantuml_jar.exists() {
-        return Err(format!("PlantUML jar not found at: {:?}", plantuml_jar));
-    }
 
     // Create a temporary output directory
     let temp_dir = std::env::temp_dir().join("plantuml_output");
