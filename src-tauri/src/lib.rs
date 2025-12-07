@@ -6,6 +6,7 @@ fn greet(name: &str) -> String {
 
 mod files;
 mod git;
+mod plantuml;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -31,7 +32,8 @@ pub fn run() {
             git::get_all_branches,
             git::switch_branch,
             git::get_git_status,
-            git::git_pull
+            git::git_pull,
+            plantuml::generate_diagram
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

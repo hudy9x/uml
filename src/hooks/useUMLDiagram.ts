@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
-import { useBackground } from "./useBackground";
+// import { useBackground } from "./useBackground"; // Only needed for HTTP method
 import { StatusBadge } from "@/lib/status-badge";
 
 let debounceTimeout: number;
@@ -12,21 +12,66 @@ interface UseUMLDiagramProps {
   filePath?: string | null;
 }
 
-export function useUMLDiagram({ initialCode = "", filePath }: UseUMLDiagramProps) {
-  const [umlCode, setUmlCode] = useState(initialCode);
-  const [svgContent, setSvgContent] = useState("");
-  const { previewBackground, isDarkBackground, previewUrl } = useBackground();
-
-  const changeBackground = (isDark: boolean, umlCode: string) => {
+/**
+ * Generate diagram using HTTP-based PlantUML server (existing method)
+ */
+export function generateDiagramByHttp(
+  umlCode: string,
+  previewUrl: string,
+  isDarkBackground: boolean,
+  previewBackground: string
+): Promise<string> {
+  const changeBackground = (isDark: boolean, code: string) => {
     if (isDark) {
-      return umlCode.replace(`@startuml`, `@startuml\n<style>
+      return code.replace(`@startuml`, `@startuml\n<style>
 root {
   BackgroundColor ${previewBackground}
 }
 </style>`)
     }
-    return umlCode
+    return code
   }
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const encoded = encode(changeBackground(isDarkBackground, umlCode));
+      const base = (previewUrl ?? '').replace(/\/$/, '');
+      console.log("URL", `${base}/svg/${encoded}`)
+      const res = await fetch(`${base}/svg/${encoded}`);
+      const svg = await res.text();
+      resolve(svg);
+    } catch (error) {
+      console.error("Error fetching SVG:", error);
+      reject(error);
+    }
+  });
+}
+
+/**
+ * Generate diagram using local PlantUML command (new method)
+ */
+export async function generateDiagramByCommand(
+  filePath: string,
+  format: 'svg' | 'png' = 'svg'
+): Promise<string> {
+  try {
+    const result = await invoke<{ content: string; format: string }>(
+      "generate_diagram",
+      { filePath, format }
+    );
+    return result.content;
+  } catch (error) {
+    console.error("Error generating diagram:", error);
+    throw error;
+  }
+}
+
+export function useUMLDiagram({ initialCode = "", filePath }: UseUMLDiagramProps) {
+  const [umlCode, setUmlCode] = useState(initialCode);
+  const [svgContent, setSvgContent] = useState("");
+  // Note: previewBackground, isDarkBackground, previewUrl are only needed for HTTP method
+  // const { previewBackground, isDarkBackground, previewUrl } = useBackground();
+
 
   useEffect(() => {
     if (!umlCode) {
@@ -36,19 +81,6 @@ root {
 
     clearTimeout(debounceTimeout);
     debounceTimeout = window.setTimeout(async () => {
-      const encoded = encode(changeBackground(isDarkBackground, umlCode));
-
-      // Generate SVG
-      try {
-        const base = (previewUrl ?? '').replace(/\/$/, '');
-        console.log("URL", `${base}/svg/${encoded}`)
-        const res = await fetch(`${base}/svg/${encoded}`);
-        const svg = await res.text();
-        setSvgContent(svg);
-      } catch (error) {
-        console.error("Error fetching SVG:", error);
-        toast.error("Failed to load UML diagram");
-      }
 
       // Autosave to file system if we have a file path
       if (filePath) {
@@ -61,10 +93,38 @@ root {
           StatusBadge.loading(false);
         }
       }
+
+      // Method 1: Generate SVG using HTTP-based PlantUML server (commented for testing)
+      // try {
+      //   const svg = await generateDiagramByHttp(
+      //     umlCode,
+      //     previewUrl ?? '',
+      //     isDarkBackground,
+      //     previewBackground
+      //   );
+      //   setSvgContent(svg);
+      // } catch (error) {
+      //   console.error("Error fetching SVG:", error);
+      //   toast.error("Failed to load UML diagram");
+      // }
+
+      // Method 2: Generate SVG using local PlantUML command
+      if (filePath) {
+        try {
+          const svg = await generateDiagramByCommand(filePath, 'svg');
+          setSvgContent(svg);
+        } catch (error) {
+          console.error("Error generating SVG:", error);
+          toast.error("Failed to generate UML diagram");
+        }
+      }
+
+
+
     }, 800);
 
     return () => clearTimeout(debounceTimeout);
-  }, [umlCode, filePath, isDarkBackground, previewUrl]);
+  }, [umlCode, filePath]); // Removed isDarkBackground, previewUrl - only needed for HTTP method
 
   return {
     umlCode,
