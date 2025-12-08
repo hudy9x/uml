@@ -1,0 +1,32 @@
+.TH DOT_SANDBOX 1
+.SH NAME
+dot_sandbox \- Graphviz sandbox
+.SH SYNOPSIS
+\fBdot_sandbox\fR \fIoptions...\fR
+.SH DESCRIPTION
+This program is a wrapper around Graphviz. It aims to provide a safe environment
+for the processing of untrusted input graphs and command line options. More
+precisely:
+.RS
+.IP \[bu] 2
+No network access will be allowed.
+.IP \[bu]
+The file system will be read-only. Command line options like \fB\-o ...\fR and
+\fB\-O\fR will not work. It is expected that the caller will render to
+\fBstdout\fR and pipe the output to their desired file.
+.RE
+.PP
+The command line options to \fBdot_sandbox\fR are command line options to be
+passed to \fBdot\fR. Options are passed through unmodified.
+.PP
+The following sandboxing mechanisms are supported:
+.RS
+.IP \[bu] 2
+Bubblewrap
+.IP \[bu]
+macOS \fBsandbox-exec\fR
+.RE
+.SH "SEE ALSO"
+.BR dot (1),
+.BR bwrap (1),
+.BR sandbox-exec (1)
