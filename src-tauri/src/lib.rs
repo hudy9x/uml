@@ -1,4 +1,6 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use tauri::Manager;
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -19,6 +21,21 @@ pub fn run() {
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_shell::init())
+        .setup(|app| {
+            // Register cleanup handler for when the app is closing
+            let window = app.get_webview_window("main").expect("Failed to get main window");
+            window.on_window_event(move |event| {
+                if let tauri::WindowEvent::CloseRequested { .. } = event {
+                    // Stop PlantUML server when window is closing
+                    tauri::async_runtime::spawn(async move {
+                        if let Err(e) = plantuml::cleanup_plantuml_server().await {
+                            eprintln!("Failed to stop PlantUML server on exit: {}", e);
+                        }
+                    });
+                }
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             files::list_dir,
@@ -33,7 +50,9 @@ pub fn run() {
             git::switch_branch,
             git::get_git_status,
             git::git_pull,
-            plantuml::generate_diagram
+            plantuml::start_plantuml_server,
+            plantuml::stop_plantuml_server,
+            plantuml::check_plantuml_server
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

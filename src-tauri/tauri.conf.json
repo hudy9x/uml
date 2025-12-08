@@ -31,6 +31,9 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "resources": [
+      "plantuml-portable"
+    ],
     "createUpdaterArtifacts": true
   },
   "plugins": {
