@@ -1,0 +1,6 @@
+include(${CMAKE_CURRENT_LIST_DIR}/cdtConfig.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cgraphConfig.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/gvcConfig.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/gvprConfig.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/pathplanConfig.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/xdotConfig.cmake)

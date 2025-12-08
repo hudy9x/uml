@@ -12,6 +12,7 @@ import { ExplorerRenameDialog } from "./ExplorerRenameDialog";
 import { ExplorerDragOverlay } from "./ExplorerDragOverlay";
 import { ExplorerFileSearchDialog } from "./ExplorerFileSearchDialog";
 import { checkAndReloadExplorer } from "@/lib/explorerReloadUtils";
+import { useExplorerReloadTrigger } from "@/stores/explorer";
 
 function ExplorerComponent({
     onFileSelect,
@@ -74,6 +75,10 @@ function ExplorerComponent({
     const [isWindowFocused, setIsWindowFocused] = useState(true);
     const fileStructureHashRef = useRef<string>("");
 
+    // Listen for external reload triggers (e.g., from git pull)
+    const [reloadTrigger] = useExplorerReloadTrigger();
+    const lastProcessedTriggerRef = useRef<number>(0);
+
     // Track window focus state
     useEffect(() => {
         const handleFocus = () => setIsWindowFocused(true);
@@ -131,6 +136,14 @@ function ExplorerComponent({
 
         return () => clearInterval(interval);
     }, [rootPath, isWindowFocused, loadDir]);
+
+    // Reload Explorer when external trigger changes (e.g., from git pull)
+    useEffect(() => {
+        if (rootPath && reloadTrigger > 0 && reloadTrigger !== lastProcessedTriggerRef.current) {
+            lastProcessedTriggerRef.current = reloadTrigger;
+            loadDir(rootPath);
+        }
+    }, [reloadTrigger, rootPath, loadDir]);
 
     // Dialog handlers
     const openCreateDialog = (parentPath: string, type: "file" | "folder") => {

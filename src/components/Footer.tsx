@@ -3,19 +3,24 @@ import { Github } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "./ui/switch";
 import { PreviewUrlDialog } from "./PreviewUrlDialog";
-// import { BranchSelector } from "./BranchSelector";
-// import { useExplorerRootPath } from "@/stores/explorer";
+import { BranchSelector } from "./BranchSelector";
+import { GitPullButton } from "./GitPullButton";
+import { useExplorerRootPath } from "@/stores/explorer";
+import { PlantUMLHealthCheck } from "./PlantUMLHealthCheck";
 
 export function Footer() {
   const { setTheme, theme } = useTheme();
-  // const [rootPath] = useExplorerRootPath();
+  const [rootPath] = useExplorerRootPath();
 
   return (
     <footer className="flex items-center justify-between px-2 py-1 gap-2 border-t border-[var(--color-border)] relative">
       <div className="flex items-center gap-4">
         <VersionDisplay />
         <PreviewUrlDialog />
-        {/* {rootPath && <BranchSelector workingDir={rootPath} />} */}
+        {rootPath && <BranchSelector workingDir={rootPath} />}
+        {rootPath && <GitPullButton workingDir={rootPath} />}
+        <PlantUMLHealthCheck />
+
       </div>
 
       <div className="flex items-center gap-4">

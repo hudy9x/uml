@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Image as TauriImage } from "@tauri-apps/api/image";
+import { usePlantUMLServerUrl } from "@/stores/plantumlServer";
 
 interface ExportActionsDropdownProps {
   umlCode: string;
@@ -22,6 +23,7 @@ export function DiagramActionsDropdown({
   umlCode,
   projectName,
 }: ExportActionsDropdownProps) {
+  const serverUrl = usePlantUMLServerUrl();
   const handleDownloadPNG = async () => {
     if (!umlCode) {
       toast.error('No diagram to download');
@@ -30,7 +32,12 @@ export function DiagramActionsDropdown({
 
     try {
       const encoded = encode(umlCode);
-      const res = await fetch(`https://www.plantuml.com/plantuml/img/${encoded}`);
+      const res = await fetch(`${serverUrl}/img/${encoded}`);
+
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status}`);
+      }
+
       const imageBlob = await res.blob();
       const imageData = await imageBlob.arrayBuffer();
       const uint8Array = new Uint8Array(imageData);
@@ -49,7 +56,7 @@ export function DiagramActionsDropdown({
       }
     } catch (error) {
       console.error('Error downloading diagram:', error);
-      toast.error('Failed to download diagram');
+      toast.error('Failed to download diagram. Check PlantUML server configuration in settings.');
     }
   };
 
@@ -61,7 +68,12 @@ export function DiagramActionsDropdown({
 
     try {
       const encoded = encode(umlCode);
-      const res = await fetch(`https://www.plantuml.com/plantuml/img/${encoded}`);
+      const res = await fetch(`${serverUrl}/img/${encoded}`);
+
+      if (!res.ok) {
+        throw new Error(`Server returned ${res.status}`);
+      }
+
       const imageBlob = await res.blob();
       const imageData = await imageBlob.arrayBuffer();
       const uint8Array = new Uint8Array(imageData);
@@ -72,7 +84,7 @@ export function DiagramActionsDropdown({
       toast.success('Diagram copied to clipboard!');
     } catch (error) {
       console.error('Error copying diagram to clipboard:', error);
-      toast.error('Failed to copy diagram to clipboard');
+      toast.error('Failed to copy diagram. Check PlantUML server configuration in settings.');
     }
   };
 

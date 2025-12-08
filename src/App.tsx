@@ -14,6 +14,7 @@ import Test from './pages/Test';
 import { useContentCategoryStore } from './stores/contentCategory';
 import { useCategoryStore } from './stores/category';
 import { LoaderCircle } from 'lucide-react';
+import { startPlantUMLServer, stopPlantUMLServer } from './hooks/useUMLDiagram';
 
 // Initialize DB immediately
 initDB().catch(console.error);
@@ -22,17 +23,24 @@ function App() {
   const [isDBReady, setIsDBReady] = useState(false);
   const loadProjects = useProjectStore(state => state.loadProjects);
   const loadContentCategories = useContentCategoryStore(state => state.loadData);
-  const loadCategories = useCategoryStore(state => state.loadCategories)
-
+  const loadCategories = useCategoryStore(state => state.loadCategories);
 
   useEffect(() => {
     // Wait for DB initialization
     console.log("Start initializing database")
     initDB()
       .then(async () => {
-        console.log("Start loading all data") 
+        console.log("Start loading all data")
         await Promise.all([loadProjects(), loadContentCategories(), loadCategories()])
         console.log("All data loaded")
+
+        // Start PlantUML server
+        try {
+          await startPlantUMLServer();
+          console.log("PlantUML server started");
+        } catch (error) {
+          console.error("Failed to start PlantUML server:", error);
+        }
 
         setTimeout(() => {
           setIsDBReady(true)
@@ -42,6 +50,15 @@ function App() {
         console.error('Failed to initialize database:', error);
         // You might want to show an error message to the user here
       });
+  }, []);
+
+  // Cleanup: Stop PlantUML server when app unmounts
+  useEffect(() => {
+    return () => {
+      stopPlantUMLServer().catch((error) => {
+        console.error('Failed to stop PlantUML server on unmount:', error);
+      });
+    };
   }, []);
 
   if (!isDBReady) {

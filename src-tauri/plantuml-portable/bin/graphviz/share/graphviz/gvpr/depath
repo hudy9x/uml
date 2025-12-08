@@ -1,0 +1,38 @@
+/* Replace paths a -> b -> ... -> c with a -> c */
+BEGIN {
+  edge_t  e;
+  node_t  n, prv, nxt;
+  int to_delete[node_t];
+}
+
+N [(indegree == 1) && (outdegree == 1)] {
+  e = fstin ($);
+  prv = e.tail;
+  e = fstout ($);
+  nxt = e.head;
+  to_delete[$] = 1;
+
+  while ((prv.indegree == 1) && (prv.outdegree == 0)) {
+    e = fstin (prv);
+    n = e.tail;
+    to_delete[prv] = 1;
+    prv = n;
+  }
+
+  while ((nxt.indegree == 0) && (nxt.outdegree == 1)) {
+    e = fstout (nxt);
+    n = e.head;
+    to_delete[nxt] = 1;
+    nxt = n;
+  }
+ 
+  if (!isEdge (prv,nxt,""))
+    edge (prv,nxt,"");
+  
+}
+
+END_G {
+  for (to_delete[n]) {
+    delete($G, n);
+  }
+}
