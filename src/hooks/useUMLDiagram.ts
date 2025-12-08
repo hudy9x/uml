@@ -3,6 +3,7 @@ import { encode } from "plantuml-encoder";
 import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
 import { StatusBadge } from "@/lib/status-badge";
+import { usePlantUMLServerUrl } from "@/stores/plantumlServer";
 
 let debounceTimeout: number;
 
@@ -10,8 +11,6 @@ interface UseUMLDiagramProps {
   initialCode?: string;
   filePath?: string | null;
 }
-
-const PLANTUML_SERVER_URL = "http://localhost:8080/plantuml";
 
 /**
  * Start the local PlantUML server
@@ -53,6 +52,7 @@ export async function checkPlantUMLServer(): Promise<boolean> {
 export function useUMLDiagram({ initialCode = "", filePath }: UseUMLDiagramProps) {
   const [umlCode, setUmlCode] = useState(initialCode);
   const [svgContent, setSvgContent] = useState("");
+  const serverUrl = usePlantUMLServerUrl();
 
   useEffect(() => {
     if (!umlCode) {
@@ -75,11 +75,11 @@ export function useUMLDiagram({ initialCode = "", filePath }: UseUMLDiagramProps
         }
       }
 
-      // Generate SVG using local PlantUML server
+      // Generate SVG using PlantUML server
       try {
         const encoded = encode(umlCode);
-        const url = `${PLANTUML_SERVER_URL}/svg/${encoded}`;
-        console.log("Fetching from local PlantUML server:", url);
+        const url = `${serverUrl}/svg/${encoded}`;
+        console.log("Fetching from PlantUML server:", url);
 
         const res = await fetch(url);
         if (!res.ok) {
@@ -90,13 +90,13 @@ export function useUMLDiagram({ initialCode = "", filePath }: UseUMLDiagramProps
         setSvgContent(svg);
       } catch (error) {
         console.error("Error fetching SVG from PlantUML server:", error);
-        toast.error("Failed to generate UML diagram. Make sure PlantUML server is running.");
+        toast.error("Failed to generate UML diagram. Check PlantUML server configuration in settings.");
       }
 
     }, 800);
 
     return () => clearTimeout(debounceTimeout);
-  }, [umlCode, filePath]);
+  }, [umlCode, filePath, serverUrl]);
 
   return {
     umlCode,

@@ -6,6 +6,7 @@ import { PreviewUrlDialog } from "./PreviewUrlDialog";
 import { BranchSelector } from "./BranchSelector";
 import { GitPullButton } from "./GitPullButton";
 import { useExplorerRootPath } from "@/stores/explorer";
+import { PlantUMLHealthCheck } from "./PlantUMLHealthCheck";
 
 export function Footer() {
   const { setTheme, theme } = useTheme();
@@ -18,6 +19,8 @@ export function Footer() {
         <PreviewUrlDialog />
         {rootPath && <BranchSelector workingDir={rootPath} />}
         {rootPath && <GitPullButton workingDir={rootPath} />}
+        <PlantUMLHealthCheck />
+
       </div>
 
       <div className="flex items-center gap-4">
