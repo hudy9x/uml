@@ -6,6 +6,43 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[tauri::command]
+fn toggle_devtools(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        #[cfg(debug_assertions)]
+        {
+            if window.is_devtools_open() {
+                let _ = window.close_devtools();
+            } else {
+                let _ = window.open_devtools();
+            }
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            // In production, always try to toggle (devtools: true in config enables this)
+            if window.is_devtools_open() {
+                let _ = window.close_devtools();
+            } else {
+                let _ = window.open_devtools();
+            }
+        }
+    }
+}
+
+#[tauri::command]
+fn open_devtools(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.open_devtools();
+    }
+}
+
+#[tauri::command]
+fn close_devtools(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.close_devtools();
+    }
+}
+
 mod files;
 mod git;
 mod plantuml;
@@ -38,6 +75,9 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             greet,
+            toggle_devtools,
+            open_devtools,
+            close_devtools,
             files::list_dir,
             files::read_file_content,
             files::write_file_content,

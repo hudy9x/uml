@@ -2,7 +2,7 @@ import { useBackground } from "@/hooks/useBackground";
 import { ZoomableView } from "./ZoomableView";
 import { Badge } from "./ui/badge";
 import { Check, RefreshCcw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { MessageToolbar } from "./MessageToolbar";
 
 interface UMLPreviewPanelProps {
@@ -30,6 +30,24 @@ export function UMLPreviewPanel({
     index?: number;
   } | null>(null);
 
+  // Detect content type: HTML or SVG
+  const contentType = useMemo(() => {
+    const trimmedContent = svgContent.trim();
+    // Check if content starts with HTML doctype or html tag
+    if (
+      trimmedContent.toLowerCase().startsWith('<!doctype html') ||
+      trimmedContent.toLowerCase().startsWith('<html')
+    ) {
+      return 'html';
+    }
+    // Check if content contains SVG
+    if (trimmedContent.includes('<svg')) {
+      return 'svg';
+    }
+    // Default to SVG for backward compatibility
+    return 'svg';
+  }, [svgContent]);
+
   // Flash effect to highlight clicked text elements
   const flashTextElement = (textElement: SVGTextElement) => {
     // Store original fill color
@@ -47,7 +65,7 @@ export function UMLPreviewPanel({
   // Add a click event on the svg content
   // User can click on the message to show the toolbar
   useEffect(() => {
-    if (!onMessageClick) return;
+    if (!onMessageClick || contentType !== 'svg') return;
 
     const messages = document.querySelectorAll(".message");
 
@@ -131,7 +149,7 @@ export function UMLPreviewPanel({
         message.removeEventListener("click", handler);
       });
     };
-  }, [svgContent, onMessageClick]);
+  }, [svgContent, onMessageClick, contentType]);
 
   const handleJumpToCode = () => {
     if (selectedMessage && onMessageClick) {
@@ -159,33 +177,51 @@ export function UMLPreviewPanel({
     setToolbarOpen(false);
   };
 
+  // Render HTML content in iframe
+  const renderHtmlPreview = () => (
+    <iframe
+      srcDoc={svgContent}
+      className="w-full h-[calc(100vh-34px)] border-0"
+      sandbox="allow-scripts allow-same-origin"
+      title="HTML Preview"
+    />
+  );
+
+  // Render SVG content with dangerouslySetInnerHTML
+  const renderSvgPreview = () => (
+    <ZoomableView className="h-full">
+      <div
+        dangerouslySetInnerHTML={{ __html: svgContent }}
+        className="max-w-full h-[calc(100vh - 34px)] uml-preview"
+      />
+    </ZoomableView>
+  );
+
   return (
     <div className={`uml-preview-card relative ${hidden ? "hidden" : ""}`}
-      style={{ height: "100%", backgroundColor: previewBackground }}>
+      style={{ height: "100%", backgroundColor: contentType === 'html' ? '#ffffff' : previewBackground }}>
 
-      <div className="absolute top-2 right-2">
+      <div className="absolute top-2 right-2 z-10">
         <Badge variant="outline" id="status-badge">
           <Check className="w-4 h-4" id="stt-icon-save" />
           <RefreshCcw className="w-4 h-4 animate-spin hidden" id="stt-icon-loading" />
           <span id="stt-text">Saved</span>
         </Badge>
       </div>
-      <ZoomableView className="h-full">
-        <div
-          dangerouslySetInnerHTML={{ __html: svgContent }}
-          className="max-w-full h-[calc(100vh - 34px)] uml-preview"
-        />
-      </ZoomableView>
 
-      <MessageToolbar
-        open={toolbarOpen}
-        position={toolbarPosition}
-        currentMessage={selectedMessage?.text}
-        onJumpToCode={handleJumpToCode}
-        onDelete={handleDelete}
-        onEditMessage={handleEditMessage}
-        onOpenChange={setToolbarOpen}
-      />
+      {contentType === 'html' ? renderHtmlPreview() : renderSvgPreview()}
+
+      {contentType === 'svg' && (
+        <MessageToolbar
+          open={toolbarOpen}
+          position={toolbarPosition}
+          currentMessage={selectedMessage?.text}
+          onJumpToCode={handleJumpToCode}
+          onDelete={handleDelete}
+          onEditMessage={handleEditMessage}
+          onOpenChange={setToolbarOpen}
+        />
+      )}
     </div>
   );
 }
