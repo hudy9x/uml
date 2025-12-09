@@ -15,7 +15,8 @@
       {
         "title": "UML Editor",
         "width": 1300,
-        "height": 700
+        "height": 700,
+        "devtools": true
       }
     ],
     "security": {
