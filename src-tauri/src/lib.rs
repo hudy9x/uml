@@ -6,29 +6,26 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[cfg(debug_assertions)]
 #[tauri::command]
 fn toggle_devtools(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
-        #[cfg(debug_assertions)]
-        {
-            if window.is_devtools_open() {
-                let _ = window.close_devtools();
-            } else {
-                let _ = window.open_devtools();
-            }
-        }
-        #[cfg(not(debug_assertions))]
-        {
-            // In production, always try to toggle (devtools: true in config enables this)
-            if window.is_devtools_open() {
-                let _ = window.close_devtools();
-            } else {
-                let _ = window.open_devtools();
-            }
+        if window.is_devtools_open() {
+            let _ = window.close_devtools();
+        } else {
+            let _ = window.open_devtools();
         }
     }
 }
 
+#[cfg(not(debug_assertions))]
+#[tauri::command]
+fn toggle_devtools(_app: tauri::AppHandle) {
+    // Devtools are not available in release builds
+    println!("Devtools are only available in debug builds");
+}
+
+#[cfg(debug_assertions)]
 #[tauri::command]
 fn open_devtools(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
@@ -36,11 +33,24 @@ fn open_devtools(app: tauri::AppHandle) {
     }
 }
 
+#[cfg(not(debug_assertions))]
+#[tauri::command]
+fn open_devtools(_app: tauri::AppHandle) {
+    println!("Devtools are only available in debug builds");
+}
+
+#[cfg(debug_assertions)]
 #[tauri::command]
 fn close_devtools(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
         let _ = window.close_devtools();
     }
+}
+
+#[cfg(not(debug_assertions))]
+#[tauri::command]
+fn close_devtools(_app: tauri::AppHandle) {
+    println!("Devtools are only available in debug builds");
 }
 
 mod files;
