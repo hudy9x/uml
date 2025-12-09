@@ -36,7 +36,18 @@
     "resources": [
       "plantuml-portable"
     ],
-    "createUpdaterArtifacts": true
+    "createUpdaterArtifacts": true,
+    "fileAssociations": [
+      {
+        "ext": [
+          "pu",
+          "puml"
+        ],
+        "name": "PlantUML Diagram",
+        "description": "PlantUML diagram file",
+        "mimeType": "text/plain"
+      }
+    ]
   },
   "plugins": {
     "updater": {
