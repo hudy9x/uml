@@ -33,18 +33,28 @@ export function UMLPreviewPanel({
   // Detect content type: HTML or SVG
   const contentType = useMemo(() => {
     const trimmedContent = svgContent.trim();
+    console.log('[UMLPreviewPanel] Content detection:', {
+      startsWithDoctype: trimmedContent.toLowerCase().startsWith('<!doctype html'),
+      startsWithHtml: trimmedContent.toLowerCase().startsWith('<html'),
+      containsSvg: trimmedContent.includes('<svg'),
+      firstChars: trimmedContent.substring(0, 50)
+    });
+
     // Check if content starts with HTML doctype or html tag
     if (
       trimmedContent.toLowerCase().startsWith('<!doctype html') ||
       trimmedContent.toLowerCase().startsWith('<html')
     ) {
+      console.log('[UMLPreviewPanel] Detected as HTML');
       return 'html';
     }
     // Check if content contains SVG
     if (trimmedContent.includes('<svg')) {
+      console.log('[UMLPreviewPanel] Detected as SVG');
       return 'svg';
     }
     // Default to SVG for backward compatibility
+    console.log('[UMLPreviewPanel] Defaulting to SVG');
     return 'svg';
   }, [svgContent]);
 
@@ -178,14 +188,19 @@ export function UMLPreviewPanel({
   };
 
   // Render HTML content in iframe
-  const renderHtmlPreview = () => (
-    <iframe
-      srcDoc={svgContent}
-      className="w-full h-[calc(100vh-34px)] border-0"
-      sandbox="allow-scripts allow-same-origin"
-      title="HTML Preview"
-    />
-  );
+  const renderHtmlPreview = () => {
+    console.log('[UMLPreviewPanel] Rendering HTML preview, content length:', svgContent.length);
+    return (
+      <iframe
+        key={svgContent.substring(0, 100)} // Force re-render when content changes
+        srcDoc={svgContent}
+        className="w-full h-[calc(100vh-34px)] border-0"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+        title="HTML Preview"
+        style={{ backgroundColor: '#ffffff' }}
+      />
+    );
+  };
 
   // Render SVG content with dangerouslySetInnerHTML
   const renderSvgPreview = () => (
