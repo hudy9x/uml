@@ -16,11 +16,12 @@ interface UseUMLDiagramProps {
  * Start the local PlantUML server
  */
 export async function startPlantUMLServer(): Promise<void> {
+  console.log("[PlantUML] startPlantUMLServer called");
   try {
     const message = await invoke<string>("start_plantuml_server");
-    console.log(message);
+    console.log("[PlantUML] Server response:", message);
   } catch (error) {
-    console.error("Failed to start PlantUML server:", error);
+    console.error("[PlantUML] invoke failed:", error);
     throw error;
   }
 }

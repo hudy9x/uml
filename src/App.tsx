@@ -35,11 +35,16 @@ function App() {
         console.log("All data loaded")
 
         // Start PlantUML server
+        console.log("[PlantUML] Attempting to start PlantUML server...");
         try {
-          await startPlantUMLServer();
-          console.log("PlantUML server started");
+          const result = await startPlantUMLServer();
+          console.log("[PlantUML] Server started successfully:", result);
         } catch (error) {
-          console.error("Failed to start PlantUML server:", error);
+          console.error("[PlantUML] Failed to start PlantUML server:", error);
+          console.error("[PlantUML] Error details:", {
+            message: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined
+          });
         }
 
         setTimeout(() => {
