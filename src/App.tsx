@@ -4,9 +4,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from "@/components/ui/sonner"
 import Home from './pages/Home';
 import UMLEditor from './pages/UMLEditor';
+import FileViewer from './pages/FileViewer';
 import { initDB } from './databases/_db';
 import Preview from './pages/Preview';
 import { Layout } from './components/Layout';
+import { FileAssociationHandler } from './components/FileAssociationHandler';
 import { useEffect, useState } from 'react';
 import Empty from './pages/Empty';
 import { useProjectStore } from './stores/project';
@@ -77,6 +79,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <FileAssociationHandler />
       <Layout>
         <Toaster position="bottom-right" richColors />
         <Routes>
@@ -86,6 +89,7 @@ function App() {
           <Route path="/empty" element={<Empty />} />
           <Route path="/preview" element={<Preview />} />
           <Route path="/test" element={<Test />} />
+          <Route path="/file-viewer" element={<FileViewer />} />
         </Routes>
       </Layout>
     </BrowserRouter>

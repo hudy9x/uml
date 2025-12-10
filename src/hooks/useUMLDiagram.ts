@@ -61,18 +61,36 @@ export function useUMLDiagram({ initialCode = "", filePath }: UseUMLDiagramProps
       return;
     }
 
+    // Check if content is HTML
+    const trimmedCode = umlCode.trim();
+    const isHtml =
+      trimmedCode.toLowerCase().startsWith('<!doctype html') ||
+      trimmedCode.toLowerCase().startsWith('<html');
+
+    if (isHtml) {
+      console.log("[useUMLDiagram] Detected HTML content, passing through without processing");
+      setSvgContent(umlCode);
+      StatusBadge.loading(false);
+      return;
+    }
+
+    // For UML content, process with PlantUML
+    console.log("[useUMLDiagram] Processing UML content with PlantUML");
+    StatusBadge.loading(true);
+
     clearTimeout(debounceTimeout);
     debounceTimeout = window.setTimeout(async () => {
-
-      // Autosave to file system if we have a file path
+      // Save file if path is provided
       if (filePath) {
-        StatusBadge.loading(true);
         try {
-          await invoke("write_file_content", { path: filePath, content: umlCode });
+          await invoke("write_file_content", {
+            path: filePath,
+            content: umlCode,
+          });
           StatusBadge.loading(false);
         } catch (error) {
-          console.error("Failed to autosave file:", error);
-          StatusBadge.loading(false);
+          console.error("Error saving file:", error);
+          toast.error("Failed to save file");
         }
       }
 

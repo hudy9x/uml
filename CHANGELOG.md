@@ -1,8 +1,17 @@
 ## What's Changed
 
-✨ Features
+🐛 Bug Fixes
 
-- Support plantuml offline in windows + fix error opening terminal when executing command (#27) ([58b4c6a](../../commit/58b4c6a))
+- Enable devtools ([7ec52bd](../../commit/7ec52bd))
+
+♻️ Refactoring
+
+- Enable debug mode ([6e6de28](../../commit/6e6de28))
+
+🔨 Other Changes
+
+- Enable preview html file ([4239c1a](../../commit/4239c1a))
+- Add debugger button for opening devtools ([74882f3](../../commit/74882f3))
 
 
-📋 Full Changelog: [58b4c6a...58b4c6a](../../compare/58b4c6a...58b4c6a)
+📋 Full Changelog: [6e6de28...4239c1a](../../compare/6e6de28...4239c1a)
