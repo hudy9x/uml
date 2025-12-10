@@ -9,6 +9,7 @@ import { initDB } from './databases/_db';
 import Preview from './pages/Preview';
 import { Layout } from './components/Layout';
 import { FileAssociationHandler } from './components/FileAssociationHandler';
+import { PlantUMLLogger } from './components/PlantUMLLogger';
 import { useEffect, useState } from 'react';
 import Empty from './pages/Empty';
 import { useProjectStore } from './stores/project';
@@ -80,6 +81,7 @@ function App() {
   return (
     <BrowserRouter>
       <FileAssociationHandler />
+      <PlantUMLLogger />
       <Layout>
         <Toaster position="bottom-right" richColors />
         <Routes>
