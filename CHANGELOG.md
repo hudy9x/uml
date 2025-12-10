@@ -1,17 +1,16 @@
 ## What's Changed
 
+✨ Features
+
+- Enable devtools + html preview (#28) ([b60e749](../../commit/b60e749))
+
 🐛 Bug Fixes
 
-- Enable devtools ([7ec52bd](../../commit/7ec52bd))
-
-♻️ Refactoring
-
-- Enable debug mode ([6e6de28](../../commit/6e6de28))
+- Running health check like hell - it doesn't stop, but keep running like a dog ([f599428](../../commit/f599428))
 
 🔨 Other Changes
 
-- Enable preview html file ([4239c1a](../../commit/4239c1a))
-- Add debugger button for opening devtools ([74882f3](../../commit/74882f3))
+- Send logs from backend to ui ([990d1ce](../../commit/990d1ce))
 
 
-📋 Full Changelog: [6e6de28...4239c1a](../../compare/6e6de28...4239c1a)
+📋 Full Changelog: [b60e749...f599428](../../compare/b60e749...f599428)
