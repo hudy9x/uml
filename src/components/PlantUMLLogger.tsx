@@ -12,6 +12,7 @@ interface LogMessage {
  * and displays them in the browser console (DevTools)
  */
 export function PlantUMLLogger() {
+    console.log('PlantUMLLogger mounted');
     useEffect(() => {
         let unlisten: (() => void) | undefined;
 
