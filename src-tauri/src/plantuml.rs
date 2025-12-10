@@ -3,8 +3,10 @@ use std::sync::Mutex;
 use tauri::Manager;
 use tauri::path::BaseDirectory;
 
-// Global state to hold the PlantUML server process
+// Global state to hold the PlantUML server process and reference count
 static PLANTUML_SERVER: Mutex<Option<Child>> = Mutex::new(None);
+// Track how many instances are using the server
+static SERVER_REFERENCE_COUNT: Mutex<usize> = Mutex::new(0);
 
 #[tauri::command]
 pub async fn start_plantuml_server(app: tauri::AppHandle) -> Result<String, String> {
@@ -17,6 +19,10 @@ pub async fn start_plantuml_server(app: tauri::AppHandle) -> Result<String, Stri
             // Check if process is still alive
             if child.try_wait().map_err(|e| e.to_string())?.is_none() {
                 println!("[PlantUML] Server already running in this process");
+                // Increment reference count
+                let mut ref_count = SERVER_REFERENCE_COUNT.lock().unwrap();
+                *ref_count += 1;
+                println!("[PlantUML] Reference count incremented to: {}", *ref_count);
                 return Ok("PlantUML server is already running on http://localhost:8080".to_string());
             }
         }
@@ -29,6 +35,10 @@ pub async fn start_plantuml_server(app: tauri::AppHandle) -> Result<String, Stri
             // Port is already in use, likely another instance is running the server
             println!("[PlantUML] Port 8080 is already in use (another instance is running the server)");
             println!("[PlantUML] Using existing PlantUML server on http://localhost:8080");
+            // Increment reference count for shared server
+            let mut ref_count = SERVER_REFERENCE_COUNT.lock().unwrap();
+            *ref_count += 1;
+            println!("[PlantUML] Reference count incremented to: {}", *ref_count);
             return Ok("Using existing PlantUML server on http://localhost:8080 (shared with another instance)".to_string());
         }
         Err(e) => {
@@ -79,10 +89,14 @@ pub async fn start_plantuml_server(app: tauri::AppHandle) -> Result<String, Stri
 
     println!("[PlantUML] Server process spawned successfully");
 
-    // Store the process
+    // Store the process and increment reference count
     {
         let mut server = PLANTUML_SERVER.lock().unwrap();
         *server = Some(child);
+        
+        let mut ref_count = SERVER_REFERENCE_COUNT.lock().unwrap();
+        *ref_count = 1; // First instance to start the server
+        println!("[PlantUML] Reference count set to: {}", *ref_count);
     }
 
     let success_msg = "PlantUML server started on http://localhost:8080".to_string();
@@ -126,18 +140,30 @@ pub async fn check_plantuml_server() -> Result<bool, String> {
 }
 
 /// Cleanup function to stop the PlantUML server (used during app shutdown)
-/// Only stops the server if this process started it
+/// Uses reference counting - only stops the server when the last instance closes
 pub async fn cleanup_plantuml_server() -> Result<(), String> {
-    let mut server = PLANTUML_SERVER.lock().unwrap();
+    // Decrement reference count
+    let should_stop = {
+        let mut ref_count = SERVER_REFERENCE_COUNT.lock().unwrap();
+        if *ref_count > 0 {
+            *ref_count -= 1;
+            println!("[PlantUML] Reference count decremented to: {}", *ref_count);
+        }
+        *ref_count == 0
+    };
     
-    if let Some(mut child) = server.take() {
-        // Only kill the server if this process owns it
-        println!("[PlantUML] Stopping PlantUML server owned by this process");
-        child.kill().map_err(|e| format!("Failed to stop PlantUML server: {}", e))?;
-        println!("[PlantUML] Server stopped during cleanup");
+    // Only stop the server if reference count reached 0
+    if should_stop {
+        let mut server = PLANTUML_SERVER.lock().unwrap();
+        if let Some(mut child) = server.take() {
+            println!("[PlantUML] Last instance closing - stopping PlantUML server");
+            child.kill().map_err(|e| format!("Failed to stop PlantUML server: {}", e))?;
+            println!("[PlantUML] Server stopped during cleanup");
+        }
     } else {
-        println!("[PlantUML] No server to stop (either not started or using shared instance)");
+        println!("[PlantUML] Other instances still using server - keeping it alive");
     }
+    
     Ok(())
 }
 
