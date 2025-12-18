@@ -22,7 +22,7 @@ export function ExplorerHeader({
     onSearchFile,
 }: ExplorerHeaderProps) {
     return (
-        <div className="flex items-center justify-between px-3 py-2 border-b bg-background">
+        <div className="flex items-center justify-between px-3 py-2 border-b bg-secondary">
             <h2 className="text-sm font-semibold uppercase tracking-wide">Explorer</h2>
             <div className="flex gap-1">
                 <Button

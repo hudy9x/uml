@@ -1,3 +1,15 @@
+// Regex pattern parts for PlantUML message syntax
+// Participant can be either:
+// 1. Quoted: "Something new" - can contain letters, numbers, spaces, underscores, hyphens inside quotes
+// 2. Unquoted: Foo123 - can only contain letters, numbers, underscores (no spaces)
+const QUOTED_PARTICIPANT = '"[a-zA-Z0-9_\\s-]+"';
+const UNQUOTED_PARTICIPANT = '[a-zA-Z0-9_]+';
+const PARTICIPANT_PATTERN = `(?:${QUOTED_PARTICIPANT}|${UNQUOTED_PARTICIPANT})`;
+
+// Arrow types: add or modify arrow types here as needed
+// Order matters: longer patterns should come first (e.g., -->x before -->)
+const ARROW_PATTERN = '->x|-->x|->|-->|<-x|<--x|<-|<--|<->|o<->o|x<->x|->>o|->o';
+
 /**
  * Represents a message in a UML diagram
  */
@@ -16,11 +28,12 @@ export function parseUMLMessages(umlCode: string): UMLMessage[] {
     const lines = umlCode.split('\n');
     const messages: UMLMessage[] = [];
 
-    // Regular expression to match PlantUML message syntax
-    // Matches: participant -> participant: message
-    // Supports: ->, -->, <-, <--, ->, etc.
-    // Supports quoted participant names like "Web App"
-    const messageRegex = /^\s*(?:(\d+)\s+)?(["\w\s]+?)\s*(<?-{1,2}>?)\s*(["\w\s]+?)\s*:\s*(.+)$/;
+    // Build the complete message regex from pattern parts
+    // Format: [optional line number] participant-1 arrow participant-2 : message
+    // Example: "23 Bob -> Alice : hello"
+    const messageRegex = new RegExp(
+        `^\\s*(${PARTICIPANT_PATTERN})\\s*(${ARROW_PATTERN})\\s*(${PARTICIPANT_PATTERN})\\s*:\\s*(.+)$`
+    );
 
     lines.forEach((line, index) => {
         const trimmedLine = line.trim();
@@ -67,11 +80,12 @@ export function findMessageLine(
 ): number | null {
     const lines = umlCode.split('\n');
 
-    // Regular expression to match PlantUML message syntax
-    // Matches: participant -> participant: message
-    // Also matches: participant -> participant (without message)
-    // Supports: ->, -->, <-, <--, etc.
-    const messageRegex = /^\s*(?:\d+\s+)?["\w\s]+?\s*<?-{1,2}>?\s*["\w\s]+?(?:\s*:\s*.+)?$/;
+    // Build the complete message regex from pattern parts
+    // Format: [optional line number] participant-1 arrow participant-2 [optional: message]
+    // Example: "Bob -> Alice" or "23 Bob -> Alice : hello"
+    const messageRegex = new RegExp(
+        `^\\s*(?:\\d+\\s+)?(${PARTICIPANT_PATTERN})\\s*(${ARROW_PATTERN})\\s*(${PARTICIPANT_PATTERN})(?:\\s*:\\s*.+)?$`
+    );
 
     let messageCount = 0;
 
