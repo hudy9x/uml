@@ -187,7 +187,7 @@ function ExplorerComponent({
 
     return (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-            <div className="h-full flex flex-col bg-muted/10 border-r">
+            <div className="h-full flex flex-col bg-secondary border-r">
                 {/* Header */}
                 <ExplorerHeader
                     isExplorerVisible={isExplorerVisible}
