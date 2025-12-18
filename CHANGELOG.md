@@ -2,15 +2,11 @@
 
 ✨ Features
 
-- Enable devtools + html preview (#28) ([b60e749](../../commit/b60e749))
-
-🐛 Bug Fixes
-
-- Running health check like hell - it doesn't stop, but keep running like a dog ([f599428](../../commit/f599428))
+- Ui logs + fix performance bug (#29) ([41f8b26](../../commit/41f8b26))
 
 🔨 Other Changes
 
-- Send logs from backend to ui ([990d1ce](../../commit/990d1ce))
+- Update participant syntax pattern ([c0a8a76](../../commit/c0a8a76))
 
 
-📋 Full Changelog: [b60e749...f599428](../../compare/b60e749...f599428)
+📋 Full Changelog: [41f8b26...c0a8a76](../../compare/41f8b26...c0a8a76)

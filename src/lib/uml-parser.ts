@@ -8,7 +8,7 @@ const PARTICIPANT_PATTERN = `(?:${QUOTED_PARTICIPANT}|${UNQUOTED_PARTICIPANT})`;
 
 // Arrow types: add or modify arrow types here as needed
 // Order matters: longer patterns should come first (e.g., -->x before -->)
-const ARROW_PATTERN = '->x|-->x|->|-->|<-x|<--x|<-|<--';
+const ARROW_PATTERN = '->x|-->x|->|-->|<-x|<--x|<-|<--|<->|o<->o|x<->x|->>o|->o';
 
 /**
  * Represents a message in a UML diagram
