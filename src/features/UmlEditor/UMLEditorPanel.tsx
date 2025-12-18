@@ -1,5 +1,5 @@
 import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
-import { plantUML } from "../lib/codemirror/plantuml";
+import { plantUML } from "../../lib/codemirror/plantuml";
 import { materialDark } from "@uiw/codemirror-theme-material";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { useTheme } from "next-themes";
@@ -7,7 +7,7 @@ import { useEffect, useState, useRef, forwardRef, useImperativeHandle, useMemo }
 import { EditorView } from "@codemirror/view";
 import { EditorSelection } from "@codemirror/state";
 import { lintGutter } from "@codemirror/lint";
-import "../styles/codemirror-lint.css";
+import "../../styles/codemirror-lint.css";
 
 interface UMLEditorPanelProps {
   umlCode: string;

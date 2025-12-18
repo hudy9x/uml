@@ -3,7 +3,7 @@ import { usePlantUMLServerStore } from "@/stores/plantumlServer";
 import { Circle } from "lucide-react";
 
 export function PlantUMLHealthCheck() {
-    console.log('PlantUMLHealthCheck mounted');
+    // console.log('PlantUMLHealthCheck mounted');
     const { serverUrl, healthStatus, checkHealth } = usePlantUMLServerStore();
 
     // Use ref to store the latest checkHealth function
@@ -23,7 +23,7 @@ export function PlantUMLHealthCheck() {
     useEffect(() => {
         console.log('[PlantUMLHealthCheck] Setting up interval for health checks every 10 seconds');
         const interval = setInterval(() => {
-            console.log('[PlantUMLHealthCheck] Running health check (interval)');
+            // console.log('[PlantUMLHealthCheck] Running health check (interval)');
             checkHealthRef.current();
         }, 10000);
 
@@ -55,7 +55,7 @@ export function PlantUMLHealthCheck() {
         }
     };
 
-    console.log('health check')
+    // console.log('health check')
 
     return (
         <div className="flex items-center gap-2 text-xs px-1 py-0.5">

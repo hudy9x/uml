@@ -1,9 +1,10 @@
 import { useBackground } from "@/hooks/useBackground";
-import { ZoomableView } from "./ZoomableView";
-import { Badge } from "./ui/badge";
+import { useAltBlockCollapse } from "@/hooks/useAltBlockCollapse";
+import { ZoomableView } from "../../components/ZoomableView";
+import { Badge } from "../../components/ui/badge";
 import { Check, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
-import { MessageToolbar } from "./MessageToolbar";
+import { MessageToolbar } from "../../components/MessageToolbar";
 
 interface UMLPreviewPanelProps {
   svgContent: string;
@@ -11,6 +12,7 @@ interface UMLPreviewPanelProps {
   onMessageClick?: (messageText: string, from?: string, to?: string, messageIndex?: number) => void;
   onMessageDelete?: (messageIndex: number) => void;
   onMessageEdit?: (messageIndex: number, newMessage: string) => void;
+  handleAltToggle?: (altIndex: number) => void;
 }
 
 export function UMLPreviewPanel({
@@ -19,6 +21,7 @@ export function UMLPreviewPanel({
   onMessageClick,
   onMessageDelete,
   onMessageEdit,
+  handleAltToggle,
 }: UMLPreviewPanelProps) {
   const { previewBackground } = useBackground();
   const [toolbarOpen, setToolbarOpen] = useState(false);
@@ -160,6 +163,9 @@ export function UMLPreviewPanel({
       });
     };
   }, [svgContent, onMessageClick, contentType]);
+
+  // Process SVG to mark alt text elements and their associated paths for collapse/expand
+  useAltBlockCollapse(svgContent, contentType, handleAltToggle);
 
   const handleJumpToCode = () => {
     if (selectedMessage && onMessageClick) {
