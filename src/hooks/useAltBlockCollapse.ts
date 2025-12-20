@@ -6,8 +6,15 @@ import { useEffect } from 'react';
  * 
  * @param svgContent - The SVG content to process
  * @param contentType - The type of content ('svg' or 'html')
+ * @param handleAltToggle - Callback when alt block is toggled (receives altIndex)
+ * @param onAltClick - Callback when alt element is clicked (receives altId, position, element)
  */
-export function useAltBlockCollapse(svgContent: string, contentType: 'svg' | 'html', handleAltToggle?: (altIndex: number) => void) {
+export function useAltBlockCollapse(
+  svgContent: string,
+  contentType: 'svg' | 'html',
+  handleAltToggle?: (altIndex: number) => void,
+  onAltClick?: (altId: string, position: { x: number; y: number }, element: Element) => void
+) {
   useEffect(() => {
     if (contentType !== 'svg') return;
 
@@ -92,10 +99,24 @@ export function useAltBlockCollapse(svgContent: string, contentType: 'svg' | 'ht
         el.removeEventListener("click", altToggleHandler)
         el.addEventListener("click", altToggleHandler)
 
-        function altToggleHandler() {
-          console.log()
-          const dataIndex = altElement.getAttribute('data-alt-id');
-          handleAltToggle?.(Number(dataIndex?.replace('alt-', '')));
+        function altToggleHandler(event: Event) {
+          const target = event.target as HTMLElement;
+          const rect = target.getBoundingClientRect();
+          const altId = altElement.getAttribute('data-alt-id');
+
+          if (altId && onAltClick) {
+            // Calculate toolbar position near the clicked element
+            onAltClick(altId, {
+              x: rect.left + rect.width / 2,
+              y: rect.bottom + 10,
+            }, altElement);
+          }
+
+          // Also call the toggle handler if provided
+          if (handleAltToggle) {
+            const dataIndex = altElement.getAttribute('data-alt-id');
+            handleAltToggle(Number(dataIndex?.replace('alt-', '')));
+          }
         }
 
         // altElement.addEventListener('click', () => {

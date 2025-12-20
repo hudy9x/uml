@@ -15,7 +15,7 @@ import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
 import { Explorer } from "@/features/Explorer";
-import { findAltMessageLine, findMessageLine } from "../lib/uml-parser";
+import { findAltRange, findMessageLine } from "../lib/uml-parser";
 import { Button } from "@/components/ui/button";
 import { PanelLeftOpen } from "lucide-react";
 
@@ -127,14 +127,15 @@ export default function UMLEditor() {
   }, [umlCode]);
 
   const handleAltToggle = useCallback((altIndex: number) => {
-    const lineNumber = findAltMessageLine(altIndex, umlCode);
+    const result = findAltRange(altIndex, umlCode);
 
-    // if (lineNumber) {
-    //   editorRef.current?.toggleAltBlock(lineNumber);
-    //   console.log(`Toggled alt block on line ${lineNumber}`);
-    // } else {
-    //   console.warn(`Could not find line for message at SVG index ${messageIndex}`);
-    // }
+    if (!result) {
+      return
+    }
+
+    const { startLine, endLine } = result
+    editorRef.current?.foldUnfoldAltBlock(startLine, endLine);
+    console.log(`Toggled alt block on line ${startLine}`);
   }, [umlCode]);
 
   // Handle message delete from preview panel

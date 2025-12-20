@@ -123,22 +123,83 @@ export function findMessageLine(
   return null;
 }
 
-export function findAltMessageLine(altIndex: number,
+export function findAltRange(altIndex: number,
   umlCode: string
-) {
+): { startLine: number; endLine: number } | null {
   const lines = umlCode.split('\n');
+  const len = lines.length
   let altCount = 0;
-  for (let i = 0; i < lines.length; i++) {
+
+  const findLinesInsideAlt = (i: number) => {
+    let open = 1
+    const index = i + 1
+    console.log('start counting', i)
+    for (let j = index; j < len; j++) {
+      const line = lines[j];
+
+      console.log('counting', j, line, open)
+
+      if (open === 0) {
+        console.log('counting end', j)
+        return j - 1
+      }
+
+      if (/^\s*alt\s+/.test(line)) {
+        console.log('counting alt', j)
+        open++
+        continue
+      }
+
+      if (/^\s*loop\s+/.test(line)) {
+        console.log('counting loop', j)
+        open++
+        continue
+      }
+
+      if (/^\s*note\s+/.test(line)) {
+        console.log('counting note', j)
+        open++
+        continue
+      }
+
+      if (/^\s*end\snote\s+/.test(line)) {
+        console.log('counting end node', j)
+        open--
+        continue
+      }
+
+      if (/^\s*end(\s+|\s*)/.test(line)) {
+        console.log('found end syntax', j)
+        open--
+        continue
+      }
+
+    }
+
+    return null
+  }
+
+
+  for (let i = 0; i < len; i++) {
     const line = lines[i].trim();
     if (/\s*alt\s+/.test(line)) {
       altCount++;
       console.log(i, `Found alt: ${line}`, altCount, altIndex)
 
       if (altCount === altIndex) {
-        console.log("result", i + 1), line
-        return i + 1;
+        const end = findLinesInsideAlt(i)
+        console.log("range:", i + 1, end)
+        const startLine = i + 1
+        const endLine = end ? end + 1 : i + 1
+        console.log("range2:", startLine, endLine)
+        return {
+          startLine,
+          endLine
+        };
       }
     }
   }
+
+  return null
 
 }

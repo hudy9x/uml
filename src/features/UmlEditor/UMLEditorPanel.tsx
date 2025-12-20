@@ -19,6 +19,7 @@ export interface UMLEditorPanelRef {
   jumpToLine: (lineNumber: number) => void;
   deleteLine: (lineNumber: number) => void;
   replaceMessage: (lineNumber: number, newMessage: string) => void;
+  foldUnfoldAltBlock: (startLine: number, endLine: number) => void;
 }
 
 export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>(
@@ -90,6 +91,59 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
           view.focus();
         } catch (error) {
           console.error(`Failed to jump to line ${lineNumber}:`, error);
+        }
+      },
+      foldUnfoldAltBlock: (startLine: number, endLine: number) => {
+        const view = editorRef.current?.view;
+        if (!view) return;
+
+        const start = startLine + 1;
+        const end = endLine - 1;
+
+        try {
+          // Get the starting line object to check if it's already commented
+          const firstLine = view.state.doc.line(start);
+
+          // Check if the first line is already commented
+          const isCommented = firstLine.text.trimStart().startsWith("'");
+
+          const changes = [];
+
+          // Iterate through all lines in the range
+          for (let i = start; i <= end; i++) {
+            const line = view.state.doc.line(i);
+
+            if (isCommented) {
+              // Remove the comment: find the first ' and remove it
+              const trimmedStart = line.text.search(/\S/); // Find first non-whitespace
+              if (trimmedStart !== -1 && line.text[trimmedStart] === "'") {
+                changes.push({
+                  from: line.from + trimmedStart,
+                  to: line.from + trimmedStart + 1,
+                  insert: "",
+                });
+              }
+            } else {
+              // Add comment: insert ' at the beginning of the line
+              changes.push({
+                from: line.from,
+                to: line.from,
+                insert: "'",
+              });
+            }
+          }
+
+          // Apply all changes in a single transaction
+          view.dispatch({
+            changes: changes,
+          });
+
+          // Focus the editor
+          view.focus();
+
+          console.log(`${isCommented ? 'Unfolded' : 'Folded'} alt block from line ${startLine} to ${endLine}`);
+        } catch (error) {
+          console.error(`Failed to fold/unfold alt block from line ${startLine} to ${endLine}:`, error);
         }
       },
       deleteLine: (lineNumber: number) => {

@@ -5,6 +5,7 @@ import { Badge } from "../../components/ui/badge";
 import { Check, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
 import { MessageToolbar } from "../../components/MessageToolbar";
+import { AltBlockToolbar } from "./AltBlockToolbar";
 
 interface UMLPreviewPanelProps {
   svgContent: string;
@@ -32,6 +33,11 @@ export function UMLPreviewPanel({
     to?: string;
     index?: number;
   } | null>(null);
+
+  // Alt block toolbar state
+  const [altToolbarOpen, setAltToolbarOpen] = useState(false);
+  const [altToolbarPosition, setAltToolbarPosition] = useState({ x: 0, y: 0 });
+  const [selectedAltId, setSelectedAltId] = useState<string>("");
 
   // Detect content type: HTML or SVG
   const contentType = useMemo(() => {
@@ -165,7 +171,26 @@ export function UMLPreviewPanel({
   }, [svgContent, onMessageClick, contentType]);
 
   // Process SVG to mark alt text elements and their associated paths for collapse/expand
-  useAltBlockCollapse(svgContent, contentType, handleAltToggle);
+  const handleAltClick = (altId: string, position: { x: number; y: number }) => {
+    setSelectedAltId(altId);
+    setAltToolbarPosition(position);
+    setAltToolbarOpen(true);
+    console.log(`[Alt Click] Showing toolbar for ${altId} at`, position);
+  };
+
+  useAltBlockCollapse(svgContent, contentType, handleAltToggle, handleAltClick);
+
+  const handleAltBlockAction = () => {
+    console.log(`[Alt Block] Alt action for ${selectedAltId}`);
+    // TODO: Implement alt block toggle logic
+    setAltToolbarOpen(false);
+  };
+
+  const handleElseBlockAction = () => {
+    console.log(`[Alt Block] Else action for ${selectedAltId}`);
+    // TODO: Implement else block toggle logic
+    setAltToolbarOpen(false);
+  };
 
   const handleJumpToCode = () => {
     if (selectedMessage && onMessageClick) {
@@ -233,15 +258,25 @@ export function UMLPreviewPanel({
       {contentType === 'html' ? renderHtmlPreview() : renderSvgPreview()}
 
       {contentType === 'svg' && (
-        <MessageToolbar
-          open={toolbarOpen}
-          position={toolbarPosition}
-          currentMessage={selectedMessage?.text}
-          onJumpToCode={handleJumpToCode}
-          onDelete={handleDelete}
-          onEditMessage={handleEditMessage}
-          onOpenChange={setToolbarOpen}
-        />
+        <>
+          <MessageToolbar
+            open={toolbarOpen}
+            position={toolbarPosition}
+            currentMessage={selectedMessage?.text}
+            onJumpToCode={handleJumpToCode}
+            onDelete={handleDelete}
+            onEditMessage={handleEditMessage}
+            onOpenChange={setToolbarOpen}
+          />
+          <AltBlockToolbar
+            open={altToolbarOpen}
+            position={altToolbarPosition}
+            altId={selectedAltId}
+            onAltClick={handleAltBlockAction}
+            onElseClick={handleElseBlockAction}
+            onOpenChange={setAltToolbarOpen}
+          />
+        </>
       )}
     </div>
   );
