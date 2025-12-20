@@ -66,7 +66,7 @@ export function MessageToolbar({
     return (
         <Popover open={open} onOpenChange={onOpenChange}>
             <PopoverContent
-                className="w-auto p-2"
+                className="w-auto p-0.5"
                 style={{
                     position: "fixed",
                     left: `${position.x}px`,

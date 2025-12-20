@@ -56,6 +56,12 @@ export const plantumlLanguage = StreamLanguage.define<PlantUMLState>({
       state.note = false;
       return 'keyword';
     }
+
+    if (stream.match(/^\s*end\s*$/i)) {
+      // state.note = false;
+      return 'keyword';
+    }
+
     // Handle comments
     if (stream.match("'")) {
       stream.skipToEnd();

@@ -1,9 +1,11 @@
 import { useBackground } from "@/hooks/useBackground";
-import { ZoomableView } from "./ZoomableView";
-import { Badge } from "./ui/badge";
+import { useAltBlockCollapse } from "@/hooks/useAltBlockCollapse";
+import { ZoomableView } from "../../components/ZoomableView";
+import { Badge } from "../../components/ui/badge";
 import { Check, RefreshCcw } from "lucide-react";
 import { useEffect, useState, useMemo } from "react";
-import { MessageToolbar } from "./MessageToolbar";
+import { MessageToolbar } from "../../components/MessageToolbar";
+import { AltBlockToolbar } from "./AltBlockToolbar";
 
 interface UMLPreviewPanelProps {
   svgContent: string;
@@ -11,6 +13,7 @@ interface UMLPreviewPanelProps {
   onMessageClick?: (messageText: string, from?: string, to?: string, messageIndex?: number) => void;
   onMessageDelete?: (messageIndex: number) => void;
   onMessageEdit?: (messageIndex: number, newMessage: string) => void;
+  handleAltToggle?: (altIndex: number) => void;
 }
 
 export function UMLPreviewPanel({
@@ -19,6 +22,7 @@ export function UMLPreviewPanel({
   onMessageClick,
   onMessageDelete,
   onMessageEdit,
+  handleAltToggle,
 }: UMLPreviewPanelProps) {
   const { previewBackground } = useBackground();
   const [toolbarOpen, setToolbarOpen] = useState(false);
@@ -29,6 +33,11 @@ export function UMLPreviewPanel({
     to?: string;
     index?: number;
   } | null>(null);
+
+  // Alt block toolbar state
+  const [altToolbarOpen, setAltToolbarOpen] = useState(false);
+  const [altToolbarPosition, setAltToolbarPosition] = useState({ x: 0, y: 0 });
+  const [selectedAltId, setSelectedAltId] = useState<string>("");
 
   // Detect content type: HTML or SVG
   const contentType = useMemo(() => {
@@ -161,6 +170,40 @@ export function UMLPreviewPanel({
     };
   }, [svgContent, onMessageClick, contentType]);
 
+  // Process SVG to mark alt text elements and their associated paths for collapse/expand
+  const handleAltClick = (altId: string, position: { x: number; y: number }) => {
+    setSelectedAltId(altId);
+    setAltToolbarPosition(position);
+    setAltToolbarOpen(true);
+    console.log(`[Alt Click] Showing toolbar for ${altId} at`, position);
+  };
+
+  useAltBlockCollapse(svgContent, contentType, undefined, handleAltClick);
+
+  const handleFoldAction = () => {
+    // Extract the alt index from the altId (e.g., "alt-1" -> 1)
+    const altIndex = Number(selectedAltId.replace('alt-', ''));
+    console.log(`[Alt Block] Fold action for ${selectedAltId} (index: ${altIndex})`);
+
+    if (handleAltToggle) {
+      handleAltToggle(altIndex);
+    }
+
+    setAltToolbarOpen(false);
+  };
+
+  const handleUnfoldAction = () => {
+    // Extract the alt index from the altId (e.g., "alt-1" -> 1)
+    const altIndex = Number(selectedAltId.replace('alt-', ''));
+    console.log(`[Alt Block] Unfold action for ${selectedAltId} (index: ${altIndex})`);
+
+    if (handleAltToggle) {
+      handleAltToggle(altIndex);
+    }
+
+    setAltToolbarOpen(false);
+  };
+
   const handleJumpToCode = () => {
     if (selectedMessage && onMessageClick) {
       onMessageClick(
@@ -227,15 +270,25 @@ export function UMLPreviewPanel({
       {contentType === 'html' ? renderHtmlPreview() : renderSvgPreview()}
 
       {contentType === 'svg' && (
-        <MessageToolbar
-          open={toolbarOpen}
-          position={toolbarPosition}
-          currentMessage={selectedMessage?.text}
-          onJumpToCode={handleJumpToCode}
-          onDelete={handleDelete}
-          onEditMessage={handleEditMessage}
-          onOpenChange={setToolbarOpen}
-        />
+        <>
+          <MessageToolbar
+            open={toolbarOpen}
+            position={toolbarPosition}
+            currentMessage={selectedMessage?.text}
+            onJumpToCode={handleJumpToCode}
+            onDelete={handleDelete}
+            onEditMessage={handleEditMessage}
+            onOpenChange={setToolbarOpen}
+          />
+          <AltBlockToolbar
+            open={altToolbarOpen}
+            position={altToolbarPosition}
+            altId={selectedAltId}
+            onAltClick={handleFoldAction}
+            onElseClick={handleUnfoldAction}
+            onOpenChange={setAltToolbarOpen}
+          />
+        </>
       )}
     </div>
   );

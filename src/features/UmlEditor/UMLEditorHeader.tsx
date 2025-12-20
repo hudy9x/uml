@@ -1,9 +1,9 @@
-import { DiagramActionsDropdown } from "./DiagramActionsDropdown";
-import { cn } from "../lib/utils";
-import { useBackground } from "../hooks/useBackground";
+import { DiagramActionsDropdown } from "../../components/DiagramActionsDropdown";
+import { cn } from "../../lib/utils";
+import { useBackground } from "../../hooks/useBackground";
 import { File, PanelLeft, AlertCircle, ExternalLink, PanelBottomClose, PanelBottomOpen } from "lucide-react";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
 
 interface UMLEditorHeaderProps {
   projectName: string;

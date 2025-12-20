@@ -1,5 +1,5 @@
 import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
-import { plantUML } from "../lib/codemirror/plantuml";
+import { plantUML } from "../../lib/codemirror/plantuml";
 import { materialDark } from "@uiw/codemirror-theme-material";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { useTheme } from "next-themes";
@@ -7,7 +7,7 @@ import { useEffect, useState, useRef, forwardRef, useImperativeHandle, useMemo }
 import { EditorView } from "@codemirror/view";
 import { EditorSelection } from "@codemirror/state";
 import { lintGutter } from "@codemirror/lint";
-import "../styles/codemirror-lint.css";
+import "../../styles/codemirror-lint.css";
 
 interface UMLEditorPanelProps {
   umlCode: string;
@@ -19,6 +19,7 @@ export interface UMLEditorPanelRef {
   jumpToLine: (lineNumber: number) => void;
   deleteLine: (lineNumber: number) => void;
   replaceMessage: (lineNumber: number, newMessage: string) => void;
+  foldUnfoldAltBlock: (startLine: number, endLine: number) => void;
 }
 
 export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>(
@@ -90,6 +91,91 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
           view.focus();
         } catch (error) {
           console.error(`Failed to jump to line ${lineNumber}:`, error);
+        }
+      },
+      foldUnfoldAltBlock: (startLine: number, endLine: number) => {
+        const view = editorRef.current?.view;
+        if (!view) return;
+
+        const start = startLine + 1;
+        const end = endLine - 1;
+
+        try {
+          // Get the alt line (startLine) to check if it's already folded
+          const altLine = view.state.doc.line(startLine);
+
+          // Check if the first line inside the block is already commented
+          const firstLine = view.state.doc.line(start);
+          const isCommented = firstLine.text.trimStart().startsWith("'");
+
+          const changes = [];
+
+          // Handle the alt line color marker
+          if (isCommented) {
+            // Unfolding: Remove only #bisque from alt line, keep any other colors
+            const altLineText = altLine.text;
+            const bisqueMatch = altLineText.match(/^(\s*alt\s+)#bisque\s+(.*)$/);
+
+            if (bisqueMatch) {
+              // Remove only #bisque, keep everything else (including other colors)
+              const [, prefix, rest] = bisqueMatch;
+              changes.push({
+                from: altLine.from,
+                to: altLine.to,
+                insert: `${prefix}${rest}`,
+              });
+            }
+          } else {
+            // Folding: Add #bisque before any existing content (including colors)
+            const altLineText = altLine.text;
+            const altMatch = altLineText.match(/^(\s*alt\s+)(.*)$/);
+
+            if (altMatch && !altLineText.includes('#bisque')) {
+              // Add #bisque after alt keyword, before any existing content
+              const [, prefix, rest] = altMatch;
+              changes.push({
+                from: altLine.from,
+                to: altLine.to,
+                insert: `${prefix}#bisque ${rest}`,
+              });
+            }
+          }
+
+          // Iterate through all lines in the range (excluding the alt line itself)
+          for (let i = start; i <= end; i++) {
+            const line = view.state.doc.line(i);
+
+            if (isCommented) {
+              // Remove the comment: find the first ' and remove it
+              const trimmedStart = line.text.search(/\S/); // Find first non-whitespace
+              if (trimmedStart !== -1 && line.text[trimmedStart] === "'") {
+                changes.push({
+                  from: line.from + trimmedStart,
+                  to: line.from + trimmedStart + 1,
+                  insert: "",
+                });
+              }
+            } else {
+              // Add comment: insert ' at the beginning of the line
+              changes.push({
+                from: line.from,
+                to: line.from,
+                insert: "'",
+              });
+            }
+          }
+
+          // Apply all changes in a single transaction
+          view.dispatch({
+            changes: changes,
+          });
+
+          // Focus the editor
+          view.focus();
+
+          console.log(`${isCommented ? 'Unfolded' : 'Folded'} alt block from line ${startLine} to ${endLine}`);
+        } catch (error) {
+          console.error(`Failed to fold/unfold alt block from line ${startLine} to ${endLine}:`, error);
         }
       },
       deleteLine: (lineNumber: number) => {

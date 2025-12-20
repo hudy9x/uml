@@ -6,16 +6,16 @@ import {
   ResizablePanelGroup,
 } from "../components/ui/resizable";
 import { toast } from "sonner";
-import { UMLEditorHeader } from "../components/UMLEditorHeader";
-import { UMLEditorPanel, UMLEditorPanelRef } from "../components/UMLEditorPanel";
-import { UMLPreviewPanel } from "../components/UMLPreviewPanel";
+import { UMLEditorHeader } from "../features/UmlEditor/UMLEditorHeader";
+import { UMLEditorPanel, UMLEditorPanelRef } from "../features/UmlEditor/UMLEditorPanel";
+import { UMLPreviewPanel } from "../features/UmlEditor/UMLPreviewPanel";
 import { usePreviewWindow } from "../components/PreviewWindowManager";
 import { useUMLDiagram } from "../hooks/useUMLDiagram";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useProjectStore } from "@/stores/project";
 import { invoke } from "@tauri-apps/api/core";
 import { Explorer } from "@/features/Explorer";
-import { findMessageLine } from "../lib/uml-parser";
+import { findAltRange, findMessageLine } from "../lib/uml-parser";
 import { Button } from "@/components/ui/button";
 import { PanelLeftOpen } from "lucide-react";
 
@@ -126,6 +126,18 @@ export default function UMLEditor() {
     }
   }, [umlCode]);
 
+  const handleAltToggle = useCallback((altIndex: number) => {
+    const result = findAltRange(altIndex, umlCode);
+
+    if (!result) {
+      return
+    }
+
+    const { startLine, endLine } = result
+    editorRef.current?.foldUnfoldAltBlock(startLine, endLine);
+    console.log(`Toggled alt block on line ${startLine}`);
+  }, [umlCode]);
+
   // Handle message delete from preview panel
   const handleMessageDelete = useCallback((messageIndex: number) => {
     const lineNumber = findMessageLine(messageIndex, umlCode);
@@ -222,6 +234,7 @@ export default function UMLEditor() {
             <UMLPreviewPanel
               svgContent={svgContent}
               hidden={!!previewWindow}
+              handleAltToggle={handleAltToggle}
               onMessageClick={handleMessageClick}
               onMessageDelete={handleMessageDelete}
               onMessageEdit={handleMessageEdit}

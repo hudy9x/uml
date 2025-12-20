@@ -6,8 +6,8 @@ import {
   ResizablePanelGroup,
 } from "../components/ui/resizable";
 import { toast } from "sonner";
-import { UMLEditorPanel, UMLEditorPanelRef } from "../components/UMLEditorPanel";
-import { UMLPreviewPanel } from "../components/UMLPreviewPanel";
+import { UMLEditorPanel, UMLEditorPanelRef } from "../features/UmlEditor/UMLEditorPanel";
+import { UMLPreviewPanel } from "../features/UmlEditor/UMLPreviewPanel";
 import { useUMLDiagram } from "../hooks/useUMLDiagram";
 import { useFileOpener } from "../hooks/useFileOpener";
 import { invoke } from "@tauri-apps/api/core";
