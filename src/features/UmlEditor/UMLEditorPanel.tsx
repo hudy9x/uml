@@ -101,15 +101,47 @@ export const UMLEditorPanel = forwardRef<UMLEditorPanelRef, UMLEditorPanelProps>
         const end = endLine - 1;
 
         try {
-          // Get the starting line object to check if it's already commented
-          const firstLine = view.state.doc.line(start);
+          // Get the alt line (startLine) to check if it's already folded
+          const altLine = view.state.doc.line(startLine);
 
-          // Check if the first line is already commented
+          // Check if the first line inside the block is already commented
+          const firstLine = view.state.doc.line(start);
           const isCommented = firstLine.text.trimStart().startsWith("'");
 
           const changes = [];
 
-          // Iterate through all lines in the range
+          // Handle the alt line color marker
+          if (isCommented) {
+            // Unfolding: Remove only #bisque from alt line, keep any other colors
+            const altLineText = altLine.text;
+            const bisqueMatch = altLineText.match(/^(\s*alt\s+)#bisque\s+(.*)$/);
+
+            if (bisqueMatch) {
+              // Remove only #bisque, keep everything else (including other colors)
+              const [, prefix, rest] = bisqueMatch;
+              changes.push({
+                from: altLine.from,
+                to: altLine.to,
+                insert: `${prefix}${rest}`,
+              });
+            }
+          } else {
+            // Folding: Add #bisque before any existing content (including colors)
+            const altLineText = altLine.text;
+            const altMatch = altLineText.match(/^(\s*alt\s+)(.*)$/);
+
+            if (altMatch && !altLineText.includes('#bisque')) {
+              // Add #bisque after alt keyword, before any existing content
+              const [, prefix, rest] = altMatch;
+              changes.push({
+                from: altLine.from,
+                to: altLine.to,
+                insert: `${prefix}#bisque ${rest}`,
+              });
+            }
+          }
+
+          // Iterate through all lines in the range (excluding the alt line itself)
           for (let i = start; i <= end; i++) {
             const line = view.state.doc.line(i);
 

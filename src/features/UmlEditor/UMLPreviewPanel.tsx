@@ -178,17 +178,29 @@ export function UMLPreviewPanel({
     console.log(`[Alt Click] Showing toolbar for ${altId} at`, position);
   };
 
-  useAltBlockCollapse(svgContent, contentType, handleAltToggle, handleAltClick);
+  useAltBlockCollapse(svgContent, contentType, undefined, handleAltClick);
 
-  const handleAltBlockAction = () => {
-    console.log(`[Alt Block] Alt action for ${selectedAltId}`);
-    // TODO: Implement alt block toggle logic
+  const handleFoldAction = () => {
+    // Extract the alt index from the altId (e.g., "alt-1" -> 1)
+    const altIndex = Number(selectedAltId.replace('alt-', ''));
+    console.log(`[Alt Block] Fold action for ${selectedAltId} (index: ${altIndex})`);
+
+    if (handleAltToggle) {
+      handleAltToggle(altIndex);
+    }
+
     setAltToolbarOpen(false);
   };
 
-  const handleElseBlockAction = () => {
-    console.log(`[Alt Block] Else action for ${selectedAltId}`);
-    // TODO: Implement else block toggle logic
+  const handleUnfoldAction = () => {
+    // Extract the alt index from the altId (e.g., "alt-1" -> 1)
+    const altIndex = Number(selectedAltId.replace('alt-', ''));
+    console.log(`[Alt Block] Unfold action for ${selectedAltId} (index: ${altIndex})`);
+
+    if (handleAltToggle) {
+      handleAltToggle(altIndex);
+    }
+
     setAltToolbarOpen(false);
   };
 
@@ -272,8 +284,8 @@ export function UMLPreviewPanel({
             open={altToolbarOpen}
             position={altToolbarPosition}
             altId={selectedAltId}
-            onAltClick={handleAltBlockAction}
-            onElseClick={handleElseBlockAction}
+            onAltClick={handleFoldAction}
+            onElseClick={handleUnfoldAction}
             onOpenChange={setAltToolbarOpen}
           />
         </>
