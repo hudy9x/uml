@@ -1,19 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Plus, PackageOpen, Home } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useProjectStore } from "@/stores/project";
-import { createProject } from "@/databases/projects";
+import { PackageOpen, Home } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Empty() {
-  const navigate = useNavigate();
-  const addProject = useProjectStore((state) => state.addProject);
-
-  const handleCreate = async () => {
-    const project = await createProject();
-    addProject(project);
-    navigate(`/uml/${project.id}`);
-  };
-
   return (
     <div className="h-[calc(100vh-64px)] flex items-center justify-center p-4">
       <div className="max-w-[400px] w-full px-6">
@@ -30,19 +19,12 @@ export default function Empty() {
               diagram types like sequence, class, activity, and more.
             </p>
           </div>
-          <div className="flex gap-2">
-            <Link to="/">
-              <Button variant="outline">
-                <Home className="w-4 h-4" />
-                Back to Home
-              </Button>
-            </Link>
-
-            <Button onClick={handleCreate} className="">
-              <Plus className="w-4 h-4" />
-              New Diagram
+          <Link to="/">
+            <Button variant="outline">
+              <Home className="w-4 h-4" />
+              Back to Home
             </Button>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

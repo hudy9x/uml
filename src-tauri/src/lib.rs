@@ -1,6 +1,6 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use tauri::{Emitter, Manager};
 use std::sync::Mutex;
+use tauri::{Emitter, Manager};
 
 // Global state to store the opened file path
 struct OpenedFilePath(Mutex<Option<String>>);
@@ -40,9 +40,7 @@ fn close_devtools(app: tauri::AppHandle) {
     }
 }
 
-mod files;
-mod git;
-mod plantuml;
+mod commands;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -76,22 +74,21 @@ pub fn run() {
 
             // Emit event to frontend if a file was opened
             if let Some(file_path) = opened_file {
-                let window = app.get_webview_window("main").expect("Failed to get main window");
+                let window = app
+                    .get_webview_window("main")
+                    .expect("Failed to get main window");
                 let _ = window.emit("file-opened", file_path);
             }
 
             // Register cleanup handler for when the app is closing
-            let window = app.get_webview_window("main").expect("Failed to get main window");
-            window.on_window_event(move |event| {
-                if let tauri::WindowEvent::CloseRequested { .. } = event {
-                    // Stop PlantUML server when window is closing
-                    tauri::async_runtime::spawn(async move {
-                        if let Err(e) = plantuml::cleanup_plantuml_server().await {
-                            eprintln!("Failed to stop PlantUML server on exit: {}", e);
-                        }
-                    });
-                }
-            });
+            let window = app
+                .get_webview_window("main")
+                .expect("Failed to get main window");
+            window.on_window_event(
+                move |event| {
+                    if let tauri::WindowEvent::CloseRequested { .. } = event {}
+                },
+            );
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -100,21 +97,18 @@ pub fn run() {
             toggle_devtools,
             open_devtools,
             close_devtools,
-            files::list_dir,
-            files::read_file_content,
-            files::write_file_content,
-            files::create_directory,
-            files::create_file,
-            files::delete_node,
-            files::rename_node,
-            git::get_current_branch,
-            git::get_all_branches,
-            git::switch_branch,
-            git::get_git_status,
-            git::git_pull,
-            plantuml::start_plantuml_server,
-            plantuml::stop_plantuml_server,
-            plantuml::check_plantuml_server
+            commands::files::list_dir,
+            commands::files::read_file_content,
+            commands::files::write_file_content,
+            commands::files::create_directory,
+            commands::files::create_file,
+            commands::files::delete_node,
+            commands::files::rename_node,
+            commands::git::get_current_branch,
+            commands::git::get_all_branches,
+            commands::git::switch_branch,
+            commands::git::get_git_status,
+            commands::git::git_pull,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

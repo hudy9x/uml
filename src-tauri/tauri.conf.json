@@ -34,7 +34,7 @@
       "icons/icon.ico"
     ],
     "resources": [
-      "plantuml-portable"
+
     ],
     "createUpdaterArtifacts": true,
     "fileAssociations": [
