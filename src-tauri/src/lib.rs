@@ -59,8 +59,12 @@ pub fn run() {
             let opened_file = if args.len() > 1 {
                 // The file path is typically the second argument (first is the executable)
                 let file_path = args[1].clone();
-                // Check if it's a .pu or .puml file
-                if file_path.ends_with(".pu") || file_path.ends_with(".puml") {
+                // Check if it's a supported file type
+                if file_path.ends_with(".pu") 
+                    || file_path.ends_with(".puml")
+                    || file_path.ends_with(".mmd")
+                    || file_path.ends_with(".mermaid")
+                {
                     Some(file_path.clone())
                 } else {
                     None

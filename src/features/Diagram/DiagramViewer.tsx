@@ -3,9 +3,10 @@ import { useTheme } from 'next-themes';
 import mermaid from 'mermaid';
 import { useDiagramContent } from './DiagramContext';
 import { DiagramActions } from './DiagramActions';
+import { Loader2 } from 'lucide-react';
 
 export function DiagramViewer() {
-  const { content } = useDiagramContent();
+  const { content, isSaving } = useDiagramContent();
   const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const renderIdRef = useRef(0);
@@ -63,7 +64,15 @@ export function DiagramViewer() {
 
   return (
     <div className="h-full w-full relative">
-      <DiagramActions />
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        {isSaving && (
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border text-xs text-muted-foreground">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            <span>Saving...</span>
+          </div>
+        )}
+        <DiagramActions />
+      </div>
       <div
         ref={containerRef}
         className="h-full w-full overflow-auto bg-background p-4 flex items-center justify-center"

@@ -26,27 +26,25 @@ export function DiagramActions() {
   };
 
   return (
-    <div className="absolute top-4 right-4 z-10 flex gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={toggleEditor}
-        className="h-8 gap-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-        title={isEditorVisible ? 'Hide Editor' : 'Show Editor'}
-      >
-        {isEditorVisible ? (
-          <>
-            <Eye className="h-4 w-4" />
-            <span className="text-xs">Preview Only</span>
-          </>
-        ) : (
-          <>
-            <Code className="h-4 w-4" />
-            <span className="text-xs">Show Editor</span>
-          </>
-        )}
-      </Button>
-    </div>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={toggleEditor}
+      className="h-8 gap-2 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      title={isEditorVisible ? 'Hide Editor' : 'Show Editor'}
+    >
+      {isEditorVisible ? (
+        <>
+          <Eye className="h-4 w-4" />
+          <span className="text-xs">Preview Only</span>
+        </>
+      ) : (
+        <>
+          <Code className="h-4 w-4" />
+          <span className="text-xs">Show Editor</span>
+        </>
+      )}
+    </Button>
   );
 }
 

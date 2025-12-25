@@ -11,13 +11,14 @@ import {
 interface DiagramContainerProps {
   content: string;
   filename?: string;
+  filePath?: string | null;
 }
 
-export function DiagramContainer({ content, filename = 'untitled' }: DiagramContainerProps) {
+export function DiagramContainer({ content, filename = 'untitled', filePath = null }: DiagramContainerProps) {
   const isEditorVisible = useEditorVisibility();
 
   return (
-    <DiagramProvider initialContent={content} filename={filename}>
+    <DiagramProvider initialContent={content} filename={filename} filePath={filePath}>
       <div className="h-full w-full">
         {isEditorVisible ? (
           <ResizablePanelGroup direction="horizontal">
