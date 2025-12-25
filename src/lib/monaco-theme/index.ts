@@ -2,7 +2,7 @@ import type { Monaco } from '@monaco-editor/react';
 import { registerMermaidLanguage } from './mermaid-language';
 import { registerMermaidThemes } from './mermaid-themes';
 
-export function setupMermaidEditor(monaco: Monaco) {
+export function setupMermaidTheme(monaco: Monaco) {
   registerMermaidLanguage(monaco);
   registerMermaidThemes(monaco);
 }

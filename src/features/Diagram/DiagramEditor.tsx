@@ -1,12 +1,12 @@
 import Editor, { BeforeMount } from '@monaco-editor/react';
 import { useDiagramContent } from './DiagramContext';
-import { setupMermaidEditor } from '@/lib/monaco-theme';
+import { setupMermaidTheme } from '@/lib/monaco-theme';
 
 export function DiagramEditor() {
   const { content, setContent } = useDiagramContent();
 
   const handleBeforeMount: BeforeMount = (monaco) => {
-    setupMermaidEditor(monaco);
+    setupMermaidTheme(monaco);
   };
 
   return (
