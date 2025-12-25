@@ -4,6 +4,7 @@ import mermaid from 'mermaid';
 import { useDiagramContent } from './DiagramContext';
 import { DiagramActions } from './DiagramActions';
 import { Loader2 } from 'lucide-react';
+import { ZoomPanContainer } from '@/components/ZoomPanContainer';
 
 export function DiagramViewer() {
   const { content, isSaving } = useDiagramContent();
@@ -73,10 +74,12 @@ export function DiagramViewer() {
         )}
         <DiagramActions />
       </div>
-      <div
-        ref={containerRef}
-        className="h-full w-full overflow-auto bg-background p-4 flex items-center justify-center"
-      />
+      <ZoomPanContainer className="h-full w-full">
+        <div
+          ref={containerRef}
+          className="w-full bg-background p-4 flex items-center justify-center"
+        />
+      </ZoomPanContainer>
     </div>
   );
 }
