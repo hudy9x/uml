@@ -8,3 +8,4 @@ export function setupMermaidTheme(monaco: Monaco) {
 }
 
 export { registerMermaidLanguage, registerMermaidThemes };
+export { formatMermaidCode } from './mermaid-formatter';
