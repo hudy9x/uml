@@ -1,19 +1,23 @@
 import { useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 import mermaid from 'mermaid';
 import { useDiagramContent } from './DiagramContext';
 import { DiagramActions } from './DiagramActions';
 
-// Initialize mermaid
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'default',
-  securityLevel: 'loose',
-});
-
 export function DiagramViewer() {
   const { content } = useDiagramContent();
+  const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const renderIdRef = useRef(0);
+
+  // Update mermaid theme when app theme changes
+  useEffect(() => {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: theme === 'dark' ? 'dark' : 'default',
+      securityLevel: 'loose',
+    });
+  }, [theme]);
 
   useEffect(() => {
     if (!containerRef.current || !content.trim()) {
@@ -47,7 +51,7 @@ export function DiagramViewer() {
     };
 
     renderDiagram();
-  }, [content]);
+  }, [content, theme]); // Re-render when theme changes
 
   return (
     <div className="h-full w-full relative">

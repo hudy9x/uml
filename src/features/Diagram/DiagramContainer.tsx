@@ -10,29 +10,34 @@ import {
 
 interface DiagramContainerProps {
   content: string;
+  filename?: string;
 }
 
-export function DiagramContainer({ content }: DiagramContainerProps) {
+export function DiagramContainer({ content, filename = 'untitled' }: DiagramContainerProps) {
   const isEditorVisible = useEditorVisibility();
 
   return (
-    <DiagramProvider initialContent={content}>
+    <DiagramProvider initialContent={content} filename={filename}>
       <div className="h-full w-full">
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel
-            defaultSize={50}
-            minSize={30}
-            className={isEditorVisible ? '' : 'hidden'}
-          >
-            <DiagramEditor />
-          </ResizablePanel>
+        {isEditorVisible ? (
+          <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel
+              defaultSize={50}
+              minSize={30}
+              className={isEditorVisible ? '' : 'hidden'}
+            >
+              <DiagramEditor />
+            </ResizablePanel>
 
-          {isEditorVisible && <ResizableHandle withHandle />}
+            {isEditorVisible && <ResizableHandle withHandle />}
 
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <DiagramViewer />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+            <ResizablePanel defaultSize={50} minSize={30}>
+              <DiagramViewer />
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          <DiagramViewer />
+        )}
       </div>
     </DiagramProvider>
   );

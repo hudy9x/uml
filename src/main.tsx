@@ -1,10 +1,13 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { ThemeProvider } from "next-themes";
+import App from "./App";
 import "./App.css";
 
-import ReactDOM from "react-dom/client";
-import App from "./App";
-
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  // <React.StrictMode>
-  <App />
-  // </React.StrictMode>,
+  <React.StrictMode>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <App />
+    </ThemeProvider>
+  </React.StrictMode>,
 );
