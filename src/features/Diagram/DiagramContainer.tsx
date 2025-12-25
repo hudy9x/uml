@@ -1,6 +1,7 @@
 import { DiagramProvider } from './DiagramContext';
 import { DiagramEditor } from './DiagramEditor';
 import { DiagramViewer } from './DiagramViewer';
+import { useEditorVisibility } from './DiagramActions';
 import {
   ResizablePanelGroup,
   ResizablePanel,
@@ -12,15 +13,21 @@ interface DiagramContainerProps {
 }
 
 export function DiagramContainer({ content }: DiagramContainerProps) {
+  const isEditorVisible = useEditorVisibility();
+
   return (
     <DiagramProvider initialContent={content}>
       <div className="h-full w-full">
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={50} minSize={30}>
+          <ResizablePanel
+            defaultSize={50}
+            minSize={30}
+            className={isEditorVisible ? '' : 'hidden'}
+          >
             <DiagramEditor />
           </ResizablePanel>
 
-          <ResizableHandle withHandle />
+          {isEditorVisible && <ResizableHandle withHandle />}
 
           <ResizablePanel defaultSize={50} minSize={30}>
             <DiagramViewer />

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import mermaid from 'mermaid';
 import { useDiagramContent } from './DiagramContext';
+import { DiagramActions } from './DiagramActions';
 
 // Initialize mermaid
 mermaid.initialize({
@@ -49,9 +50,12 @@ export function DiagramViewer() {
   }, [content]);
 
   return (
-    <div
-      ref={containerRef}
-      className="h-full w-full overflow-auto bg-background p-4 flex items-center justify-center"
-    />
+    <div className="h-full w-full relative">
+      <DiagramActions />
+      <div
+        ref={containerRef}
+        className="h-full w-full overflow-auto bg-background p-4 flex items-center justify-center"
+      />
+    </div>
   );
 }
