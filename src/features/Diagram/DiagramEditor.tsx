@@ -2,14 +2,14 @@ import Editor, { BeforeMount, OnMount } from '@monaco-editor/react';
 import { useRef } from 'react';
 import { useTheme } from 'next-themes';
 import { useDiagramContent } from './DiagramContext';
-import { setupMermaidTheme, formatMermaidCode } from '@/lib/monaco-theme';
+import { setupMermaidTheme } from '@/lib/monaco-theme';
+import { registerFormatAction } from '@/lib/monaco-actions';
 import { FileText } from 'lucide-react';
-import type * as Monaco from 'monaco-editor';
 
 export function DiagramEditor() {
   const { content, setContent, filename } = useDiagramContent();
   const { theme } = useTheme();
-  const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
+  const editorRef = useRef<any>(null);
 
   const handleBeforeMount: BeforeMount = (monaco) => {
     setupMermaidTheme(monaco);
@@ -18,28 +18,12 @@ export function DiagramEditor() {
   const handleEditorDidMount: OnMount = (editor, monaco) => {
     editorRef.current = editor;
 
-    // Register format command with Shift+Alt+F
-    editor.addAction({
-      id: 'format-mermaid',
-      label: 'Format Mermaid Code',
-      keybindings: [monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF],
-      run: (ed) => {
-        const currentContent = ed.getValue();
-        const formatted = formatMermaidCode(currentContent);
+    // Register format action with Shift+Alt+F
+    const handleFormat = (formattedCode: string) => {
+      setContent(formattedCode);
+    };
 
-        // Get current cursor position
-        const position = ed.getPosition();
-
-        // Update content
-        ed.setValue(formatted);
-        setContent(formatted);
-
-        // Restore cursor position (approximately)
-        if (position) {
-          ed.setPosition(position);
-        }
-      },
-    });
+    registerFormatAction(editor, monaco, handleFormat);
   };
 
   // Determine Monaco theme based on app theme
