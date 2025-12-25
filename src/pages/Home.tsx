@@ -1,20 +1,16 @@
 import { DiagramContainer } from '@/features/Diagram';
 
-const defaultDiagram = `graph TD
-    Start[🚀 Start] --> Plan[📋 Plan]
-    Plan --> Design[🎨 Design]
-    Design --> Code[💻 Code]
-    Code --> Test{✅ Test}
-    Test -->|Pass| Deploy[🚀 Deploy]
-    Test -->|Fail| Debug[🐛 Debug]
-    Debug --> Code
-    Deploy --> Monitor[📊 Monitor]
-    Monitor --> End[🎉 End]
-    
-    style Start fill:#4ade80
-    style End fill:#4ade80
-    style Deploy fill:#60a5fa
-    style Debug fill:#f87171`;
+const defaultDiagram = `sequenceDiagram
+    Alice->>Bob: Hello Bob, how are you?
+    alt is sick
+        Bob->>Alice: Not so good :(
+    else is well
+        Bob->>Alice: Feeling fresh like a daisy
+    end
+    opt Extra response
+        Bob->>Alice: Thanks for asking
+    end
+`;
 
 export default function Home() {
   return (
