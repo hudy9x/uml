@@ -16,6 +16,7 @@ export function DiagramViewer() {
       startOnLoad: false,
       theme: theme === 'dark' ? 'dark' : 'default',
       securityLevel: 'loose',
+      suppressErrorRendering: true, // Prevent Mermaid from creating error elements in body
     });
   }, [theme]);
 
@@ -37,6 +38,13 @@ export function DiagramViewer() {
         }
       } catch (error) {
         console.error('Mermaid render error:', error);
+
+        // Clean up any error elements that Mermaid might have created
+        const errorElement = document.getElementById(renderId);
+        if (errorElement && errorElement.parentNode === document.body) {
+          document.body.removeChild(errorElement);
+        }
+
         if (containerRef.current) {
           containerRef.current.innerHTML = `
             <div class="flex items-center justify-center h-full p-4">
