@@ -17,7 +17,16 @@ export function DiagramViewer() {
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: false,
-      theme: theme === 'dark' ? 'dark' : 'default',
+      // theme: theme === 'dark' ? 'dark' : 'default',
+      theme: "base",
+      themeVariables: {
+        primaryColor: '#e3e3f1',
+        primaryTextColor: '#000',
+        primaryBorderColor: '#323232ff',
+        lineColor: '#000',
+        secondaryColor: '#006100',
+        tertiaryColor: '#000',
+      },
       securityLevel: 'loose',
       suppressErrorRendering: true, // Prevent Mermaid from creating error elements in body
     });
