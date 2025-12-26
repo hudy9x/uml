@@ -9,8 +9,8 @@ interface UseFileOpenerResult {
 }
 
 /**
- * Custom hook to handle file opening via CLI arguments
- * Listens for file-opened events and retrieves the file path from Tauri
+ * Custom hook to handle file opening via "Open With" functionality
+ * Works on both Windows and macOS by checking CLI arguments and listening for events
  */
 export function useFileOpener(): UseFileOpenerResult {
     const [filePath, setFilePath] = useState<string | null>(null);
@@ -22,24 +22,23 @@ export function useFileOpener(): UseFileOpenerResult {
 
         const initFileOpener = async () => {
             try {
-                // First, check if a file was opened via CLI
+                // Check if a file was opened via "Open With" (works for both Windows and macOS)
                 const openedFile = await invoke<string | null>('get_opened_file_path');
+
                 if (openedFile) {
-                    console.log('[FileOpener] File opened via CLI:', openedFile);
-                    alert(`File opened via CLI:\n${openedFile}`);
+                    console.log('[useFileOpener] ✅ File opened:', openedFile);
                     setFilePath(openedFile);
                 }
 
-                // Listen for file-opened events (in case the event fires after component mount)
+                // Listen for file-opened events (for files opened while app is running)
                 unlisten = await listen<string>('file-opened', (event) => {
-                    console.log('[FileOpener] File opened event received:', event.payload);
-                    alert(`File opened event received:\n${event.payload}`);
+                    console.log('[useFileOpener] 🎉 File-opened event:', event.payload);
                     setFilePath(event.payload);
                 });
 
                 setIsLoading(false);
             } catch (err) {
-                console.error('[FileOpener] Error:', err);
+                console.error('[useFileOpener] ❌ Error:', err);
                 setError(err instanceof Error ? err.message : String(err));
                 setIsLoading(false);
             }

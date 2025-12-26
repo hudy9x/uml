@@ -26,6 +26,7 @@ export default function Home() {
   // Load file content when filePath changes
   useEffect(() => {
     if (filePath) {
+      console.log('[Home] Loading file:', filePath);
       loadFile(filePath);
     }
   }, [filePath]);
@@ -38,9 +39,10 @@ export default function Home() {
       setFileContent(content);
       setFilename(name);
 
-      console.log('File loaded:', path);
+      console.log('[Home] ✅ File loaded:', name);
     } catch (error) {
-      console.error('Failed to load file:', error);
+      console.error('[Home] ❌ Failed to load file:', error);
+      alert(`Failed to load file:\n${error}`);
     }
   };
 
