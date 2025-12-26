@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useRef, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, useMemo, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 
 interface DiagramContextType {
@@ -6,10 +6,15 @@ interface DiagramContextType {
   setContent: (content: string) => void;
   filename: string;
   filePath: string | null;
+  saveFile: (content: string) => Promise<void>;
+}
+
+interface SavingContextType {
   isSaving: boolean;
 }
 
 const DiagramContext = createContext<DiagramContextType | null>(null);
+const SavingContext = createContext<SavingContextType>({ isSaving: false });
 
 export function useDiagramContent() {
   const context = useContext(DiagramContext);
@@ -17,6 +22,10 @@ export function useDiagramContent() {
     throw new Error('useDiagramContent must be used within DiagramContainer');
   }
   return context;
+}
+
+export function useSavingState() {
+  return useContext(SavingContext);
 }
 
 export function DiagramProvider({
@@ -32,41 +41,45 @@ export function DiagramProvider({
 }) {
   const [content, setContent] = useState(initialContent);
   const [isSaving, setIsSaving] = useState(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-save with 500ms debounce
+  // Sync content when initialContent prop changes (e.g., when file is loaded)
   useEffect(() => {
+    setContent(initialContent);
+  }, [initialContent]);
+
+  // Save file function that can be called manually
+  const saveFile = useCallback(async (contentToSave: string) => {
     if (!filePath) return;
 
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
+    setIsSaving(true);
+    try {
+      await invoke('write_file_content', { path: filePath, content: contentToSave });
+      console.log('File saved:', filePath);
+    } catch (error) {
+      console.error('Failed to save file:', error);
+    } finally {
+      // Keep saving indicator visible for a brief moment
+      setTimeout(() => setIsSaving(false), 300);
     }
+  }, [filePath]);
 
-    // Set new timeout
-    saveTimeoutRef.current = setTimeout(async () => {
-      setIsSaving(true);
-      try {
-        await invoke('write_file_content', { path: filePath, content });
-        console.log('File saved:', filePath);
-      } catch (error) {
-        console.error('Failed to save file:', error);
-      } finally {
-        // Keep saving indicator visible for a brief moment
-        setTimeout(() => setIsSaving(false), 300);
-      }
-    }, 500);
+  // Memoize main context value (doesn't include isSaving)
+  const contextValue = useMemo(() => ({
+    content,
+    setContent,
+    filename,
+    filePath,
+    saveFile
+  }), [content, filename, filePath, saveFile]);
 
-    return () => {
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-    };
-  }, [content, filePath]);
+  // Separate saving state context
+  const savingValue = useMemo(() => ({ isSaving }), [isSaving]);
 
   return (
-    <DiagramContext.Provider value={{ content, setContent, filename, filePath, isSaving }}>
-      {children}
+    <DiagramContext.Provider value={contextValue}>
+      <SavingContext.Provider value={savingValue}>
+        {children}
+      </SavingContext.Provider>
     </DiagramContext.Provider>
   );
 }

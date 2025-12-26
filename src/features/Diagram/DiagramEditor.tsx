@@ -1,5 +1,5 @@
 import Editor, { BeforeMount, OnMount } from '@monaco-editor/react';
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 import { useTheme } from 'next-themes';
 import { useDiagramContent } from './DiagramContext';
 import { setupMermaidTheme } from '@/lib/monaco-theme';
@@ -7,9 +7,10 @@ import { registerFormatAction } from '@/lib/monaco-actions';
 import { FileText } from 'lucide-react';
 
 export function DiagramEditor() {
-  const { content, setContent, filename } = useDiagramContent();
+  const { content, setContent, filename, saveFile } = useDiagramContent();
   const { theme } = useTheme();
   const editorRef = useRef<any>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleBeforeMount: BeforeMount = (monaco) => {
     setupMermaidTheme(monaco);
@@ -25,6 +26,22 @@ export function DiagramEditor() {
 
     registerFormatAction(editor, monaco, handleFormat);
   };
+
+  // Debounced save handler with 300ms delay
+  const handleContentChange = useCallback((value: string | undefined) => {
+    const newContent = value || '';
+    setContent(newContent);
+
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Set new timeout for 300ms
+    saveTimeoutRef.current = setTimeout(() => {
+      saveFile(newContent);
+    }, 300);
+  }, [setContent, saveFile]);
 
   // Determine Monaco theme based on app theme
   const monacoTheme = theme === 'dark' ? 'mermaid-dark' : 'mermaid-light';
@@ -43,7 +60,7 @@ export function DiagramEditor() {
           height="100%"
           language="mermaid"
           value={content}
-          onChange={(value) => setContent(value || '')}
+          onChange={handleContentChange}
           theme={monacoTheme}
           beforeMount={handleBeforeMount}
           onMount={handleEditorDidMount}

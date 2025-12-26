@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import mermaid from 'mermaid';
-import { useDiagramContent } from './DiagramContext';
+import { useDiagramContent, useSavingState } from './DiagramContext';
 import { DiagramActions } from './DiagramActions';
 import { Loader2 } from 'lucide-react';
 import { ZoomPanContainer } from '@/components/ZoomPanContainer';
 
 export function DiagramViewer() {
-  const { content, isSaving } = useDiagramContent();
+  const { content } = useDiagramContent();
+  const { isSaving } = useSavingState();
   const { theme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const renderIdRef = useRef(0);
@@ -64,7 +65,7 @@ export function DiagramViewer() {
   }, [content, theme]); // Re-render when theme changes
 
   return (
-    <div className="h-full w-full relative">
+    <div className="h-full w-full relative bg-background">
       <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
         {isSaving && (
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border text-xs text-muted-foreground">
@@ -77,7 +78,7 @@ export function DiagramViewer() {
       <ZoomPanContainer className="h-full w-full">
         <div
           ref={containerRef}
-          className="w-full bg-background p-4 flex items-center justify-center"
+          className="w-full p-4 flex items-center justify-center"
         />
       </ZoomPanContainer>
     </div>

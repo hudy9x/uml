@@ -77,6 +77,8 @@ pub fn run() {
             commands::files::create_file,
             commands::files::delete_node,
             commands::files::rename_node,
+            commands::file_dialog::open_file_dialog,
+            commands::file_dialog::open_folder_dialog,
             commands::git::get_current_branch,
             commands::git::get_all_branches,
             commands::git::switch_branch,
@@ -87,7 +89,7 @@ pub fn run() {
         .expect("error while running tauri application")
         .run(|app_handle, event| {
             // Log ALL events to see what's happening
-            eprintln!("[lib.rs] Received event: {:?}", event);
+            // eprintln!("[lib.rs] Received event: {:?}", event);
             
             // macOS: Handle file opened events
             #[cfg(target_os = "macos")]
