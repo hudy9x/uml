@@ -206,7 +206,7 @@ export function ZoomPanContainer({
             <path d="M3 21v-5h5" />
           </svg>
         </button>
-        <div className="w-10 h-10 rounded-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border flex items-center justify-center text-xs font-medium">
+        <div className="text-[10px] font-medium w-10 h-10 rounded-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border flex items-center justify-center">
           {Math.round(zoom * 100)}%
         </div>
       </div>

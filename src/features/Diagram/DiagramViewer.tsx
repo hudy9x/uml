@@ -15,6 +15,7 @@ export function DiagramViewer() {
 
   // Update mermaid theme when app theme changes
   useEffect(() => {
+    const isDark = theme === 'dark';
     mermaid.initialize({
       startOnLoad: false,
       // theme: theme === 'dark' ? 'dark' : 'default',
@@ -22,10 +23,10 @@ export function DiagramViewer() {
       themeVariables: {
         primaryColor: '#e3e3f1',
         primaryTextColor: '#000',
-        primaryBorderColor: '#323232ff',
-        lineColor: '#000',
+        primaryBorderColor: isDark ? '#646464ff' : '#323232ff',
+        lineColor: isDark ? '#fff' : '#000',
         secondaryColor: '#006100',
-        tertiaryColor: '#000',
+        tertiaryColor: isDark ? '#221919ff' : '#000',
       },
       securityLevel: 'loose',
       suppressErrorRendering: true, // Prevent Mermaid from creating error elements in body
@@ -74,7 +75,7 @@ export function DiagramViewer() {
   }, [content, theme]); // Re-render when theme changes
 
   return (
-    <div className="h-full w-full relative bg-background">
+    <div className="h-full w-full relative bg-background dot-pattern">
       <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
         {isSaving && (
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border text-xs text-muted-foreground">

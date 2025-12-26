@@ -114,6 +114,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -122,14 +123,16 @@
 body {
   background: transparent;
 }
+
 .cm-focused {
   @apply border-transparent !outline-transparent;
 }
+
 .home-page {
   @apply overflow-hidden relative bg-secondary;
 }
 
-.home-wrapper{
+.home-wrapper {
   @apply h-[calc(100vh-34px)];
 }
 
@@ -191,4 +194,18 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted-foreground);
+}
+
+/* Dotted Background Pattern */
+.dot-pattern {
+  background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+:root {
+  --dot-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --dot-color: rgba(255, 255, 255, 0.1);
 }

@@ -65,6 +65,7 @@ export function DiagramEditor() {
           beforeMount={handleBeforeMount}
           onMount={handleEditorDidMount}
           options={{
+            padding: { top: 10, bottom: 10 },
             minimap: { enabled: false },
             fontSize: 12,
             lineNumbers: 'on',
