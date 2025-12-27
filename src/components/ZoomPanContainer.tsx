@@ -7,6 +7,12 @@ interface ZoomPanContainerProps {
   className?: string;
 }
 
+// Store zoom/pan state outside component to persist across remounts
+const zoomPanState = {
+  zoom: 1,
+  pan: { x: 0, y: 0 }
+};
+
 export function ZoomPanContainer({
   children,
   config: userConfig,
@@ -17,10 +23,21 @@ export function ZoomPanContainer({
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const [zoom, setZoom] = useState(config.initialZoom);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
+  // Initialize from persisted state, or use config default
+  const [zoom, setZoom] = useState(() => zoomPanState.zoom || config.initialZoom);
+  const [pan, setPan] = useState(() => zoomPanState.pan || { x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Persist zoom state whenever it changes
+  useEffect(() => {
+    zoomPanState.zoom = zoom;
+  }, [zoom]);
+
+  // Persist pan state whenever it changes
+  useEffect(() => {
+    zoomPanState.pan = pan;
+  }, [pan]);
 
   // Clamp zoom value within min/max bounds
   const clampZoom = useCallback((value: number) => {
