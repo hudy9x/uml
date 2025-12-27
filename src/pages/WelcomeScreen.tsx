@@ -2,6 +2,8 @@ import { invoke } from '@tauri-apps/api/core';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { FolderOpen, FileText } from 'lucide-react';
+import { RecentItems } from '@/components/RecentItems';
+import { addRecentItem } from '@/lib/recentItems';
 
 export default function WelcomeScreen() {
   const navigate = useNavigate();
@@ -11,6 +13,13 @@ export default function WelcomeScreen() {
       const filePath = await invoke<string | null>('open_file_dialog');
       if (filePath) {
         console.log('[WelcomeScreen] Selected file:', filePath);
+
+        // Extract filename from path
+        const filename = filePath.split('/').pop() || 'untitled';
+
+        // Save to recent items
+        addRecentItem(filePath, filename, 'file');
+
         navigate('/file', { state: { filePath } });
       }
     } catch (error) {
@@ -23,6 +32,13 @@ export default function WelcomeScreen() {
       const folderPath = await invoke<string | null>('open_folder_dialog');
       if (folderPath) {
         console.log('[WelcomeScreen] Selected folder:', folderPath);
+
+        // Extract folder name from path
+        const folderName = folderPath.split('/').pop() || 'untitled';
+
+        // Save to recent items
+        addRecentItem(folderPath, folderName, 'folder');
+
         // Encode the folder path for URL
         const encodedPath = encodeURIComponent(folderPath);
         navigate(`/project/${encodedPath}`);
@@ -78,6 +94,9 @@ export default function WelcomeScreen() {
             </Button>
           </div>
         </div>
+
+        {/* Recent Items */}
+        <RecentItems />
 
       </div>
     </main>

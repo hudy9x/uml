@@ -120,6 +120,12 @@
   }
 }
 
+
+@view-transition {
+  navigation: auto;
+}
+
+
 body {
   background: transparent;
 }
