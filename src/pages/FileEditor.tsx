@@ -52,7 +52,7 @@ export default function FileEditor() {
   console.log('File Editor render', fileContent)
 
   return (
-    <main className="min-h-screen home-page flex flex-col">
+    <main id="home-page" className="min-h-screen h-full home-page flex flex-col">
       <div className="home-wrapper flex-1 flex overflow-hidden" style={{ height: "calc(100vh - 29px - 33px)" }}>
         <div className="flex-1">
           <DiagramContainer

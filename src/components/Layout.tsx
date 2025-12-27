@@ -6,10 +6,8 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className=" relative">
-      <main className="">
-        {children}
-      </main>
-    </div>
+    <main id="main-layout" className="h-full overflow-hidden">
+      {children}
+    </main>
   );
 } 
