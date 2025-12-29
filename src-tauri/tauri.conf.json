@@ -53,6 +53,15 @@
         "name": "Mermaid Diagram",
         "description": "Mermaid diagram file",
         "mimeType": "text/plain"
+      },
+      {
+        "ext": [
+          "md",
+          "markdown"
+        ],
+        "name": "Markdown Document",
+        "description": "Markdown document file",
+        "mimeType": "text/markdown"
       }
     ]
   },

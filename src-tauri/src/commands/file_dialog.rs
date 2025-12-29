@@ -5,7 +5,7 @@ pub async fn open_file_dialog(app: tauri::AppHandle) -> Result<Option<String>, S
     let file = app
         .dialog()
         .file()
-        .add_filter("Diagram Files", &["mmd", "mermaid", "pu", "puml"])
+        .add_filter("Diagram Files", &["mmd", "mermaid", "pu", "puml", "md", "markdown"])
         .blocking_pick_file();
 
     Ok(file.map(|f| f.to_string()))
