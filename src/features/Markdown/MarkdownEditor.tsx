@@ -29,7 +29,7 @@ export function MarkdownEditor() {
   const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs-light';
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-[calc(100vh-100px)] w-full flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30">
         <FileText className="h-4 w-4 text-muted-foreground" />

@@ -7,6 +7,7 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from '@/components/ui/resizable';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface MarkdownContainerProps {
   content: string;
@@ -27,7 +28,9 @@ export function MarkdownContainer({ content, filename = 'untitled.md', filePath 
               minSize={20}
               className={isEditorVisible ? '' : 'hidden'}
             >
-              <MarkdownEditor />
+              <ScrollArea>
+                <MarkdownEditor />
+              </ScrollArea>
             </ResizablePanel>
 
             {isEditorVisible && <ResizableHandle withHandle />}
