@@ -3,7 +3,7 @@ import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
-import { useEffect } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useMarkdownContent } from './MarkdownContext';
 import { useEditorVisibility, MarkdownActions } from './MarkdownActions';
 import { SavingIndicator } from './SavingIndicator';
@@ -25,6 +25,22 @@ const lowlight = createLowlight(common);
 export function MarkdownViewer() {
   const { content, setContent, saveFile } = useMarkdownContent();
   const isEditorVisible = useEditorVisibility();
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced save handler with 300ms delay
+  const handleContentChange = useCallback((markdownContent: string) => {
+    setContent(markdownContent);
+
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Set new timeout for 300ms
+    saveTimeoutRef.current = setTimeout(() => {
+      saveFile(markdownContent);
+    }, 300);
+  }, [setContent, saveFile]);
 
   const editor = useEditor({
     extensions: [
@@ -44,8 +60,7 @@ export function MarkdownViewer() {
       // Only save when editor is NOT visible (user is editing in viewer)
       if (!isEditorVisible) {
         const markdownContent = editor.getMarkdown();
-        setContent(markdownContent);
-        saveFile(markdownContent);
+        handleContentChange(markdownContent);
       }
     },
     editorProps: {
@@ -73,11 +88,14 @@ export function MarkdownViewer() {
   console.log('markdown renderer')
 
   return (
-    <div className="h-full w-full relative bg-background">
-      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+    <div className="h-full w-full bg-background">
+      {/* Fixed controls in top-right */}
+      <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
         <SavingIndicator />
         <MarkdownActions />
       </div>
+
+      {/* Content */}
       <div className="h-full w-full overflow-auto">
         <div className="max-w-3xl mx-auto px-8 py-8">
           <EditorContent editor={editor} />
