@@ -91,14 +91,29 @@ export default function FileEditor() {
   };
 
   return (
-    <main id="home-page" className="min-h-screen h-full home-page flex flex-col">
-      <EditorHeader />
-      <div className="home-wrapper flex-1 flex overflow-hidden" style={{ height: "calc(100vh - 29px - 33px - 40px)" }}>
-        <div className="flex-1">
+    <main id="home-page" className="relative w-full h-screen overflow-hidden">
+      {/* Fixed Header at Top */}
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <EditorHeader />
+      </div>
+
+      {/* Main Content Area - Absolute positioning between header and footer */}
+      <div
+        className="absolute left-0 right-0 overflow-hidden"
+        style={{
+          top: '40px',  // Height of EditorHeader
+          bottom: '33px'  // Height of Footer
+        }}
+      >
+        <div className="w-full h-full">
           {renderViewer()}
         </div>
       </div>
-      <Footer />
+
+      {/* Fixed Footer at Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        <Footer />
+      </div>
     </main>
   );
 }

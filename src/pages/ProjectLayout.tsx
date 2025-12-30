@@ -16,8 +16,14 @@ export default function ProjectLayout() {
   const decodedPath = folderPath ? decodeURIComponent(folderPath) : '';
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <div className="flex-1 overflow-hidden" style={{ height: "calc(100vh - 29px - 33px)" }}>
+    <main className="relative w-full h-screen overflow-hidden">
+      {/* Main Content Area - Absolute positioning above footer */}
+      <div
+        className="absolute top-0 left-0 right-0 overflow-hidden"
+        style={{
+          bottom: '33px'  // Height of Footer
+        }}
+      >
         <ResizablePanelGroup direction="horizontal" className='h-full'>
           <ResizablePanel defaultSize={20} minSize={15} maxSize={40}>
             <FileExplorer folderPath={decodedPath} />
@@ -34,7 +40,11 @@ export default function ProjectLayout() {
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
-      <Footer />
+
+      {/* Fixed Footer at Bottom */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        <Footer />
+      </div>
     </main>
   );
 }

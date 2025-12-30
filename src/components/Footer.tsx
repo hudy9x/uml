@@ -18,7 +18,7 @@ export function Footer() {
 
   if (!mounted) {
     return (
-      <footer className="border-t bg-muted/30">
+      <footer className="border-t bg-muted">
         <div className="flex items-center justify-between px-4 py-1.5">
           <div className="text-xs text-muted-foreground">Mermaid Editor</div>
           <div className="h-7 w-7" />
@@ -28,7 +28,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t bg-muted/30">
+    <footer className="border-t bg-muted">
       <div className="flex items-center justify-between px-4 py-1.5">
         <div className="text-xs text-muted-foreground">
           Mermaid Editor

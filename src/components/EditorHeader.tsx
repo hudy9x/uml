@@ -9,7 +9,7 @@ export function EditorHeader() {
   };
 
   return (
-    <div className="h-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center px-3 gap-2">
+    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex items-center px-3 gap-2" style={{ height: '40px' }}>
       <BackButton
         to="/welcome"
         onClick={handleBackClick}

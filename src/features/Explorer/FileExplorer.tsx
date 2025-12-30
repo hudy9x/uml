@@ -54,7 +54,7 @@ export function FileExplorer({ folderPath }: FileExplorerProps) {
 
   return (
     <div className="h-full bg-secondary border-r border-border overflow-y-auto">
-      <div className="p-3 border-b border-border">
+      <div className="flex items-center px-3 border-b border-border" style={{ height: '40px' }}>
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           Explorer
         </h2>

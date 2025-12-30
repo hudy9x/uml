@@ -49,7 +49,7 @@ export function DiagramEditor() {
   return (
     <div className="h-full w-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30">
+      <div className="flex items-center gap-2 px-3 border-b bg-muted/30" style={{ height: '40px' }}>
         <FileText className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm font-medium text-foreground">{filename}</span>
       </div>
