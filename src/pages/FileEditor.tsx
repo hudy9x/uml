@@ -6,23 +6,13 @@ import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { useLocation } from 'react-router-dom';
 import { detectFileType, FileType } from '@/utils/fileTypes';
-
-const defaultDiagram = `sequenceDiagram
-    Alice->>Bob: Hello Bob, how are you?
-    alt is sick
-        Bob->>Alice: Not so good :(
-    else is well
-        Bob->>Alice: Feeling fresh like a daisy
-    end
-    opt Extra response
-        Bob->>Alice: Thanks for asking
-    end
-`;
+import { Loader2 } from 'lucide-react';
 
 export default function FileEditor() {
-  const [fileContent, setFileContent] = useState(defaultDiagram);
-  const [filename, setFilename] = useState('untitled');
-  const [fileType, setFileType] = useState<FileType>(FileType.DIAGRAM);
+  const [fileContent, setFileContent] = useState('');
+  const [filename, setFilename] = useState('');
+  const [fileType, setFileType] = useState<FileType | null>(null);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const filePath = (location.state as { filePath?: string })?.filePath || null;
 
@@ -33,11 +23,14 @@ export default function FileEditor() {
     if (filePath) {
       console.log('[FileEditor] Loading file:', filePath);
       loadFile(filePath);
+    } else {
+      setLoading(false);
     }
   }, [filePath]);
 
   const loadFile = async (path: string) => {
     try {
+      setLoading(true);
       const content = await invoke<string>('read_file_content', { path });
 
       console.log("file content:", content)
@@ -52,6 +45,10 @@ export default function FileEditor() {
     } catch (error) {
       console.error('[FileEditor] ❌ Failed to load file:', error);
       alert(`Failed to load file:\n${error}`);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 500);
     }
   };
 
@@ -59,6 +56,28 @@ export default function FileEditor() {
 
   // Render appropriate viewer based on file type
   const renderViewer = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">Loading file...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!filePath || !fileType) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center text-muted-foreground">
+            <p className="text-lg font-semibold">No File Selected</p>
+            <p className="text-sm mt-2">Please select a file to edit.</p>
+          </div>
+        </div>
+      );
+    }
+
     switch (fileType) {
       case FileType.DIAGRAM:
         return (
