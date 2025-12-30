@@ -73,6 +73,7 @@ export default function FileEditor() {
         return (
           <MarkdownContainer
             content={fileContent}
+            filename={filename}
             filePath={filePath}
           />
         );

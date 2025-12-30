@@ -1,9 +1,12 @@
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode, useMemo } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 
 interface MarkdownContextType {
   content: string;
   setContent: (content: string) => void;
+  filename: string;
+  filePath: string | null;
+  saveFile: (content: string) => Promise<void>;
 }
 
 interface SavingStateContextType {
@@ -28,64 +31,55 @@ export function useSavingState() {
 interface MarkdownProviderProps {
   children: ReactNode;
   initialContent?: string;
+  filename?: string;
   filePath?: string | null;
 }
 
-export function MarkdownProvider({ children, initialContent = '', filePath }: MarkdownProviderProps) {
-  const [content, setContentState] = useState(initialContent);
+export function MarkdownProvider({
+  children,
+  initialContent = '',
+  filename = 'untitled.md',
+  filePath = null
+}: MarkdownProviderProps) {
+  const [content, setContent] = useState(initialContent);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  // Update content when initialContent changes
+  // Sync content when initialContent prop changes (e.g., when file is loaded)
   useEffect(() => {
-    setContentState(initialContent);
+    setContent(initialContent);
   }, [initialContent]);
 
-  const setContent = useCallback(
-    (newContent: string) => {
-      setContentState(newContent);
+  // Save file function that can be called manually
+  const saveFile = useCallback(async (contentToSave: string) => {
+    if (!filePath) return;
 
-      // Auto-save logic (debounced)
-      if (filePath) {
-        // Clear existing timeout
-        if (saveTimeout) {
-          clearTimeout(saveTimeout);
-        }
+    setIsSaving(true);
+    try {
+      await invoke('write_file_content', { path: filePath, content: contentToSave });
+      console.log('[MarkdownContext] ✅ File saved:', filePath);
+    } catch (error) {
+      console.error('[MarkdownContext] ❌ Failed to save file:', error);
+    } finally {
+      // Keep saving indicator visible for a brief moment
+      setTimeout(() => setIsSaving(false), 300);
+    }
+  }, [filePath]);
 
-        // Set new timeout for saving
-        const timeout = setTimeout(async () => {
-          setIsSaving(true);
-          try {
-            await invoke('write_file_content', {
-              path: filePath,
-              content: newContent,
-            });
-            console.log('[MarkdownContext] ✅ File saved:', filePath);
-          } catch (error) {
-            console.error('[MarkdownContext] ❌ Failed to save file:', error);
-          } finally {
-            setIsSaving(false);
-          }
-        }, 500);
+  // Memoize main context value (doesn't include isSaving)
+  const contextValue = useMemo(() => ({
+    content,
+    setContent,
+    filename,
+    filePath,
+    saveFile
+  }), [content, filename, filePath, saveFile]);
 
-        setSaveTimeout(timeout);
-      }
-    },
-    [filePath, saveTimeout]
-  );
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (saveTimeout) {
-        clearTimeout(saveTimeout);
-      }
-    };
-  }, [saveTimeout]);
+  // Separate saving state context
+  const savingValue = useMemo(() => ({ isSaving }), [isSaving]);
 
   return (
-    <MarkdownContext.Provider value={{ content, setContent }}>
-      <SavingStateContext.Provider value={{ isSaving }}>
+    <MarkdownContext.Provider value={contextValue}>
+      <SavingStateContext.Provider value={savingValue}>
         {children}
       </SavingStateContext.Provider>
     </MarkdownContext.Provider>
