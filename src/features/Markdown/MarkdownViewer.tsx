@@ -2,6 +2,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { createTauriImage } from './TauriImage';
 import { common, createLowlight } from 'lowlight';
 import { useEffect, useRef, useCallback } from 'react';
 import { useMarkdownContent } from './MarkdownContext';
@@ -23,7 +24,7 @@ import 'highlight.js/styles/github-dark.css';
 const lowlight = createLowlight(common);
 
 export function MarkdownViewer() {
-  const { content, setContent, saveFile } = useMarkdownContent();
+  const { content, setContent, saveFile, filePath } = useMarkdownContent();
   const isEditorVisible = useEditorVisibility();
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -51,6 +52,13 @@ export function MarkdownViewer() {
         lowlight,
         defaultLanguage: 'plaintext',
       }),
+      createTauriImage(filePath).configure({
+        inline: true,
+        allowBase64: true,
+        HTMLAttributes: {
+          class: 'markdown-image',
+        },
+      }),
       Markdown,
     ],
     content: content,
@@ -68,7 +76,7 @@ export function MarkdownViewer() {
         class: 'prose focus:outline-none min-h-full',
       },
     },
-  });
+  }, [isEditorVisible, handleContentChange, content, filePath]);
 
 
   // Update editor content when content changes from external source (e.g., editor)
