@@ -4,6 +4,7 @@ import { Markdown } from '@tiptap/markdown';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
+import FileHandler from '@tiptap/extension-file-handler';
 import { createTauriImage } from './TauriImage';
 import { common, createLowlight } from 'lowlight';
 import { useEffect, useRef, useCallback } from 'react';
@@ -73,6 +74,58 @@ export function MarkdownViewer() {
         lowlight,
         defaultLanguage: 'plaintext',
       }),
+      FileHandler.configure({
+        allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+        onDrop: (currentEditor, files, pos) => {
+          console.log('[FileHandler] onDrop triggered', { files, pos });
+          files.forEach(file => {
+            console.log('[FileHandler] Processing dropped file:', file.name, file.type);
+            const fileReader = new FileReader()
+
+            fileReader.readAsDataURL(file)
+            fileReader.onload = () => {
+              console.log('[FileHandler] File loaded, inserting at position:', pos);
+              currentEditor
+                .chain()
+                .insertContentAt(pos, {
+                  type: 'image',
+                  attrs: {
+                    src: fileReader.result,
+                  },
+                })
+                .focus()
+                .run()
+            }
+          })
+        },
+        onPaste: (currentEditor, files, htmlContent) => {
+          console.log('[FileHandler] onPaste triggered', { files, htmlContent });
+          files.forEach(file => {
+            if (htmlContent) {
+              // if there is htmlContent, stop manual insertion & let other extensions handle insertion via inputRule
+              // you could extract the pasted file from this url string and upload it to a server for example
+              console.log(htmlContent)
+              return false
+            }
+
+            const fileReader = new FileReader()
+
+            fileReader.readAsDataURL(file)
+            fileReader.onload = () => {
+              currentEditor
+                .chain()
+                .insertContentAt(currentEditor.state.selection.anchor, {
+                  type: 'image',
+                  attrs: {
+                    src: fileReader.result,
+                  },
+                })
+                .focus()
+                .run()
+            }
+          })
+        },
+      }),
       createTauriImage(filePath).configure({
         inline: true,
         allowBase64: true,
@@ -84,7 +137,7 @@ export function MarkdownViewer() {
     ],
     content: content,
     contentType: 'markdown',
-    editable: mode === 'preview', // Only editable in preview mode
+    editable: true, // Always editable to allow FileHandler drop events
     onUpdate: ({ editor }) => {
       // Only save when in preview mode (user is editing in viewer)
       if (mode === 'preview') {
@@ -95,6 +148,28 @@ export function MarkdownViewer() {
     editorProps: {
       attributes: {
         class: 'prose focus:outline-none min-h-full',
+      },
+      handlePaste: (_view, event) => {
+        console.log('[EditorProps] handlePaste called, mode:', mode);
+        // In non-preview modes, only allow file paste (handled by FileHandler)
+        // Block text paste
+        if (mode !== 'preview') {
+          const hasFiles = event.clipboardData?.files && event.clipboardData.files.length > 0;
+          if (!hasFiles) {
+            console.log('[EditorProps] Blocking text paste in non-preview mode');
+            return true; // Block text paste
+          }
+        }
+        return false; // Allow paste (FileHandler will handle files)
+      },
+      handleTextInput: (_view) => {
+        console.log('[EditorProps] handleTextInput called, mode:', mode);
+        // Block text input in non-preview modes
+        if (mode !== 'preview') {
+          console.log('[EditorProps] Blocking text input in non-preview mode');
+          return true; // Block text input
+        }
+        return false; // Allow text input in preview mode
       },
     },
   }, [mode, handleContentChange, content, filePath]);
@@ -131,17 +206,52 @@ export function MarkdownViewer() {
     prevModeRef.current = mode;
   }, [mode, setContent]);
 
-  // Update editor editable state when mode changes
+  // Add native drop event listeners for debugging
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (editor) {
-      editor.setEditable(mode === 'preview');
-    }
-  }, [mode, editor]);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleDragEnter = (e: DragEvent) => {
+      console.log('[Native] dragenter event', e);
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      console.log('[Native] dragover event', e);
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      console.log('[Native] dragleave event', e);
+    };
+
+    const handleDrop = (e: DragEvent) => {
+      console.log('[Native] drop event', e);
+      console.log('[Native] drop files:', e.dataTransfer?.files);
+      // Don't prevent default - let TipTap handle it
+    };
+
+    container.addEventListener('dragenter', handleDragEnter);
+    container.addEventListener('dragover', handleDragOver);
+    container.addEventListener('dragleave', handleDragLeave);
+    container.addEventListener('drop', handleDrop);
+
+    return () => {
+      container.removeEventListener('dragenter', handleDragEnter);
+      container.removeEventListener('dragover', handleDragOver);
+      container.removeEventListener('dragleave', handleDragLeave);
+      container.removeEventListener('drop', handleDrop);
+    };
+  }, []);
 
   console.log('markdown renderer')
 
   return (
-    <div className="h-full w-full bg-background">
+    <div className="h-full w-full bg-background" ref={containerRef}>
       {/* Content */}
       <div className="h-full w-full overflow-auto">
         <div className="max-w-3xl mx-auto px-8 py-8">
