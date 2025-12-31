@@ -28,7 +28,7 @@ export function MarkdownEditor() {
   const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs-light';
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-[calc(100vh-90px)] w-full flex flex-col">
       {/* Editor */}
       <div className="flex-1">
         <Editor

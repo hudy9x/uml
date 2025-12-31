@@ -14,8 +14,8 @@
     "windows": [
       {
         "title": "UML Editor",
-        "width": 1300,
-        "height": 700,
+        "width": 800,
+        "height": 900,
         "devtools": true,
         "dragDropEnabled": false
       }
