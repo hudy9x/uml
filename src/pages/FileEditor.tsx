@@ -1,5 +1,8 @@
 import { DiagramContainer } from '@/features/Diagram';
 import { MarkdownContainer } from '@/features/Markdown';
+import { MarkdownProvider } from '@/features/Markdown/MarkdownContext';
+import { MarkdownActions } from '@/features/Markdown/MarkdownActions';
+import { SavingIndicator } from '@/features/Markdown/SavingIndicator';
 import { Footer } from '@/components/Footer';
 import { EditorHeader } from '@/components/EditorHeader';
 import { useEffect, useState } from 'react';
@@ -90,11 +93,7 @@ export default function FileEditor() {
 
       case FileType.MARKDOWN:
         return (
-          <MarkdownContainer
-            content={fileContent}
-            filename={filename}
-            filePath={filePath}
-          />
+          <MarkdownContainer />
         );
 
       default:
@@ -109,11 +108,18 @@ export default function FileEditor() {
     }
   };
 
-  return (
+  const content = (
     <main id="home-page" className="relative w-full h-screen overflow-hidden">
       {/* Fixed Header at Top */}
       <div className="fixed top-0 left-0 right-0 z-50">
-        <EditorHeader />
+        <EditorHeader filename={filename}>
+          {fileType === FileType.MARKDOWN && (
+            <>
+              <SavingIndicator />
+              <MarkdownActions />
+            </>
+          )}
+        </EditorHeader>
       </div>
 
       {/* Main Content Area - Absolute positioning between header and footer */}
@@ -135,5 +141,16 @@ export default function FileEditor() {
       </div>
     </main>
   );
+
+  // Wrap with MarkdownProvider if viewing markdown file
+  if (fileType === FileType.MARKDOWN && filePath) {
+    return (
+      <MarkdownProvider initialContent={fileContent} filename={filename} filePath={filePath}>
+        {content}
+      </MarkdownProvider>
+    );
+  }
+
+  return content;
 }
 

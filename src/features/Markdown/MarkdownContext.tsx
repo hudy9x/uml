@@ -7,6 +7,7 @@ interface MarkdownContextType {
   filename: string;
   filePath: string | null;
   saveFile: (content: string) => Promise<void>;
+  reloadFile: () => Promise<void>;
 }
 
 interface SavingStateContextType {
@@ -65,14 +66,28 @@ export function MarkdownProvider({
     }
   }, [filePath]);
 
+  // Reload file function to refresh content from disk
+  const reloadFile = useCallback(async () => {
+    if (!filePath) return;
+
+    try {
+      const fileContent = await invoke<string>('read_file_content', { path: filePath });
+      setContent(fileContent);
+      console.log('[MarkdownContext] ✅ File reloaded:', filePath);
+    } catch (error) {
+      console.error('[MarkdownContext] ❌ Failed to reload file:', error);
+    }
+  }, [filePath]);
+
   // Memoize main context value (doesn't include isSaving)
   const contextValue = useMemo(() => ({
     content,
     setContent,
     filename,
     filePath,
-    saveFile
-  }), [content, filename, filePath, saveFile]);
+    saveFile,
+    reloadFile
+  }), [content, filename, filePath, saveFile, reloadFile]);
 
   // Separate saving state context
   const savingValue = useMemo(() => ({ isSaving }), [isSaving]);

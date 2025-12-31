@@ -6,8 +6,7 @@ import { createTauriImage } from './TauriImage';
 import { common, createLowlight } from 'lowlight';
 import { useEffect, useRef, useCallback } from 'react';
 import { useMarkdownContent } from './MarkdownContext';
-import { useEditorVisibility, MarkdownActions } from './MarkdownActions';
-import { SavingIndicator } from './SavingIndicator';
+import { useEditorMode } from './MarkdownActions';
 
 import "./style.css"
 
@@ -25,23 +24,39 @@ const lowlight = createLowlight(common);
 
 export function MarkdownViewer() {
   const { content, setContent, saveFile, filePath } = useMarkdownContent();
-  const isEditorVisible = useEditorVisibility();
+  const mode = useEditorMode();
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const editorRef = useRef<any>(null);
 
   // Debounced save handler with 300ms delay
   const handleContentChange = useCallback((markdownContent: string) => {
-    setContent(markdownContent);
+    // In preview-only mode: only save to file, don't update context state
+    // This prevents re-render and maintains scroll position/focus
+    if (mode === 'preview') {
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
 
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
+      // Set new timeout for 300ms - only save, don't update state
+      saveTimeoutRef.current = setTimeout(() => {
+        saveFile(markdownContent);
+      }, 300);
+    } else {
+      // In split/code mode: update state and save
+      setContent(markdownContent);
+
+      // Clear existing timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      // Set new timeout for 300ms
+      saveTimeoutRef.current = setTimeout(() => {
+        saveFile(markdownContent);
+      }, 300);
     }
-
-    // Set new timeout for 300ms
-    saveTimeoutRef.current = setTimeout(() => {
-      saveFile(markdownContent);
-    }, 300);
-  }, [setContent, saveFile]);
+  }, [mode, setContent, saveFile]);
 
   const editor = useEditor({
     extensions: [
@@ -63,10 +78,10 @@ export function MarkdownViewer() {
     ],
     content: content,
     contentType: 'markdown',
-    editable: !isEditorVisible, // Disable editing when editor is visible
+    editable: mode === 'preview', // Only editable in preview mode
     onUpdate: ({ editor }) => {
-      // Only save when editor is NOT visible (user is editing in viewer)
-      if (!isEditorVisible) {
+      // Only save when in preview mode (user is editing in viewer)
+      if (mode === 'preview') {
         const markdownContent = editor.getMarkdown();
         handleContentChange(markdownContent);
       }
@@ -76,33 +91,51 @@ export function MarkdownViewer() {
         class: 'prose focus:outline-none min-h-full',
       },
     },
-  }, [isEditorVisible, handleContentChange, content, filePath]);
+  }, [mode, handleContentChange, content, filePath]);
+
+  // Store editor ref
+  useEffect(() => {
+    if (editor) {
+      editorRef.current = editor;
+    }
+  }, [editor]);
 
 
-  // Update editor content when content changes from external source (e.g., editor)
+  // Update editor content when content changes from external source (e.g., Monaco editor)
   useEffect(() => {
     if (editor && content !== editor.getMarkdown()) {
       editor.commands.setContent(content, { contentType: 'markdown' });
     }
   }, [content, editor]);
 
-  // Update editor editable state when visibility changes
+  // Get latest content from TipTap before switching to split mode
+  const prevModeRef = useRef(mode);
+  useEffect(() => {
+    const wasPreview = prevModeRef.current === 'preview';
+    const isNowSplit = mode === 'split';
+
+    // When switching from preview to split, get latest content from TipTap and update context
+    if (wasPreview && isNowSplit && editorRef.current) {
+      const latestContent = editorRef.current.getMarkdown();
+      console.log('[MarkdownViewer] Switching to split mode, updating context with latest content');
+      setContent(latestContent);
+    }
+
+    // Update ref for next render
+    prevModeRef.current = mode;
+  }, [mode, setContent]);
+
+  // Update editor editable state when mode changes
   useEffect(() => {
     if (editor) {
-      editor.setEditable(!isEditorVisible);
+      editor.setEditable(mode === 'preview');
     }
-  }, [isEditorVisible, editor]);
+  }, [mode, editor]);
 
   console.log('markdown renderer')
 
   return (
     <div className="h-full w-full bg-background">
-      {/* Fixed controls in top-right */}
-      <div className="fixed top-4 right-4 z-10 flex items-center gap-2">
-        <SavingIndicator />
-        <MarkdownActions />
-      </div>
-
       {/* Content */}
       <div className="h-full w-full overflow-auto">
         <div className="max-w-3xl mx-auto px-8 py-8">

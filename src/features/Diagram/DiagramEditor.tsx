@@ -4,10 +4,9 @@ import { useTheme } from 'next-themes';
 import { useDiagramContent } from './DiagramContext';
 import { setupMermaidTheme } from '@/lib/monaco-theme';
 import { registerFormatAction } from '@/lib/monaco-actions';
-import { FileText } from 'lucide-react';
 
 export function DiagramEditor() {
-  const { content, setContent, filename, saveFile } = useDiagramContent();
+  const { content, setContent, saveFile } = useDiagramContent();
   const { theme } = useTheme();
   const editorRef = useRef<any>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -48,12 +47,6 @@ export function DiagramEditor() {
 
   return (
     <div className="h-full w-full flex flex-col">
-      {/* Header */}
-      <div className="flex items-center gap-2 px-3 border-b bg-muted/30" style={{ height: '40px' }}>
-        <FileText className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">{filename}</span>
-      </div>
-
       {/* Editor */}
       <div className="flex-1">
         <Editor
