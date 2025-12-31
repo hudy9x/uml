@@ -225,8 +225,67 @@
 }
 
 /* Task Lists */
+.prose ul[data-type="taskList"] {
+  list-style: none;
+  margin-left: 0;
+  padding: 0;
+}
+
+.prose ul[data-type="taskList"] li {
+  align-items: flex-start;
+  display: flex;
+}
+
+.prose ul[data-type="taskList"] li>label {
+  flex: 0 0 auto;
+  margin-right: 0.5rem;
+  user-select: none;
+}
+
+.prose ul[data-type="taskList"] li>div {
+  flex: 1 1 auto;
+}
+
+.prose ul[data-type="taskList"] input[type="checkbox"] {
+  margin-top: 5px;
+}
+
+.prose ul[data-type="taskList"] li p {
+  margin: 0;
+}
+
+.prose ul[data-type="taskList"] ul[data-type="taskList"] {
+  margin: 0;
+}
+
 .prose input[type="checkbox"] {
-  margin-right: 0.5em;
+  width: 1.125em;
+  height: 1.125em;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  border: 2px solid var(--border);
+  background-color: var(--background);
+  appearance: none;
+  flex-shrink: 0;
+}
+
+.prose input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.prose input[type="checkbox"]:hover {
+  border-color: var(--primary);
+}
+
+.prose input[type="checkbox"]:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 
 /* Dark Mode Support */
@@ -279,4 +338,13 @@
 
 .dark .prose tbody tr {
   border-bottom-color: var(--border);
+}
+
+.dark .prose ul[data-type="taskList"] input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
 }

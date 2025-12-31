@@ -2,6 +2,8 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import TaskList from '@tiptap/extension-task-list';
+import TaskItem from '@tiptap/extension-task-item';
 import { createTauriImage } from './TauriImage';
 import { common, createLowlight } from 'lowlight';
 import { useEffect, useRef, useCallback } from 'react';
@@ -62,6 +64,10 @@ export function MarkdownViewer() {
     extensions: [
       StarterKit.configure({
         codeBlock: false, // Disable default code block
+      }),
+      TaskList,
+      TaskItem.configure({
+        nested: true,
       }),
       CodeBlockLowlight.configure({
         lowlight,
