@@ -1,8 +1,6 @@
-import { DiagramContainer } from '@/features/Diagram';
-import { MarkdownContainer } from '@/features/Markdown';
+import { DiagramContainer, DiagramEditorHeaderActions } from '@/features/Diagram';
+import { MarkdownContainer, MarkdownEditorHeaderActions } from '@/features/Markdown';
 import { MarkdownProvider } from '@/features/Markdown/MarkdownContext';
-import { MarkdownActions } from '@/features/Markdown/MarkdownActions';
-import { SavingIndicator } from '@/features/Markdown/SavingIndicator';
 import { Footer } from '@/components/Footer';
 import { EditorHeader } from '@/components/EditorHeader';
 import { useEffect, useState } from 'react';
@@ -113,12 +111,8 @@ export default function FileEditor() {
       {/* Fixed Header at Top */}
       <div className="fixed top-0 left-0 right-0 z-50">
         <EditorHeader filename={filename}>
-          {fileType === FileType.MARKDOWN && (
-            <>
-              <SavingIndicator />
-              <MarkdownActions />
-            </>
-          )}
+          {fileType === FileType.MARKDOWN && <MarkdownEditorHeaderActions />}
+          {fileType === FileType.DIAGRAM && <DiagramEditorHeaderActions />}
         </EditorHeader>
       </div>
 

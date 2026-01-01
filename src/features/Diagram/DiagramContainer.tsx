@@ -23,7 +23,7 @@ export function DiagramContainer({ content, filename = 'untitled', filePath = nu
         {isEditorVisible ? (
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel
-              defaultSize={30}
+              defaultSize={60}
               minSize={30}
               className={isEditorVisible ? '' : 'hidden'}
             >
@@ -32,7 +32,7 @@ export function DiagramContainer({ content, filename = 'untitled', filePath = nu
 
             {isEditorVisible && <ResizableHandle withHandle />}
 
-            <ResizablePanel defaultSize={70} minSize={30}>
+            <ResizablePanel defaultSize={40} minSize={30}>
               <DiagramViewer />
             </ResizablePanel>
           </ResizablePanelGroup>
