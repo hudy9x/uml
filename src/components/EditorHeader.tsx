@@ -11,7 +11,7 @@ interface EditorHeaderProps {
 export function EditorHeader({ filename, children }: EditorHeaderProps) {
   const handleBackClick = () => {
     // Clear recent items cache to prevent auto-redirect
-    clearRecentItems();
+    // clearRecentItems();
     console.log('[EditorHeader] ✅ Recent items cleared');
   };
 

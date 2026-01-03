@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { DiagramContainer } from '@/features/Diagram';
-import { FileExplorer } from '@/features/Explorer/FileExplorer';
+import { FileExplorer } from '@/containers/Explorer/FileExplorer';
 import { Footer } from '@/components/Footer';
 import {
   ResizablePanelGroup,
