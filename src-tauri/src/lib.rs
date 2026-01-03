@@ -1,18 +1,12 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use tauri::{Emitter, Manager};
-use std::sync::Mutex;
+use tauri::Manager;
 
-// Global state to store the opened file path
-struct OpenedFilePath(Mutex<Option<String>>);
+mod commands;
+mod file_opener;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
-fn get_opened_file_path(state: tauri::State<OpenedFilePath>) -> Option<String> {
-    state.0.lock().unwrap().clone()
 }
 
 #[tauri::command]
@@ -40,10 +34,6 @@ fn close_devtools(app: tauri::AppHandle) {
     }
 }
 
-mod files;
-mod git;
-mod plantuml;
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -56,66 +46,59 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
-            // Capture CLI arguments to check if a file was opened
-            let args: Vec<String> = std::env::args().collect();
-            let opened_file = if args.len() > 1 {
-                // The file path is typically the second argument (first is the executable)
-                let file_path = args[1].clone();
-                // Check if it's a .pu or .puml file
-                if file_path.ends_with(".pu") || file_path.ends_with(".puml") {
-                    Some(file_path.clone())
-                } else {
-                    None
-                }
-            } else {
-                None
-            };
+            // Setup platform-specific file opener
+            #[cfg(target_os = "windows")]
+            file_opener::setup_windows_file_opener(app);
 
-            // Store the opened file path in app state
-            app.manage(OpenedFilePath(Mutex::new(opened_file.clone())));
-
-            // Emit event to frontend if a file was opened
-            if let Some(file_path) = opened_file {
-                let window = app.get_webview_window("main").expect("Failed to get main window");
-                let _ = window.emit("file-opened", file_path);
-            }
+            #[cfg(target_os = "macos")]
+            file_opener::setup_macos_file_opener(app);
 
             // Register cleanup handler for when the app is closing
-            let window = app.get_webview_window("main").expect("Failed to get main window");
-            window.on_window_event(move |event| {
-                if let tauri::WindowEvent::CloseRequested { .. } = event {
-                    // Stop PlantUML server when window is closing
-                    tauri::async_runtime::spawn(async move {
-                        if let Err(e) = plantuml::cleanup_plantuml_server().await {
-                            eprintln!("Failed to stop PlantUML server on exit: {}", e);
-                        }
-                    });
-                }
-            });
+            let window = app
+                .get_webview_window("main")
+                .expect("Failed to get main window");
+            window.on_window_event(
+                move |event| {
+                    if let tauri::WindowEvent::CloseRequested { .. } = event {}
+                },
+            );
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
             greet,
-            get_opened_file_path,
+            file_opener::get_opened_file_path,
             toggle_devtools,
             open_devtools,
             close_devtools,
-            files::list_dir,
-            files::read_file_content,
-            files::write_file_content,
-            files::create_directory,
-            files::create_file,
-            files::delete_node,
-            files::rename_node,
-            git::get_current_branch,
-            git::get_all_branches,
-            git::switch_branch,
-            git::get_git_status,
-            git::git_pull,
-            plantuml::start_plantuml_server,
-            plantuml::stop_plantuml_server,
-            plantuml::check_plantuml_server
+            commands::files::list_dir,
+            commands::files::read_file_content,
+            commands::files::write_file_content,
+            commands::files::create_directory,
+            commands::files::create_file,
+            commands::files::delete_node,
+            commands::files::rename_node,
+            commands::file_dialog::open_file_dialog,
+            commands::file_dialog::open_folder_dialog,
+            commands::git::get_current_branch,
+            commands::git::get_all_branches,
+            commands::git::switch_branch,
+            commands::git::get_git_status,
+            commands::git::git_pull,
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while running tauri application")
+        .run(|app_handle, event| {
+            // Log ALL events to see what's happening
+            // eprintln!("[lib.rs] Received event: {:?}", event);
+            
+            // macOS: Handle file opened events
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Opened { urls } = event {
+                eprintln!("[lib.rs] ✅ Opened event detected with {} URLs", urls.len());
+                for (i, url) in urls.iter().enumerate() {
+                    eprintln!("[lib.rs] URL {}: {}", i, url);
+                }
+                file_opener::handle_macos_opened_event(&app_handle, urls);
+            }
+        });
 }

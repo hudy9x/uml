@@ -14,13 +14,20 @@
     "windows": [
       {
         "title": "UML Editor",
-        "width": 1300,
-        "height": 700,
-        "devtools": true
+        "width": 800,
+        "height": 900,
+        "devtools": true,
+        "dragDropEnabled": false
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "**"
+        ]
+      }
     }
   },
   "bundle": {
@@ -33,9 +40,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": [
-      "plantuml-portable"
-    ],
+    "resources": [],
     "createUpdaterArtifacts": true,
     "fileAssociations": [
       {
@@ -46,6 +51,24 @@
         "name": "PlantUML Diagram",
         "description": "PlantUML diagram file",
         "mimeType": "text/plain"
+      },
+      {
+        "ext": [
+          "mmd",
+          "mermaid"
+        ],
+        "name": "Mermaid Diagram",
+        "description": "Mermaid diagram file",
+        "mimeType": "text/plain"
+      },
+      {
+        "ext": [
+          "md",
+          "markdown"
+        ],
+        "name": "Markdown Document",
+        "description": "Markdown document file",
+        "mimeType": "text/markdown"
       }
     ]
   },

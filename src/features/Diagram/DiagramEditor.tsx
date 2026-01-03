@@ -1,0 +1,79 @@
+import Editor, { BeforeMount, OnMount } from '@monaco-editor/react';
+import { useRef, useCallback } from 'react';
+import { useTheme } from 'next-themes';
+import { useDiagramContent } from './DiagramContext';
+import { setupMermaidTheme } from '@/lib/monaco-theme';
+import { registerFormatAction } from '@/lib/monaco-actions';
+
+export function DiagramEditor() {
+  const { content, setContent, saveFile } = useDiagramContent();
+  const { theme } = useTheme();
+  const editorRef = useRef<any>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleBeforeMount: BeforeMount = (monaco) => {
+    setupMermaidTheme(monaco);
+  };
+
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
+
+    // Register format action with Shift+Alt+F
+    const handleFormat = (formattedCode: string) => {
+      setContent(formattedCode);
+    };
+
+    registerFormatAction(editor, monaco, handleFormat);
+  };
+
+  // Debounced save handler with 300ms delay
+  const handleContentChange = useCallback((value: string | undefined) => {
+    const newContent = value || '';
+    setContent(newContent);
+
+    // Clear existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Set new timeout for 300ms
+    saveTimeoutRef.current = setTimeout(() => {
+      saveFile(newContent);
+    }, 300);
+  }, [setContent, saveFile]);
+
+  // Determine Monaco theme based on app theme
+  const monacoTheme = theme === 'dark' ? 'mermaid-dark' : 'mermaid-light';
+
+  return (
+    <div className="h-full w-full flex flex-col">
+      {/* Editor */}
+      <div className="flex-1">
+        <Editor
+          height="100%"
+          language="mermaid"
+          value={content}
+          onChange={handleContentChange}
+          theme={monacoTheme}
+          beforeMount={handleBeforeMount}
+          onMount={handleEditorDidMount}
+          options={{
+            padding: { top: 10, bottom: 10 },
+            minimap: { enabled: false },
+            fontSize: 12,
+            lineNumbers: 'on',
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+            tabSize: 2,
+            insertSpaces: true,
+            detectIndentation: false,
+            autoIndent: 'full',
+            wordWrap: 'on',
+            formatOnPaste: false,
+            formatOnType: false,
+          }}
+        />
+      </div>
+    </div>
+  );
+}

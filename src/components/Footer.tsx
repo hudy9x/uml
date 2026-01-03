@@ -1,69 +1,52 @@
-import { VersionDisplay } from "./VersionDisplay";
-import { Github, Bug } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Switch } from "./ui/switch";
-import { PreviewUrlDialog } from "./PreviewUrlDialog";
-import { BranchSelector } from "./BranchSelector";
-import { GitPullButton } from "./GitPullButton";
-import { useExplorerRootPath } from "@/stores/explorer";
-import { PlantUMLHealthCheck } from "./PlantUMLHealthCheck";
-import { invoke } from "@tauri-apps/api/core";
-import { useState } from "react";
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
+import { Moon, Sun } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function Footer() {
-  const { setTheme, theme } = useTheme();
-  const [rootPath] = useExplorerRootPath();
-  const [devtoolsOpen, setDevtoolsOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  const toggleDevtools = async () => {
-    try {
-      await invoke("toggle_devtools");
-      setDevtoolsOpen(!devtoolsOpen);
-    } catch (error) {
-      console.error("Failed to toggle devtools:", error);
-    }
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  return (
-    <footer className="flex items-center justify-between px-2 py-1 gap-2 border-t border-[var(--color-border)] relative">
-      <div className="flex items-center gap-4">
-        <VersionDisplay />
-        <PreviewUrlDialog />
-        {rootPath && <BranchSelector workingDir={rootPath} />}
-        {rootPath && <GitPullButton workingDir={rootPath} />}
-        <PlantUMLHealthCheck />
-
-      </div>
-
-      <div className="flex items-center gap-4">
-        <button
-          onClick={toggleDevtools}
-          className="flex items-center gap-1 text-xs hover:bg-primary/10 px-1 py-0.5 rounded cursor-pointer"
-          title={devtoolsOpen ? "Close DevTools" : "Open DevTools"}
-        >
-          <Bug className="h-3 w-3" />
-          Debug
-        </button>
-        <a
-          href="https://github.com/hudy9x/uml"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1 text-xs hover:bg-primary/10 px-1 py-0.5 rounded"
-        >
-          <Github className="h-3 w-3" />
-          Star on GitHub
-        </a>
-        <div className="flex items-center space-x-2">
-          <Switch
-            checked={theme === "dark"}
-            id="theme-toggle"
-            className="cursor-pointer"
-            onCheckedChange={() =>
-              setTheme((theme) => (theme === "dark" ? "light" : "dark"))
-            }
-          />
-          <label className="text-xs cursor-pointer" htmlFor="theme-toggle">{theme === "dark" ? "Dark" : "Light"}</label>
+  if (!mounted) {
+    return (
+      <footer className="border-t bg-muted">
+        <div className="flex items-center justify-between px-4 py-1.5">
+          <div className="text-xs text-muted-foreground">Mermaid Editor</div>
+          <div className="h-7 w-7" />
         </div>
+      </footer>
+    );
+  }
+
+  return (
+    <footer className="border-t bg-muted">
+      <div className="flex items-center justify-between px-4 py-1.5">
+        <div className="text-xs text-muted-foreground">
+          Mermaid Editor
+        </div>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleTheme}
+          className="h-7 w-7 p-0"
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? (
+            <Sun className="h-4 w-4" />
+          ) : (
+            <Moon className="h-4 w-4" />
+          )}
+        </Button>
       </div>
     </footer>
   );
